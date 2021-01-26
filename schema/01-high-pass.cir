@@ -1,7 +1,6 @@
 *
-Vin	1	0	AC	1
-Vout	2	0
+Vin	Vin	0	AC	1V
 *
-R1	1	2	100K
-C1	2	0	0.015UF
+R1	Vin	Vout	100K
+C1	Vout	0	0.015UF
 *
