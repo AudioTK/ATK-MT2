@@ -2,14 +2,13 @@
 #include <memory>
 
 #include <ATK/Core/Utilities.h>
-
 #include <ATK/Modelling/ModellerFilter.h>
-#include <ATK/Modelling/StaticCapacitor.h>
-#include <ATK/Modelling/StaticCoil.h>
-#include <ATK/Modelling/StaticCurrent.h>
-#include <ATK/Modelling/StaticDiode.h>
-#include <ATK/Modelling/StaticResistor.h>
-#include <ATK/Modelling/StaticTransistor.h>
+#include <ATK/Modelling/StaticComponent/StaticCapacitor.h>
+#include <ATK/Modelling/StaticComponent/StaticCoil.h>
+#include <ATK/Modelling/StaticComponent/StaticCurrent.h>
+#include <ATK/Modelling/StaticComponent/StaticDiode.h>
+#include <ATK/Modelling/StaticComponent/StaticResistor.h>
+#include <ATK/Modelling/StaticComponent/StaticTransistor.h>
 
 #include <Eigen/Eigen>
 

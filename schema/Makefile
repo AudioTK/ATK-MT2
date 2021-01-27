@@ -6,4 +6,4 @@ all: $(CPP_FILES)
 %.cpp: %.cir
 	ATKModellingGenerator $< $@
 
-PHONY: all
+.PHONY: all
