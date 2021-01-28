@@ -12,10 +12,10 @@
 
 #include <Eigen/Eigen>
 
-constexpr gsl::index MAX_ITERATION = 10;
-constexpr gsl::index MAX_ITERATION_STEADY_STATE = 200;
+constexpr gsl::index MAX_ITERATION = 1;
+constexpr gsl::index MAX_ITERATION_STEADY_STATE = 1;
 
-constexpr gsl::index INIT_WARMUP = 10;
+constexpr gsl::index INIT_WARMUP = 1;
 constexpr double EPS = 1e-8;
 constexpr double MAX_DELTA = 1e-1;
 
@@ -31,14 +31,15 @@ class StaticFilter: public ATK::ModellerFilter<double>
   Eigen::Matrix<DataType, 1, 1> static_state{Eigen::Matrix<DataType, 1, 1>::Zero()};
   mutable Eigen::Matrix<DataType, 1, 1> input_state{Eigen::Matrix<DataType, 1, 1>::Zero()};
   mutable Eigen::Matrix<DataType, 2, 1> dynamic_state{Eigen::Matrix<DataType, 2, 1>::Zero()};
+  Eigen::Matrix<DataType, 2, 2> inverse;
   StaticResistor<DataType> r1{10000};
   StaticResistor<DataType> r2{10000};
   StaticCapacitor<DataType> c1{4.7e-08};
   StaticCapacitor<DataType> c2{3.3e-08};
-  StaticResistor<DataType> r2{100000};
+  StaticResistor<DataType> r3{100000};
 
 public:
-  StaticFilter(): ModellerFilter<DataType>(2, 1)
+  StaticFilter(): ModellerFilter<DataType>(2, 1), inverse(2, 2)
   {
     static_state << 0.000000;
   }
@@ -142,6 +143,7 @@ public:
 
     if(!initialized)
     {
+      setup_inverse<true>();
       auto target_static_state = static_state;
 
       for(gsl::index i = 0; i < INIT_WARMUP; ++i)
@@ -151,6 +153,20 @@ public:
       }
       static_state = target_static_state;
     }
+    setup_inverse<false>();
+  }
+
+  template <bool steady_state>
+  void setup_inverse()
+  {
+    Eigen::Matrix<DataType, 2, 2> jacobian(Eigen::Matrix<DataType, 2, 2>::Zero());
+    auto jac0_0 = 0 - r1.get_gradient() - r2.get_gradient() - (steady_state ? 0 : c1.get_gradient())
+                - (steady_state ? 0 : c2.get_gradient());
+    auto jac0_1 = 0 + (steady_state ? 0 : c2.get_gradient());
+    auto jac1_0 = 0 + (steady_state ? 0 : c2.get_gradient());
+    auto jac1_1 = 0 - (steady_state ? 0 : c2.get_gradient()) - r3.get_gradient();
+    jacobian << jac0_0, jac0_1, jac1_0, jac1_1;
+    inverse = jacobian.inverse();
   }
 
   void init()
@@ -216,10 +232,12 @@ public:
     auto d0_ = dynamic_state[0];
     auto d1_ = dynamic_state[1];
 
+    // Precomputes
+
     Eigen::Matrix<DataType, 2, 1> eqs(Eigen::Matrix<DataType, 2, 1>::Zero());
     auto eq0 = -r1.get_current(i0_, d0_) + r2.get_current(d0_, s0_) + (steady_state ? 0 : c1.get_current(d0_, s0_))
              + (steady_state ? 0 : c2.get_current(d0_, d1_));
-    auto eq1 = -(steady_state ? 0 : c2.get_current(d0_, d1_)) + r2.get_current(d1_, s0_);
+    auto eq1 = -(steady_state ? 0 : c2.get_current(d0_, d1_)) + r3.get_current(d1_, s0_);
     eqs << eq0, eq1;
 
     // Check if the equations have converged
@@ -228,21 +246,7 @@ public:
       return true;
     }
 
-    auto jac0_0 = 0 - r1.get_gradient() - r2.get_gradient() - (steady_state ? 0 : c1.get_gradient())
-                - (steady_state ? 0 : c2.get_gradient());
-    auto jac0_1 = 0 + (steady_state ? 0 : c2.get_gradient());
-    auto jac1_0 = 0 + (steady_state ? 0 : c2.get_gradient());
-    auto jac1_1 = 0 - (steady_state ? 0 : c2.get_gradient()) - r2.get_gradient();
-    auto det = (jac0_0 * jac1_1 + jac0_1 * jac1_0);
-    auto invdet = 1 / det;
-    auto com0_0 = jac1_1;
-    auto com1_0 = -1 * jac1_0;
-    auto com0_1 = -1 * jac0_1;
-    auto com1_1 = jac0_0;
-    Eigen::Matrix<DataType, 2, 2> cojacobian(Eigen::Matrix<DataType, 2, 2>::Zero());
-
-    cojacobian << com0_0, com0_1, com1_0, com1_1;
-    Eigen::Matrix<DataType, 2, 1> delta = cojacobian * eqs * invdet;
+    Eigen::Matrix<DataType, 2, 1> delta = inverse * eqs;
 
     // Check if the update is big enough
     if((delta.array().abs() < EPS).all())
@@ -273,4 +277,4 @@ extern "C"
   {
     return std::make_unique<StaticFilter>();
   }
-}
+} // namespace
