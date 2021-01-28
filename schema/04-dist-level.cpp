@@ -36,6 +36,7 @@ class StaticFilter: public ATK::ModellerFilter<double>
   StaticCapacitor<DataType> c2{4.7e-11};
   DataType p1{250000};
   DataType p1_trimmer{0};
+  StaticResistor<DataType> r2{1000};
 
 public:
   StaticFilter(): ModellerFilter<DataType>(4, 1)
@@ -65,7 +66,7 @@ public:
 
   gsl::index get_nb_components() const override
   {
-    return 5;
+    return 6;
   }
 
   std::string get_dynamic_pin_name(gsl::index identifier) const override
@@ -90,7 +91,7 @@ public:
     switch(identifier)
     {
     case 0:
-      return "3";
+      return "vin";
     default:
       throw ATK::RuntimeError("No such pin");
     }
@@ -181,13 +182,13 @@ public:
   {
     // update_steady_state
     c1.update_steady_state(1. / input_sampling_rate, static_state[0], dynamic_state[2]);
-    c2.update_steady_state(1. / input_sampling_rate, dynamic_state[3], dynamic_state[0]);
+    c2.update_steady_state(1. / input_sampling_rate, dynamic_state[1], dynamic_state[0]);
 
     solve<true>();
 
     // update_steady_state
     c1.update_steady_state(1. / input_sampling_rate, static_state[0], dynamic_state[2]);
-    c2.update_steady_state(1. / input_sampling_rate, dynamic_state[3], dynamic_state[0]);
+    c2.update_steady_state(1. / input_sampling_rate, dynamic_state[1], dynamic_state[0]);
 
     initialized = true;
   }
@@ -205,7 +206,7 @@ public:
 
       // Update state
       c1.update_state(static_state[0], dynamic_state[2]);
-      c2.update_state(dynamic_state[3], dynamic_state[0]);
+      c2.update_state(dynamic_state[1], dynamic_state[0]);
       for(gsl::index j = 0; j < nb_output_ports; ++j)
       {
         outputs[j][i] = dynamic_state[j];
@@ -245,11 +246,11 @@ public:
     // Precomputes
 
     Eigen::Matrix<DataType, 4, 1> eqs(Eigen::Matrix<DataType, 4, 1>::Zero());
-    auto eq0 = -r1.get_current(d2_, d0_) - (steady_state ? 0 : c2.get_current(d3_, d0_))
+    auto eq0 = -r1.get_current(d2_, d0_) - (steady_state ? 0 : c2.get_current(d1_, d0_))
              + (p1_trimmer != 0 ? (d3_ - d0_) / (p1_trimmer * p1) : 0);
     auto eq1 = input_state[0] - dynamic_state[0];
     auto eq2 = -(steady_state ? 0 : c1.get_current(s0_, d2_)) + r1.get_current(d2_, d0_);
-    auto eq3 = +(steady_state ? 0 : c2.get_current(d3_, d0_)) + (p1_trimmer != 0 ? (d0_ - d3_) / (p1_trimmer * p1) : 0);
+    auto eq3 = +(p1_trimmer != 0 ? (d0_ - d3_) / (p1_trimmer * p1) : 0) + r2.get_current(d3_, d1_);
     eqs << eq0, eq1, eq2, eq3;
 
     // Check if the equations have converged
@@ -260,9 +261,9 @@ public:
 
     auto jac0_0 = 0 - r1.get_gradient() - (steady_state ? 0 : c2.get_gradient())
                 + (p1_trimmer != 0 ? -1 / (p1_trimmer * p1) : 0);
-    auto jac0_1 = 0;
+    auto jac0_1 = 0 + (steady_state ? 0 : c2.get_gradient());
     auto jac0_2 = 0 + r1.get_gradient();
-    auto jac0_3 = 0 + (steady_state ? 0 : c2.get_gradient()) + (p1_trimmer != 0 ? 1 / (p1_trimmer * p1) : 0);
+    auto jac0_3 = 0 + (p1_trimmer != 0 ? 1 / (p1_trimmer * p1) : 0);
     auto jac1_0 = 0 + -1;
     auto jac1_1 = 0;
     auto jac1_2 = 0;
@@ -271,31 +272,33 @@ public:
     auto jac2_1 = 0;
     auto jac2_2 = 0 - (steady_state ? 0 : c1.get_gradient()) - r1.get_gradient();
     auto jac2_3 = 0;
-    auto jac3_0 = 0 + (steady_state ? 0 : c2.get_gradient()) + (p1_trimmer != 0 ? 1 / (p1_trimmer * p1) : 0);
-    auto jac3_1 = 0;
+    auto jac3_0 = 0 + (p1_trimmer != 0 ? 1 / (p1_trimmer * p1) : 0);
+    auto jac3_1 = 0 + r2.get_gradient();
     auto jac3_2 = 0;
-    auto jac3_3 = 0 - (steady_state ? 0 : c2.get_gradient()) + (p1_trimmer != 0 ? -1 / (p1_trimmer * p1) : 0)
+    auto jac3_3 = 0 + (p1_trimmer != 0 ? -1 / (p1_trimmer * p1) : 0)
                 + (p1_trimmer != 1 ? -1 / ((1 - p1_trimmer) * p1) : 0)
-                + (p1_trimmer != 1 ? 1 / ((1 - p1_trimmer) * p1) : 0);
-    auto det = ;
+                + (p1_trimmer != 1 ? 1 / ((1 - p1_trimmer) * p1) : 0) - r2.get_gradient();
+    auto det
+        = (-1 * jac0_1 * (1 * jac1_0 * (1 * jac2_2 * jac3_3)) + -1 * jac0_3 * (1 * jac1_0 * (-1 * jac2_2 * jac3_1)));
     auto invdet = 1 / det;
     auto com0_0 = 0;
     auto com1_0 = -1 * (1 * jac1_0 * (1 * jac2_2 * jac3_3));
     auto com2_0 = 0;
-    auto com3_0 = -1 * 0;
-    auto com0_1 = -1 * 0;
+    auto com3_0 = -1 * (1 * jac1_0 * (-1 * jac2_2 * jac3_1));
+    auto com0_1 = -1 * (1 * jac0_1 * (1 * jac2_2 * jac3_3) + 1 * jac0_3 * (-1 * jac2_2 * jac3_1));
     auto com1_1 = (1 * jac0_0 * (1 * jac2_2 * jac3_3) + -1 * jac0_2 * (1 * jac2_0 * jac3_3)
                    + 1 * jac0_3 * (-1 * jac2_2 * jac3_0));
-    auto com2_1 = -1 * 0;
-    auto com3_1 = 0;
+    auto com2_1 = -1 * (-1 * jac0_1 * (1 * jac2_0 * jac3_3) + 1 * jac0_3 * (1 * jac2_0 * jac3_1));
+    auto com3_1 = (1 * jac0_0 * (-1 * jac2_2 * jac3_1) + -1 * jac0_1 * (-1 * jac2_2 * jac3_0)
+                   + 1 * jac0_2 * (1 * jac2_0 * jac3_1));
     auto com0_2 = 0;
     auto com1_2 = -1 * (-1 * jac0_2 * (1 * jac1_0 * jac3_3));
-    auto com2_2 = 0;
-    auto com3_2 = -1 * 0;
+    auto com2_2 = (-1 * jac0_1 * (1 * jac1_0 * jac3_3) + 1 * jac0_3 * (1 * jac1_0 * jac3_1));
+    auto com3_2 = -1 * (1 * jac0_2 * (1 * jac1_0 * jac3_1));
     auto com0_3 = -1 * 0;
     auto com1_3 = (1 * jac0_3 * (1 * jac1_0 * jac2_2));
     auto com2_3 = -1 * 0;
-    auto com3_3 = 0;
+    auto com3_3 = (-1 * jac0_1 * (1 * jac1_0 * jac2_2));
     Eigen::Matrix<DataType, 4, 4> cojacobian(Eigen::Matrix<DataType, 4, 4>::Zero());
 
     cojacobian << com0_0, com0_1, com0_2, com0_3, com1_0, com1_1, com1_2, com1_3, com2_0, com2_1, com2_2, com2_3,

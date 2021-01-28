@@ -1,10 +1,11 @@
 *
-Vin	3	0	AC	1
+Vin	Vin	0	AC	1
 *
 *	V-	V+	Vout
-Z1	2	3	Vout
+Z1	2	Vin	Vout
 C1	0	4	10uF
 R1	4	2	1k
-C2	1	2	47pF
+C2	Vout	2	47pF
 P1	2	1	1	250k
+R2	1	Vout	1k
 *

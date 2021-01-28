@@ -163,12 +163,12 @@ public:
   void init()
   {
     // update_steady_state
-    c1.update_steady_state(1. / input_sampling_rate, dynamic_state[0], static_state[0]);
+    c1.update_steady_state(1. / input_sampling_rate, input_state[0], dynamic_state[0]);
 
     solve<true>();
 
     // update_steady_state
-    c1.update_steady_state(1. / input_sampling_rate, dynamic_state[0], static_state[0]);
+    c1.update_steady_state(1. / input_sampling_rate, input_state[0], dynamic_state[0]);
 
     initialized = true;
   }
@@ -185,7 +185,7 @@ public:
       solve<false>();
 
       // Update state
-      c1.update_state(dynamic_state[0], static_state[0]);
+      c1.update_state(input_state[0], dynamic_state[0]);
       for(gsl::index j = 0; j < nb_output_ports; ++j)
       {
         outputs[j][i] = dynamic_state[j];
@@ -222,7 +222,7 @@ public:
     // Precomputes
 
     Eigen::Matrix<DataType, 1, 1> eqs(Eigen::Matrix<DataType, 1, 1>::Zero());
-    auto eq0 = -r1.get_current(i0_, d0_) + (steady_state ? 0 : c1.get_current(d0_, s0_));
+    auto eq0 = -r1.get_current(s0_, d0_) - (steady_state ? 0 : c1.get_current(i0_, d0_));
     eqs << eq0;
 
     // Check if the equations have converged

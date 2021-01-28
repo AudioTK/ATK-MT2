@@ -74,7 +74,7 @@ public:
     switch(identifier)
     {
     case 1:
-      return "3";
+      return "vout";
     case 0:
       return "2";
     default:
@@ -87,7 +87,7 @@ public:
     switch(identifier)
     {
     case 0:
-      return "1";
+      return "vin";
     default:
       throw ATK::RuntimeError("No such pin");
     }

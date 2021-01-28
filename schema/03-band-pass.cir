@@ -1,9 +1,9 @@
 *
-Vin	1	0	AC	1
+Vin	Vin	0	AC	1
 *
-R1	1	2	10K
+R1	Vin	2	10K
 R2	2	0	10K
 C1	2	0	0.047UF
-C2	2	3	0.033UF
-R3	3	0	100K
+C2	2	Vout	0.033UF
+R3	Vout	0	100K
 *
