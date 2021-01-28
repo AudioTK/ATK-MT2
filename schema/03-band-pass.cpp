@@ -32,11 +32,11 @@ class StaticFilter: public ATK::ModellerFilter<double>
   mutable Eigen::Matrix<DataType, 1, 1> input_state{Eigen::Matrix<DataType, 1, 1>::Zero()};
   mutable Eigen::Matrix<DataType, 2, 1> dynamic_state{Eigen::Matrix<DataType, 2, 1>::Zero()};
   Eigen::Matrix<DataType, 2, 2> inverse;
-  StaticResistor<DataType> r1{10000};
-  StaticResistor<DataType> r2{10000};
-  StaticCapacitor<DataType> c1{4.7e-08};
-  StaticCapacitor<DataType> c2{3.3e-08};
-  StaticResistor<DataType> r3{100000};
+  StaticResistor<DataType> r045{10000};
+  StaticResistor<DataType> r042{10000};
+  StaticCapacitor<DataType> c031{4.7e-08};
+  StaticCapacitor<DataType> c029{3.3e-08};
+  StaticResistor<DataType> r040{100000};
 
 public:
   StaticFilter(): ModellerFilter<DataType>(2, 1), inverse(2, 2)
@@ -160,11 +160,11 @@ public:
   void setup_inverse()
   {
     Eigen::Matrix<DataType, 2, 2> jacobian(Eigen::Matrix<DataType, 2, 2>::Zero());
-    auto jac0_0 = 0 - r1.get_gradient() - r2.get_gradient() - (steady_state ? 0 : c1.get_gradient())
-                - (steady_state ? 0 : c2.get_gradient());
-    auto jac0_1 = 0 + (steady_state ? 0 : c2.get_gradient());
-    auto jac1_0 = 0 + (steady_state ? 0 : c2.get_gradient());
-    auto jac1_1 = 0 - (steady_state ? 0 : c2.get_gradient()) - r3.get_gradient();
+    auto jac0_0 = 0 - r045.get_gradient() - r042.get_gradient() - (steady_state ? 0 : c031.get_gradient())
+                - (steady_state ? 0 : c029.get_gradient());
+    auto jac0_1 = 0 + (steady_state ? 0 : c029.get_gradient());
+    auto jac1_0 = 0 + (steady_state ? 0 : c029.get_gradient());
+    auto jac1_1 = 0 - (steady_state ? 0 : c029.get_gradient()) - r040.get_gradient();
     jacobian << jac0_0, jac0_1, jac1_0, jac1_1;
     inverse = jacobian.inverse();
   }
@@ -172,14 +172,14 @@ public:
   void init()
   {
     // update_steady_state
-    c1.update_steady_state(1. / input_sampling_rate, dynamic_state[0], static_state[0]);
-    c2.update_steady_state(1. / input_sampling_rate, dynamic_state[0], dynamic_state[1]);
+    c031.update_steady_state(1. / input_sampling_rate, dynamic_state[0], static_state[0]);
+    c029.update_steady_state(1. / input_sampling_rate, dynamic_state[0], dynamic_state[1]);
 
     solve<true>();
 
     // update_steady_state
-    c1.update_steady_state(1. / input_sampling_rate, dynamic_state[0], static_state[0]);
-    c2.update_steady_state(1. / input_sampling_rate, dynamic_state[0], dynamic_state[1]);
+    c031.update_steady_state(1. / input_sampling_rate, dynamic_state[0], static_state[0]);
+    c029.update_steady_state(1. / input_sampling_rate, dynamic_state[0], dynamic_state[1]);
 
     initialized = true;
   }
@@ -196,8 +196,8 @@ public:
       solve<false>();
 
       // Update state
-      c1.update_state(dynamic_state[0], static_state[0]);
-      c2.update_state(dynamic_state[0], dynamic_state[1]);
+      c031.update_state(dynamic_state[0], static_state[0]);
+      c029.update_state(dynamic_state[0], dynamic_state[1]);
       for(gsl::index j = 0; j < nb_output_ports; ++j)
       {
         outputs[j][i] = dynamic_state[j];
@@ -235,9 +235,9 @@ public:
     // Precomputes
 
     Eigen::Matrix<DataType, 2, 1> eqs(Eigen::Matrix<DataType, 2, 1>::Zero());
-    auto eq0 = -r1.get_current(i0_, d0_) + r2.get_current(d0_, s0_) + (steady_state ? 0 : c1.get_current(d0_, s0_))
-             + (steady_state ? 0 : c2.get_current(d0_, d1_));
-    auto eq1 = -(steady_state ? 0 : c2.get_current(d0_, d1_)) + r3.get_current(d1_, s0_);
+    auto eq0 = -r045.get_current(i0_, d0_) + r042.get_current(d0_, s0_)
+             + (steady_state ? 0 : c031.get_current(d0_, s0_)) + (steady_state ? 0 : c029.get_current(d0_, d1_));
+    auto eq1 = -(steady_state ? 0 : c029.get_current(d0_, d1_)) + r040.get_current(d1_, s0_);
     eqs << eq0, eq1;
 
     // Check if the equations have converged

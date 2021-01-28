@@ -31,12 +31,12 @@ class StaticFilter: public ATK::ModellerFilter<double>
   Eigen::Matrix<DataType, 1, 1> static_state{Eigen::Matrix<DataType, 1, 1>::Zero()};
   mutable Eigen::Matrix<DataType, 1, 1> input_state{Eigen::Matrix<DataType, 1, 1>::Zero()};
   mutable Eigen::Matrix<DataType, 4, 1> dynamic_state{Eigen::Matrix<DataType, 4, 1>::Zero()};
-  StaticCapacitor<DataType> c1{1e-05};
-  StaticResistor<DataType> r1{1000};
-  StaticCapacitor<DataType> c2{4.7e-11};
-  DataType p1{250000};
-  DataType p1_trimmer{0};
-  StaticResistor<DataType> r2{1000};
+  StaticCapacitor<DataType> c030{1e-05};
+  StaticResistor<DataType> r041{1000};
+  StaticCapacitor<DataType> c028{4.7e-11};
+  DataType pr01{250000};
+  DataType pr01_trimmer{0};
+  StaticResistor<DataType> r051{1000};
 
 public:
   StaticFilter(): ModellerFilter<DataType>(4, 1)
@@ -119,7 +119,7 @@ public:
     {
     case 0:
     {
-      return "p1";
+      return "pr01";
     }
     default:
       throw ATK::RuntimeError("No such pin");
@@ -132,7 +132,7 @@ public:
     {
     case 0:
     {
-      return p1_trimmer;
+      return pr01_trimmer;
     }
     default:
       throw ATK::RuntimeError("No such pin");
@@ -145,7 +145,7 @@ public:
     {
     case 0:
     {
-      p1_trimmer = value;
+      pr01_trimmer = value;
       break;
     }
     default:
@@ -181,14 +181,14 @@ public:
   void init()
   {
     // update_steady_state
-    c1.update_steady_state(1. / input_sampling_rate, static_state[0], dynamic_state[2]);
-    c2.update_steady_state(1. / input_sampling_rate, dynamic_state[1], dynamic_state[0]);
+    c030.update_steady_state(1. / input_sampling_rate, static_state[0], dynamic_state[2]);
+    c028.update_steady_state(1. / input_sampling_rate, dynamic_state[1], dynamic_state[0]);
 
     solve<true>();
 
     // update_steady_state
-    c1.update_steady_state(1. / input_sampling_rate, static_state[0], dynamic_state[2]);
-    c2.update_steady_state(1. / input_sampling_rate, dynamic_state[1], dynamic_state[0]);
+    c030.update_steady_state(1. / input_sampling_rate, static_state[0], dynamic_state[2]);
+    c028.update_steady_state(1. / input_sampling_rate, dynamic_state[1], dynamic_state[0]);
 
     initialized = true;
   }
@@ -205,8 +205,8 @@ public:
       solve<false>();
 
       // Update state
-      c1.update_state(static_state[0], dynamic_state[2]);
-      c2.update_state(dynamic_state[1], dynamic_state[0]);
+      c030.update_state(static_state[0], dynamic_state[2]);
+      c028.update_state(dynamic_state[1], dynamic_state[0]);
       for(gsl::index j = 0; j < nb_output_ports; ++j)
       {
         outputs[j][i] = dynamic_state[j];
@@ -246,11 +246,11 @@ public:
     // Precomputes
 
     Eigen::Matrix<DataType, 4, 1> eqs(Eigen::Matrix<DataType, 4, 1>::Zero());
-    auto eq0 = -r1.get_current(d2_, d0_) - (steady_state ? 0 : c2.get_current(d1_, d0_))
-             + (p1_trimmer != 0 ? (d3_ - d0_) / (p1_trimmer * p1) : 0);
+    auto eq0 = -r041.get_current(d2_, d0_) - (steady_state ? 0 : c028.get_current(d1_, d0_))
+             + (pr01_trimmer != 0 ? (d3_ - d0_) / (pr01_trimmer * pr01) : 0);
     auto eq1 = input_state[0] - dynamic_state[0];
-    auto eq2 = -(steady_state ? 0 : c1.get_current(s0_, d2_)) + r1.get_current(d2_, d0_);
-    auto eq3 = +(p1_trimmer != 0 ? (d0_ - d3_) / (p1_trimmer * p1) : 0) + r2.get_current(d3_, d1_);
+    auto eq2 = -(steady_state ? 0 : c030.get_current(s0_, d2_)) + r041.get_current(d2_, d0_);
+    auto eq3 = +(pr01_trimmer != 0 ? (d0_ - d3_) / (pr01_trimmer * pr01) : 0) + r051.get_current(d3_, d1_);
     eqs << eq0, eq1, eq2, eq3;
 
     // Check if the equations have converged
@@ -259,25 +259,25 @@ public:
       return true;
     }
 
-    auto jac0_0 = 0 - r1.get_gradient() - (steady_state ? 0 : c2.get_gradient())
-                + (p1_trimmer != 0 ? -1 / (p1_trimmer * p1) : 0);
-    auto jac0_1 = 0 + (steady_state ? 0 : c2.get_gradient());
-    auto jac0_2 = 0 + r1.get_gradient();
-    auto jac0_3 = 0 + (p1_trimmer != 0 ? 1 / (p1_trimmer * p1) : 0);
+    auto jac0_0 = 0 - r041.get_gradient() - (steady_state ? 0 : c028.get_gradient())
+                + (pr01_trimmer != 0 ? -1 / (pr01_trimmer * pr01) : 0);
+    auto jac0_1 = 0 + (steady_state ? 0 : c028.get_gradient());
+    auto jac0_2 = 0 + r041.get_gradient();
+    auto jac0_3 = 0 + (pr01_trimmer != 0 ? 1 / (pr01_trimmer * pr01) : 0);
     auto jac1_0 = 0 + -1;
     auto jac1_1 = 0;
     auto jac1_2 = 0;
     auto jac1_3 = 0;
-    auto jac2_0 = 0 + r1.get_gradient();
+    auto jac2_0 = 0 + r041.get_gradient();
     auto jac2_1 = 0;
-    auto jac2_2 = 0 - (steady_state ? 0 : c1.get_gradient()) - r1.get_gradient();
+    auto jac2_2 = 0 - (steady_state ? 0 : c030.get_gradient()) - r041.get_gradient();
     auto jac2_3 = 0;
-    auto jac3_0 = 0 + (p1_trimmer != 0 ? 1 / (p1_trimmer * p1) : 0);
-    auto jac3_1 = 0 + r2.get_gradient();
+    auto jac3_0 = 0 + (pr01_trimmer != 0 ? 1 / (pr01_trimmer * pr01) : 0);
+    auto jac3_1 = 0 + r051.get_gradient();
     auto jac3_2 = 0;
-    auto jac3_3 = 0 + (p1_trimmer != 0 ? -1 / (p1_trimmer * p1) : 0)
-                + (p1_trimmer != 1 ? -1 / ((1 - p1_trimmer) * p1) : 0)
-                + (p1_trimmer != 1 ? 1 / ((1 - p1_trimmer) * p1) : 0) - r2.get_gradient();
+    auto jac3_3 = 0 + (pr01_trimmer != 0 ? -1 / (pr01_trimmer * pr01) : 0)
+                + (pr01_trimmer != 1 ? -1 / ((1 - pr01_trimmer) * pr01) : 0)
+                + (pr01_trimmer != 1 ? 1 / ((1 - pr01_trimmer) * pr01) : 0) - r051.get_gradient();
     auto det
         = (-1 * jac0_1 * (1 * jac1_0 * (1 * jac2_2 * jac3_3)) + -1 * jac0_3 * (1 * jac1_0 * (-1 * jac2_2 * jac3_1)));
     auto invdet = 1 / det;

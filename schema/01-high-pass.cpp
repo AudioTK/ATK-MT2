@@ -32,8 +32,8 @@ class StaticFilter: public ATK::ModellerFilter<double>
   mutable Eigen::Matrix<DataType, 1, 1> input_state{Eigen::Matrix<DataType, 1, 1>::Zero()};
   mutable Eigen::Matrix<DataType, 1, 1> dynamic_state{Eigen::Matrix<DataType, 1, 1>::Zero()};
   Eigen::Matrix<DataType, 1, 1> inverse;
-  StaticResistor<DataType> r1{100000};
-  StaticCapacitor<DataType> c1{1.5e-08};
+  StaticResistor<DataType> r043{100000};
+  StaticCapacitor<DataType> c033{1.5e-08};
 
 public:
   StaticFilter(): ModellerFilter<DataType>(1, 1), inverse(1, 1)
@@ -155,7 +155,7 @@ public:
   void setup_inverse()
   {
     Eigen::Matrix<DataType, 1, 1> jacobian(Eigen::Matrix<DataType, 1, 1>::Zero());
-    auto jac0_0 = 0 - r1.get_gradient() - (steady_state ? 0 : c1.get_gradient());
+    auto jac0_0 = 0 - r043.get_gradient() - (steady_state ? 0 : c033.get_gradient());
     jacobian << jac0_0;
     inverse = jacobian.inverse();
   }
@@ -163,12 +163,12 @@ public:
   void init()
   {
     // update_steady_state
-    c1.update_steady_state(1. / input_sampling_rate, input_state[0], dynamic_state[0]);
+    c033.update_steady_state(1. / input_sampling_rate, input_state[0], dynamic_state[0]);
 
     solve<true>();
 
     // update_steady_state
-    c1.update_steady_state(1. / input_sampling_rate, input_state[0], dynamic_state[0]);
+    c033.update_steady_state(1. / input_sampling_rate, input_state[0], dynamic_state[0]);
 
     initialized = true;
   }
@@ -185,7 +185,7 @@ public:
       solve<false>();
 
       // Update state
-      c1.update_state(input_state[0], dynamic_state[0]);
+      c033.update_state(input_state[0], dynamic_state[0]);
       for(gsl::index j = 0; j < nb_output_ports; ++j)
       {
         outputs[j][i] = dynamic_state[j];
@@ -222,7 +222,7 @@ public:
     // Precomputes
 
     Eigen::Matrix<DataType, 1, 1> eqs(Eigen::Matrix<DataType, 1, 1>::Zero());
-    auto eq0 = -r1.get_current(s0_, d0_) - (steady_state ? 0 : c1.get_current(i0_, d0_));
+    auto eq0 = -r043.get_current(s0_, d0_) - (steady_state ? 0 : c033.get_current(i0_, d0_));
     eqs << eq0;
 
     // Check if the equations have converged
