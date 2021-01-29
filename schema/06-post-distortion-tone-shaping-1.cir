@@ -4,7 +4,7 @@ Vdd Vdd	0	DC -4.5
 Vcc	Vcc	0	DC 4.5
 *
 *	V-	V+	Vout
-Z1	2	Vin	Vout
+Z4b	2	Vin	Vout
 R030	2	Vout	3.3k
 C022	2	Vout	47p
 

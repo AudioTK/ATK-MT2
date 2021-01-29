@@ -3,7 +3,7 @@ Vin	Vin	0	AC	1
 *
 *	V-	V+	Vout
 R028	Vin 2	22k
-Z3a	2	0	Vout
+Z4a	2	0	Vout
 C016	2	Vout	10p
 R026	2	Vout	22k
 *
