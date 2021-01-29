@@ -37,7 +37,8 @@ class StaticFilter: public ATK::ModellerFilter<double>
   StaticResistor<DataType> r046{2200};
   StaticResistor<DataType> r054{10000};
   StaticCapacitor<DataType> c035{1e-08};
-  StaticNPN<DataType> q0{1e-12, 0.026, 1, 1, 100};
+  StaticResistor<DataType> r053{47000};
+  StaticNPN<DataType> q010{1e-12, 0.026, 1, 1, 100};
 
 public:
   StaticFilter(): ModellerFilter<DataType>(5, 1)
@@ -67,7 +68,7 @@ public:
 
   gsl::index get_nb_components() const override
   {
-    return 8;
+    return 9;
   }
 
   std::string get_dynamic_pin_name(gsl::index identifier) const override
@@ -244,7 +245,7 @@ public:
     auto d4_ = dynamic_state[4];
 
     // Precomputes
-    q0.precompute(dynamic_state[4], static_state[2], dynamic_state[3]);
+    q010.precompute(dynamic_state[4], static_state[2], dynamic_state[3]);
 
     Eigen::Matrix<DataType, 5, 1> eqs(Eigen::Matrix<DataType, 5, 1>::Zero());
     auto eq0 = +r044.get_current(d0_, d1_) + (steady_state ? 0 : c032.get_current(d0_, d1_))
@@ -252,8 +253,8 @@ public:
     auto eq1 = input_state[0] - dynamic_state[0];
     auto eq2 = -(steady_state ? 0 : c034.get_current(d0_, d2_)) + r046.get_current(d2_, d3_)
              + (steady_state ? 0 : c035.get_current(d2_, d4_));
-    auto eq3 = -r046.get_current(d2_, d3_) + r054.get_current(d3_, s1_) + q0.ib() + q0.ic();
-    auto eq4 = -(steady_state ? 0 : c035.get_current(d2_, d4_)) - q0.ib();
+    auto eq3 = -r046.get_current(d2_, d3_) + r054.get_current(d3_, s1_) + q010.ib() + q010.ic();
+    auto eq4 = -(steady_state ? 0 : c035.get_current(d2_, d4_)) - r053.get_current(s0_, d4_) - q010.ib();
     eqs << eq0, eq1, eq2, eq3, eq4;
 
     // Check if the equations have converged
@@ -282,13 +283,13 @@ public:
     auto jac3_0 = 0;
     auto jac3_1 = 0;
     auto jac3_2 = 0 + r046.get_gradient();
-    auto jac3_3 = 0 - r046.get_gradient() - r054.get_gradient() - q0.ib_Vbe() - q0.ic_Vbe();
-    auto jac3_4 = 0 + q0.ib_Vbc() + q0.ib_Vbe() + q0.ic_Vbc() + q0.ic_Vbe();
+    auto jac3_3 = 0 - r046.get_gradient() - r054.get_gradient() - q010.ib_Vbe() - q010.ic_Vbe();
+    auto jac3_4 = 0 + q010.ib_Vbc() + q010.ib_Vbe() + q010.ic_Vbc() + q010.ic_Vbe();
     auto jac4_0 = 0;
     auto jac4_1 = 0;
     auto jac4_2 = 0 + (steady_state ? 0 : c035.get_gradient());
-    auto jac4_3 = 0 + q0.ib_Vbe();
-    auto jac4_4 = 0 - (steady_state ? 0 : c035.get_gradient()) - q0.ib_Vbc() - q0.ib_Vbe();
+    auto jac4_3 = 0 + q010.ib_Vbe();
+    auto jac4_4 = 0 - (steady_state ? 0 : c035.get_gradient()) - r053.get_gradient() - q010.ib_Vbc() - q010.ib_Vbe();
     auto det = (-1 * jac0_1
                 * (1 * jac1_0
                     * (1 * jac2_2 * (1 * jac3_3 * jac4_4 + -1 * jac3_4 * jac4_3)

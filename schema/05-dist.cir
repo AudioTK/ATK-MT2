@@ -1,0 +1,13 @@
+*
+Vin	Vin	0	AC	1
+*
+*	V-	V+	Vout
+C027	Vin	1	10uF
+R033	1	2	2.2k
+D003 0 2 SS133
+D004 2 0 SS133
+R032	2	Vout	10k
+R031	Vout	3	4.7k
+C023	3	0	0.015u
+*
+.model SS133 d (Is=1e-14 N=1.24 Vt=26e-3)
