@@ -16,6 +16,21 @@
               jucerFormatVersion="1">
   <MAINGROUP id="H9V4ut" name="MT2">
     <GROUP id="{65FEA80A-F647-1916-F1CE-08CA719AE1BE}" name="Source">
+      <FILE id="MvMVFL" name="01-high-pass.cpp" compile="1" resource="0"
+            file="Source/01-high-pass.cpp"/>
+      <FILE id="HMzpE3" name="02-pre-distortion-tone-shaping.cpp" compile="1"
+            resource="0" file="Source/02-pre-distortion-tone-shaping.cpp"/>
+      <FILE id="Udqgaq" name="03-band-pass.cpp" compile="1" resource="0"
+            file="Source/03-band-pass.cpp"/>
+      <FILE id="vC1xv3" name="04-dist-level.cpp" compile="1" resource="0"
+            file="Source/04-dist-level.cpp"/>
+      <FILE id="TxwfYy" name="05-dist.cpp" compile="1" resource="0" file="Source/05-dist.cpp"/>
+      <FILE id="zvDaw5" name="06-post-distortion-tone-shaping-1.cpp" compile="1"
+            resource="0" file="Source/06-post-distortion-tone-shaping-1.cpp"/>
+      <FILE id="AKYstP" name="07-post-distortion-tone-shaping-2.cpp" compile="1"
+            resource="0" file="Source/07-post-distortion-tone-shaping-2.cpp"/>
+      <FILE id="copDEO" name="static_elements.h" compile="0" resource="0"
+            file="Source/static_elements.h"/>
       <FILE id="LX9XxX" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="lieT9v" name="PluginProcessor.h" compile="0" resource="0"
@@ -24,11 +39,6 @@
             file="Source/PluginEditor.cpp"/>
       <FILE id="Js7KLE" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
     </GROUP>
-    <FILE id="km7XE2" name="LookAndFeel.cpp" compile="1" resource="0" file="Source/LookAndFeel.cpp"/>
-    <FILE id="gEV8mU" name="LookAndFeel.h" compile="0" resource="0" file="Source/LookAndFeel.h"/>
-    <FILE id="Sn5rDJ" name="VolumeFilter.cpp" compile="1" resource="0"
-          file="Source/VolumeFilter.cpp"/>
-    <FILE id="aSyuXl" name="VolumeFilter.h" compile="0" resource="0" file="Source/VolumeFilter.h"/>
   </MAINGROUP>
   <EXPORTFORMATS>
     <VS2017 targetFolder="Builds/VisualStudio2017" vst3Folder="" extraDefs="ATK_NO_FFT"
@@ -59,10 +69,10 @@
         <MODULEPATH id="juce_audio_processors" path="../../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_plugin_client" path="../../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_utils" path="../../../JUCE/modules"/>
-        <MODULEPATH id="atk_core" path="../../../AudioTK/modules/JUCE"/>
-        <MODULEPATH id="atk_utility" path="../../../AudioTK/modules/JUCE"/>
-        <MODULEPATH id="atk_dynamic" path="../../../AudioTK/modules/JUCE"/>
-        <MODULEPATH id="atk_tools" path="../../../AudioTK/modules/JUCE"/>
+        <MODULEPATH id="atk_core" path="../../AudioTK/modules/JUCE"/>
+        <MODULEPATH id="atk_utility" path="../../AudioTK/modules/JUCE"/>
+        <MODULEPATH id="atk_tools" path="../../AudioTK/modules/JUCE"/>
+        <MODULEPATH id="atk_modelling" path="../../AudioTK-Modeling/modules/JUCE"/>
       </MODULEPATHS>
     </VS2017>
     <XCODE_MAC targetFolder="Builds/MacOSX" vst3Folder="../../../SDKs/VST3_SDK"
@@ -70,10 +80,10 @@
                extraDefs="ATK_NO_FFT" keepCustomXcodeSchemes="1" aaxFolder="../../../SDKs/AAX_SDK_2p3p0">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MT2" enablePluginBinaryCopyStep="1"
-                       headerPath="../../../../&#10;../../../../../AudioTK&#10;../../../../../AudioTK/3rdParty/gsl/include&#10;../../../../../AudioTK/3rdParty/eigen&#10;../../../../../../local/boost_1_75_0"/>
+                       headerPath="../../../&#10;../../../../AudioTK&#10;../../../../AudioTK/3rdParty/gsl/include&#10;../../../../AudioTK/3rdParty/eigen&#10;../../../../../local/boost_1_75_0&#10;../../../../AudioTK-Modeling&#10;"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MT2"
                        enablePluginBinaryCopyStep="1" stripLocalSymbols="1" fastMath="1"
-                       headerPath="../../../../&#10;../../../../../AudioTK&#10;../../../../../AudioTK/3rdParty/gsl/include&#10;../../../../../AudioTK/3rdParty/eigen&#10;../../../../../../local/boost_1_75_0"
+                       headerPath="../../../&#10;../../../../AudioTK&#10;../../../../AudioTK/3rdParty/gsl/include&#10;../../../../AudioTK/3rdParty/eigen&#10;../../../../../local/boost_1_75_0&#10;../../../../AudioTK-Modeling&#10;"
                        aaxBinaryLocation="$(HOME)/Library/Application Support/Avid/Audio/Plug-Ins/"
                        osxSDK="10.12 SDK" osxCompatibility="10.9 SDK" osxArchitecture="64BitUniversal"/>
       </CONFIGURATIONS>
@@ -91,10 +101,10 @@
         <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_plugin_client" path="../../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_utils" path="../../JUCE/modules"/>
-        <MODULEPATH id="atk_core" path="../../../AudioTK/modules/JUCE"/>
-        <MODULEPATH id="atk_utility" path="../../../AudioTK/modules/JUCE"/>
-        <MODULEPATH id="atk_dynamic" path="../../../AudioTK/modules/JUCE"/>
-        <MODULEPATH id="atk_tools" path="../../../AudioTK/modules/JUCE"/>
+        <MODULEPATH id="atk_core" path="../../AudioTK/modules/JUCE"/>
+        <MODULEPATH id="atk_utility" path="../../AudioTK/modules/JUCE"/>
+        <MODULEPATH id="atk_tools" path="../../AudioTK/modules/JUCE"/>
+        <MODULEPATH id="atk_modelling" path="../../AudioTK-Modeling/modules/JUCE"/>
       </MODULEPATHS>
     </XCODE_MAC>
     <VS2017 targetFolder="Builds/VisualStudio2017_x64" vst3Folder="" windowsTargetPlatformVersion="10.0.16299.0">
@@ -123,16 +133,16 @@
         <MODULEPATH id="juce_audio_formats" path="../../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_devices" path="../../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_basics" path="../../../JUCE/modules"/>
-        <MODULEPATH id="atk_utility" path="../../../AudioTK/modules/JUCE"/>
-        <MODULEPATH id="atk_tools" path="../../../AudioTK/modules/JUCE"/>
-        <MODULEPATH id="atk_dynamic" path="../../../AudioTK/modules/JUCE"/>
-        <MODULEPATH id="atk_core" path="../../../AudioTK/modules/JUCE"/>
+        <MODULEPATH id="atk_utility" path="../../AudioTK/modules/JUCE"/>
+        <MODULEPATH id="atk_tools" path="../../AudioTK/modules/JUCE"/>
+        <MODULEPATH id="atk_core" path="../../AudioTK/modules/JUCE"/>
+        <MODULEPATH id="atk_modelling" path="../../AudioTK-Modeling/modules/JUCE"/>
       </MODULEPATHS>
     </VS2017>
   </EXPORTFORMATS>
   <MODULES>
     <MODULE id="atk_core" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
-    <MODULE id="atk_dynamic" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="atk_modelling" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="atk_tools" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="atk_utility" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>

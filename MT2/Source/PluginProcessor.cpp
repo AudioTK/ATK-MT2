@@ -27,17 +27,15 @@ MT2AudioProcessor::MT2AudioProcessor()
 #endif
   inFilter(nullptr, 1, 0, false)
   , outFilter(nullptr, 1, 0, false)
+  , parameters(*this,
+        nullptr,
+        juce::Identifier("ATKMT2"),
+        std::make_unique<juce::AudioParameterFloat>("gain", "Gain", 0.0f, 1.0f, .5f))
 {
   outFilter.set_input_port(0, &inFilter, 0);
-
-  parameters.createAndAddParameter("drywet", "Dry/Wet", "", NormalisableRange<float>(0, 100), 100, nullptr, nullptr);
-
-  parameters.state = ValueTree(Identifier("MT2"));
 }
 
-MT2AudioProcessor::~MT2AudioProcessor()
-{
-}
+MT2AudioProcessor::~MT2AudioProcessor() = default;
 
 //==============================================================================
 const String MT2AudioProcessor::getName() const
@@ -200,20 +198,25 @@ AudioProcessorEditor* MT2AudioProcessor::createEditor()
 //==============================================================================
 void MT2AudioProcessor::getStateInformation(MemoryBlock& destData)
 {
-  MemoryOutputStream store(destData, true);
-  store.writeInt(0); // version ID
-  auto str = parameters.state.toXmlString();
-  store.writeString(str);
+  auto state = parameters.copyState();
+  std::unique_ptr<juce::XmlElement> xml(state.createXml());
+  xml->setAttribute("version", "0");
+  copyXmlToBinary(*xml, destData);
 }
 
 void MT2AudioProcessor::setStateInformation(const void* data, int sizeInBytes)
 {
-  MemoryInputStream store(data, static_cast<size_t>(sizeInBytes), false);
-  int version = store.readInt(); // version ID
-  std::unique_ptr<::juce::XmlElement> xml(::juce::XmlDocument::parse(store.readString()));
-  if(xml)
+  std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+
+  if(xmlState.get() != nullptr)
   {
-    parameters.state = ValueTree::fromXml(*xml);
+    if(xmlState->hasTagName(parameters.state.getType()))
+    {
+      if(xmlState->getStringAttribute("version") == "0")
+      {
+        parameters.replaceState(juce::ValueTree::fromXml(*xmlState));
+      }
+    }
   }
 }
 

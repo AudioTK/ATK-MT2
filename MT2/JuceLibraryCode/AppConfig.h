@@ -49,7 +49,7 @@
 
 //==============================================================================
 #define JUCE_MODULE_AVAILABLE_atk_core 1
-#define JUCE_MODULE_AVAILABLE_atk_dynamic 1
+#define JUCE_MODULE_AVAILABLE_atk_modelling 1
 #define JUCE_MODULE_AVAILABLE_atk_tools 1
 #define JUCE_MODULE_AVAILABLE_atk_utility 1
 #define JUCE_MODULE_AVAILABLE_juce_audio_basics 1

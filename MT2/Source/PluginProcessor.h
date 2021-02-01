@@ -58,15 +58,12 @@ public:
   void setStateInformation(const void* data, int sizeInBytes) override;
 
 private:
-  //==============================================================================
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MT2AudioProcessor)
-
   ATK::InPointerFilter<float> inFilter;
   ATK::OutPointerFilter<float> outFilter;
 
   AudioProcessorValueTreeState parameters;
-  int sampleRate;
+  long sampleRate;
   int lastParameterSet;
 
-  float old_drywet{1};
+  //  float old_drywet{1};
 };

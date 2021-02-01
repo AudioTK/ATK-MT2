@@ -33,7 +33,7 @@ void MT2AudioProcessorEditor::paint(Graphics& g)
   g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
   g.setFont(Font("Times New Roman", 30.0f, Font::bold | Font::italic));
   g.setColour(Colours::whitesmoke);
-  g.drawText("Auto Swell", 20, 10, 400, 30, Justification::verticallyCentred);
+  g.drawText("ATK MT2", 20, 10, 400, 30, Justification::verticallyCentred);
 }
 
 void MT2AudioProcessorEditor::resized()
