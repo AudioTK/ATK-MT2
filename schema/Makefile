@@ -18,4 +18,7 @@ all: $(EXE_FILES) $(CPP_FILES) $(DAT_FILES) $(PNG_FILES)
 %.png: %.dat display.py
 	python3 display.py $< $@
 
-.PHONY: all
+clean:
+	rm -f $(CPP_FILES) $(EXE_FILES) $(DAT_FILES) $(PNG_FILES)
+
+.PHONY: all clean

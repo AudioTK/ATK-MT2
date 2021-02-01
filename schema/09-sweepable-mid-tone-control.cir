@@ -5,22 +5,28 @@ Vdd	Vdd 0	DC	-4.5
 *	V-	V+	Vout
 C011	Vin	2	1u
 R038	2	3	47k
-Z2a	3	4	5
-R045	3	5	47k
-C026	3	5	100p
-R050	2	6	330
-C005	5	Vout	10u
-C037	5	7	1u
-R049	7	8	330
+Z2a	3	4	Vout
+R035	3	Vout	47k
+C026	3	Vout	100p
 R039	4	0	1M
+
+C037	Vout	7	1u
+PR02	2	9	7	100.66k
+
 C038	4	14	0.1u
 C043	14	0	0.0082u
-PR2aa	14	14	15	50k
-R062	15	Vdd	2.2k
-PR2ab	14	14	13	50k
-R048	12	13	2.2k
+
+PR2aa	14	14	Vdd	52.2k
+PR2ab	14	14	12	50k
+
 C036	12	11	0.022u
 Z2b	11	9	11
-PR02	6	9	8	100k
+
+* Simplified
+*R050	2	6	330
+*R049	7	8	330
+
+*R062	15	Vdd	2.2k
+*R048	12	13	2.2k
 
 *

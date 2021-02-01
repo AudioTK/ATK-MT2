@@ -12,16 +12,14 @@
 
 #include <Eigen/Eigen>
 
-constexpr gsl::index MAX_ITERATION = 10;
-constexpr gsl::index MAX_ITERATION_STEADY_STATE = 200;
-
-constexpr gsl::index INIT_WARMUP = 10;
-constexpr double EPS = 1e-8;
-constexpr double MAX_DELTA = 1e-1;
-
 namespace
 {
-using namespace ATK;
+constexpr gsl::index MAX_ITERATION = 1;
+constexpr gsl::index MAX_ITERATION_STEADY_STATE = 1;
+
+constexpr gsl::index INIT_WARMUP = 1;
+constexpr double EPS = 1e-8;
+constexpr double MAX_DELTA = 1e-1;
 
 class StaticFilter: public ATK::ModellerFilter<double>
 {
@@ -31,19 +29,19 @@ class StaticFilter: public ATK::ModellerFilter<double>
   Eigen::Matrix<DataType, 1, 1> static_state{Eigen::Matrix<DataType, 1, 1>::Zero()};
   mutable Eigen::Matrix<DataType, 1, 1> input_state{Eigen::Matrix<DataType, 1, 1>::Zero()};
   mutable Eigen::Matrix<DataType, 9, 1> dynamic_state{Eigen::Matrix<DataType, 9, 1>::Zero()};
-  StaticResistor<DataType> r014{22000};
-  StaticCapacitor<DataType> c010{1e-11};
-  StaticResistor<DataType> r015{22000};
+  ATK::StaticResistor<DataType> r014{22000};
+  ATK::StaticCapacitor<DataType> c010{1e-11};
+  ATK::StaticResistor<DataType> r015{22000};
   DataType pr03a{100000};
   DataType pr03a_trimmer{0};
-  StaticResistor<DataType> r061{2200};
-  StaticCapacitor<DataType> c044{1e-08};
+  ATK::StaticResistor<DataType> r061{2200};
+  ATK::StaticCapacitor<DataType> c044{1e-08};
   DataType pr03b{100000};
   DataType pr03b_trimmer{0};
-  StaticCapacitor<DataType> c008{2.2e-07};
-  StaticResistor<DataType> r012{2200};
-  StaticCapacitor<DataType> c009{4.7e-08};
-  StaticResistor<DataType> r013{1e+06};
+  ATK::StaticCapacitor<DataType> c008{2.2e-07};
+  ATK::StaticResistor<DataType> r012{2200};
+  ATK::StaticCapacitor<DataType> c009{4.7e-08};
+  ATK::StaticResistor<DataType> r013{1e+06};
 
 public:
   StaticFilter(): ModellerFilter<DataType>(9, 1)
@@ -127,7 +125,7 @@ public:
 
   gsl::index get_number_parameters() const override
   {
-    return 0;
+    return 2;
   }
 
   std::string get_parameter_name(gsl::index identifier) const override
@@ -311,7 +309,6 @@ public:
       return true;
     }
 
-    Eigen::Matrix<DataType, 9, 9> jacobian(Eigen::Matrix<DataType, 9, 9>::Zero());
     auto jac0_0 = 0 - r014.get_gradient() + (pr03a_trimmer != 0 ? -1 / (pr03a_trimmer * pr03a) : 0)
                 + (pr03b_trimmer != 0 ? -1 / (pr03b_trimmer * pr03b) : 0);
     auto jac0_1 = 0;
@@ -400,13 +397,1339 @@ public:
     auto jac8_6 = 0 + (steady_state ? 0 : c009.get_gradient());
     auto jac8_7 = 0;
     auto jac8_8 = 0 - (steady_state ? 0 : c009.get_gradient()) - r013.get_gradient();
-    jacobian << jac0_0, jac0_1, jac0_2, jac0_3, jac0_4, jac0_5, jac0_6, jac0_7, jac0_8, jac1_0, jac1_1, jac1_2, jac1_3,
-        jac1_4, jac1_5, jac1_6, jac1_7, jac1_8, jac2_0, jac2_1, jac2_2, jac2_3, jac2_4, jac2_5, jac2_6, jac2_7, jac2_8,
-        jac3_0, jac3_1, jac3_2, jac3_3, jac3_4, jac3_5, jac3_6, jac3_7, jac3_8, jac4_0, jac4_1, jac4_2, jac4_3, jac4_4,
-        jac4_5, jac4_6, jac4_7, jac4_8, jac5_0, jac5_1, jac5_2, jac5_3, jac5_4, jac5_5, jac5_6, jac5_7, jac5_8, jac6_0,
-        jac6_1, jac6_2, jac6_3, jac6_4, jac6_5, jac6_6, jac6_7, jac6_8, jac7_0, jac7_1, jac7_2, jac7_3, jac7_4, jac7_5,
-        jac7_6, jac7_7, jac7_8, jac8_0, jac8_1, jac8_2, jac8_3, jac8_4, jac8_5, jac8_6, jac8_7, jac8_8;
-    Eigen::Matrix<DataType, 9, 1> delta = jacobian.colPivHouseholderQr().solve(eqs);
+    auto det
+        = (1 * jac0_0
+                * (-1 * jac1_2
+                    * (1 * jac2_1
+                        * (1 * jac3_3
+                                * (1 * jac4_4
+                                    * (1 * jac5_5
+                                            * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                        + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))
+                            + -1 * jac3_4
+                                  * (1 * jac4_3
+                                      * (1 * jac5_5
+                                              * (1 * jac6_6 * (1 * jac7_7 * jac8_8)
+                                                  + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                  + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                          + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8)))))))
+            + -1 * jac0_3
+                  * (1 * jac1_2
+                      * (1 * jac2_0
+                              * (1 * jac3_1
+                                  * (1 * jac4_4
+                                      * (1 * jac5_5
+                                              * (1 * jac6_6 * (1 * jac7_7 * jac8_8)
+                                                  + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                  + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                          + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8)))))
+                          + -1 * jac2_1
+                                * (1 * jac3_0
+                                    * (1 * jac4_4
+                                        * (1 * jac5_5
+                                                * (1 * jac6_6 * (1 * jac7_7 * jac8_8)
+                                                    + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                    + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                            + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8)))))))
+            + -1 * jac0_5
+                  * (1 * jac1_2
+                      * (1 * jac2_0
+                              * (-1 * jac3_3
+                                      * (-1 * jac4_4
+                                          * (1 * jac5_1
+                                              * (1 * jac6_6 * (1 * jac7_7 * jac8_8)
+                                                  + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                  + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                                  + 1 * jac3_4
+                                        * (-1 * jac4_3
+                                            * (1 * jac5_1
+                                                * (1 * jac6_6 * (1 * jac7_7 * jac8_8)
+                                                    + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                    + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))
+                          + -1 * jac2_1
+                                * (-1 * jac3_3
+                                        * (-1 * jac4_4
+                                            * (1 * jac5_0
+                                                * (1 * jac6_6 * (1 * jac7_7 * jac8_8)
+                                                    + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                    + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                                    + 1 * jac3_4
+                                          * (-1 * jac4_3
+                                              * (1 * jac5_0
+                                                  * (1 * jac6_6 * (1 * jac7_7 * jac8_8)
+                                                      + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                      + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))))));
+    auto invdet = 1 / det;
+    auto com0_0
+        = (-1 * jac1_2
+            * (1 * jac2_1
+                * (1 * jac3_3
+                        * (1 * jac4_4
+                            * (1 * jac5_5
+                                    * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                        + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))
+                    + -1 * jac3_4
+                          * (1 * jac4_3
+                              * (1 * jac5_5
+                                      * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                          + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                  + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8)))))));
+    auto com1_0
+        = -1
+        * (-1 * jac1_2
+            * (1 * jac2_0
+                * (1 * jac3_3
+                        * (1 * jac4_4
+                            * (1 * jac5_5
+                                    * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                        + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))
+                    + -1 * jac3_4
+                          * (1 * jac4_3
+                              * (1 * jac5_5
+                                      * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                          + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                  + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8)))))));
+    auto com2_0
+        = (-1 * jac1_1
+                * (1 * jac2_0
+                    * (1 * jac3_3
+                            * (1 * jac4_4
+                                * (1 * jac5_5
+                                        * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                            + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                    + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))
+                        + -1 * jac3_4
+                              * (1 * jac4_3
+                                  * (1 * jac5_5
+                                          * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                              + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                      + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))))
+            + 1 * jac1_3
+                  * (1 * jac2_0
+                          * (1 * jac3_1
+                              * (1 * jac4_4
+                                  * (1 * jac5_5
+                                          * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                              + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                      + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8)))))
+                      + -1 * jac2_1
+                            * (1 * jac3_0
+                                * (1 * jac4_4
+                                    * (1 * jac5_5
+                                            * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                        + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))))
+            + 1 * jac1_5
+                  * (1 * jac2_0
+                          * (-1 * jac3_3
+                                  * (-1 * jac4_4
+                                      * (1 * jac5_1
+                                          * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                              + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                              + 1 * jac3_4
+                                    * (-1 * jac4_3
+                                        * (1 * jac5_1
+                                            * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))
+                      + -1 * jac2_1
+                            * (-1 * jac3_3
+                                    * (-1 * jac4_4
+                                        * (1 * jac5_0
+                                            * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                                + 1 * jac3_4
+                                      * (-1 * jac4_3
+                                          * (1 * jac5_0
+                                              * (1 * jac6_6 * (1 * jac7_7 * jac8_8)
+                                                  + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                  + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))));
+    auto com3_0
+        = -1
+        * (1 * jac1_2
+            * (1 * jac2_0
+                    * (1 * jac3_1
+                        * (1 * jac4_4
+                            * (1 * jac5_5
+                                    * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                        + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8)))))
+                + -1 * jac2_1
+                      * (1 * jac3_0
+                          * (1 * jac4_4
+                              * (1 * jac5_5
+                                      * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                          + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                  + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8)))))));
+    auto com4_0
+        = (1 * jac1_2
+            * (1 * jac2_0
+                    * (1 * jac3_1
+                        * (1 * jac4_3
+                            * (1 * jac5_5
+                                    * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                        + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8)))))
+                + -1 * jac2_1
+                      * (1 * jac3_0
+                          * (1 * jac4_3
+                              * (1 * jac5_5
+                                      * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                          + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                  + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8)))))));
+    auto com5_0
+        = -1
+        * (1 * jac1_2
+            * (1 * jac2_0
+                    * (-1 * jac3_3
+                            * (-1 * jac4_4
+                                * (1 * jac5_1
+                                    * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                        + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                        + 1 * jac3_4
+                              * (-1 * jac4_3
+                                  * (1 * jac5_1
+                                      * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                          + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))
+                + -1 * jac2_1
+                      * (-1 * jac3_3
+                              * (-1 * jac4_4
+                                  * (1 * jac5_0
+                                      * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                          + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                          + 1 * jac3_4
+                                * (-1 * jac4_3
+                                    * (1 * jac5_0
+                                        * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                            + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))));
+    auto com6_0 = (1 * jac1_2
+                   * (1 * jac2_0
+                           * (-1 * jac3_3 * (-1 * jac4_4 * (1 * jac5_1 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))
+                               + 1 * jac3_4 * (-1 * jac4_3 * (1 * jac5_1 * (1 * jac6_5 * (1 * jac7_7 * jac8_8)))))
+                       + -1 * jac2_1
+                             * (-1 * jac3_3 * (-1 * jac4_4 * (1 * jac5_0 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))
+                                 + 1 * jac3_4 * (-1 * jac4_3 * (1 * jac5_0 * (1 * jac6_5 * (1 * jac7_7 * jac8_8)))))));
+    auto com7_0
+        = -1
+        * (1 * jac1_2
+            * (1 * jac2_0
+                    * (-1 * jac3_3 * (-1 * jac4_4 * (1 * jac5_1 * (1 * jac6_5 * (-1 * jac7_8 * jac8_6))))
+                        + 1 * jac3_4 * (-1 * jac4_3 * (1 * jac5_1 * (1 * jac6_5 * (-1 * jac7_8 * jac8_6)))))
+                + -1 * jac2_1
+                      * (-1 * jac3_3 * (-1 * jac4_4 * (1 * jac5_0 * (1 * jac6_5 * (-1 * jac7_8 * jac8_6))))
+                          + 1 * jac3_4 * (-1 * jac4_3 * (1 * jac5_0 * (1 * jac6_5 * (-1 * jac7_8 * jac8_6)))))));
+    auto com8_0 = (1 * jac1_2
+                   * (1 * jac2_0
+                           * (-1 * jac3_3 * (-1 * jac4_4 * (1 * jac5_1 * (1 * jac6_5 * (-1 * jac7_7 * jac8_6))))
+                               + 1 * jac3_4 * (-1 * jac4_3 * (1 * jac5_1 * (1 * jac6_5 * (-1 * jac7_7 * jac8_6)))))
+                       + -1 * jac2_1
+                             * (-1 * jac3_3 * (-1 * jac4_4 * (1 * jac5_0 * (1 * jac6_5 * (-1 * jac7_7 * jac8_6))))
+                                 + 1 * jac3_4 * (-1 * jac4_3 * (1 * jac5_0 * (1 * jac6_5 * (-1 * jac7_7 * jac8_6)))))));
+    auto com0_1 = -1 * 0;
+    auto com1_1 = 0;
+    auto com2_1
+        = -1
+        * (1 * jac0_0
+                * (1 * jac2_1
+                    * (1 * jac3_3
+                            * (1 * jac4_4
+                                * (1 * jac5_5
+                                        * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                            + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                    + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))
+                        + -1 * jac3_4
+                              * (1 * jac4_3
+                                  * (1 * jac5_5
+                                          * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                              + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                      + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))))
+            + 1 * jac0_3
+                  * (1 * jac2_0
+                          * (1 * jac3_1
+                              * (1 * jac4_4
+                                  * (1 * jac5_5
+                                          * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                              + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                      + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8)))))
+                      + -1 * jac2_1
+                            * (1 * jac3_0
+                                * (1 * jac4_4
+                                    * (1 * jac5_5
+                                            * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                        + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))))
+            + 1 * jac0_5
+                  * (1 * jac2_0
+                          * (-1 * jac3_3
+                                  * (-1 * jac4_4
+                                      * (1 * jac5_1
+                                          * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                              + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                              + 1 * jac3_4
+                                    * (-1 * jac4_3
+                                        * (1 * jac5_1
+                                            * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))
+                      + -1 * jac2_1
+                            * (-1 * jac3_3
+                                    * (-1 * jac4_4
+                                        * (1 * jac5_0
+                                            * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                                + 1 * jac3_4
+                                      * (-1 * jac4_3
+                                          * (1 * jac5_0
+                                              * (1 * jac6_6 * (1 * jac7_7 * jac8_8)
+                                                  + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                  + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))));
+    auto com3_1 = 0;
+    auto com4_1 = -1 * 0;
+    auto com5_1 = 0;
+    auto com6_1 = -1 * 0;
+    auto com7_1 = 0;
+    auto com8_1 = -1 * 0;
+    auto com0_2
+        = (1 * jac0_3
+                * (-1 * jac1_2
+                    * (1 * jac3_1
+                        * (1 * jac4_4
+                            * (1 * jac5_5
+                                    * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                        + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))))
+            + 1 * jac0_5
+                  * (-1 * jac1_2
+                      * (-1 * jac3_3
+                              * (-1 * jac4_4
+                                  * (1 * jac5_1
+                                      * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                          + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                          + 1 * jac3_4
+                                * (-1 * jac4_3
+                                    * (1 * jac5_1
+                                        * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                            + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))));
+    auto com1_2
+        = -1
+        * (1 * jac0_0
+                * (1 * jac1_2
+                    * (1 * jac3_3
+                            * (1 * jac4_4
+                                * (1 * jac5_5
+                                        * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                            + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                    + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))
+                        + -1 * jac3_4
+                              * (1 * jac4_3
+                                  * (1 * jac5_5
+                                          * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                              + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                      + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))))
+            + 1 * jac0_3
+                  * (-1 * jac1_2
+                      * (1 * jac3_0
+                          * (1 * jac4_4
+                              * (1 * jac5_5
+                                      * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                          + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                  + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))))
+            + 1 * jac0_5
+                  * (-1 * jac1_2
+                      * (-1 * jac3_3
+                              * (-1 * jac4_4
+                                  * (1 * jac5_0
+                                      * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                          + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                          + 1 * jac3_4
+                                * (-1 * jac4_3
+                                    * (1 * jac5_0
+                                        * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                            + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))));
+    auto com2_2
+        = (1 * jac0_0
+                * (1 * jac1_1
+                        * (1 * jac3_3
+                                * (1 * jac4_4
+                                    * (1 * jac5_5
+                                            * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                        + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))
+                            + -1 * jac3_4
+                                  * (1 * jac4_3
+                                      * (1 * jac5_5
+                                              * (1 * jac6_6 * (1 * jac7_7 * jac8_8)
+                                                  + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                  + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                          + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8)))))
+                    + -1 * jac1_3
+                          * (1 * jac3_1
+                              * (1 * jac4_4
+                                  * (1 * jac5_5
+                                          * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                              + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                      + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8)))))
+                    + -1 * jac1_5
+                          * (-1 * jac3_3
+                                  * (-1 * jac4_4
+                                      * (1 * jac5_1
+                                          * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                              + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                              + 1 * jac3_4
+                                    * (-1 * jac4_3
+                                        * (1 * jac5_1
+                                            * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))))
+            + 1 * jac0_3
+                  * (-1 * jac1_1
+                          * (1 * jac3_0
+                              * (1 * jac4_4
+                                  * (1 * jac5_5
+                                          * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                              + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                      + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8)))))
+                      + -1 * jac1_5
+                            * (1 * jac3_0
+                                    * (-1 * jac4_4
+                                        * (1 * jac5_1
+                                            * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                                + -1 * jac3_1
+                                      * (-1 * jac4_4
+                                          * (1 * jac5_0
+                                              * (1 * jac6_6 * (1 * jac7_7 * jac8_8)
+                                                  + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                  + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))))
+            + 1 * jac0_5
+                  * (-1 * jac1_1
+                          * (-1 * jac3_3
+                                  * (-1 * jac4_4
+                                      * (1 * jac5_0
+                                          * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                              + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                              + 1 * jac3_4
+                                    * (-1 * jac4_3
+                                        * (1 * jac5_0
+                                            * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))
+                      + 1 * jac1_3
+                            * (1 * jac3_0
+                                    * (-1 * jac4_4
+                                        * (1 * jac5_1
+                                            * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                                + -1 * jac3_1
+                                      * (-1 * jac4_4
+                                          * (1 * jac5_0
+                                              * (1 * jac6_6 * (1 * jac7_7 * jac8_8)
+                                                  + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                  + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))));
+    auto com3_2
+        = -1
+        * (1 * jac0_0
+                * (-1 * jac1_2
+                    * (1 * jac3_1
+                        * (1 * jac4_4
+                            * (1 * jac5_5
+                                    * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                        + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))))
+            + 1 * jac0_5
+                  * (1 * jac1_2
+                      * (1 * jac3_0
+                              * (-1 * jac4_4
+                                  * (1 * jac5_1
+                                      * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                          + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                          + -1 * jac3_1
+                                * (-1 * jac4_4
+                                    * (1 * jac5_0
+                                        * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                            + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))));
+    auto com4_2
+        = (1 * jac0_0
+                * (-1 * jac1_2
+                    * (1 * jac3_1
+                        * (1 * jac4_3
+                            * (1 * jac5_5
+                                    * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                        + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))))
+            + 1 * jac0_5
+                  * (1 * jac1_2
+                      * (1 * jac3_0
+                              * (-1 * jac4_3
+                                  * (1 * jac5_1
+                                      * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                          + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                          + -1 * jac3_1
+                                * (-1 * jac4_3
+                                    * (1 * jac5_0
+                                        * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                            + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))));
+    auto com5_2
+        = -1
+        * (1 * jac0_0
+                * (-1 * jac1_2
+                    * (-1 * jac3_3
+                            * (-1 * jac4_4
+                                * (1 * jac5_1
+                                    * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                        + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                        + 1 * jac3_4
+                              * (-1 * jac4_3
+                                  * (1 * jac5_1
+                                      * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                          + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))))
+            + -1 * jac0_3
+                  * (1 * jac1_2
+                      * (1 * jac3_0
+                              * (-1 * jac4_4
+                                  * (1 * jac5_1
+                                      * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                          + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                          + -1 * jac3_1
+                                * (-1 * jac4_4
+                                    * (1 * jac5_0
+                                        * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                            + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))));
+    auto com6_2 = (1 * jac0_0
+                       * (-1 * jac1_2
+                           * (-1 * jac3_3 * (-1 * jac4_4 * (1 * jac5_1 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))
+                               + 1 * jac3_4 * (-1 * jac4_3 * (1 * jac5_1 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))))
+                   + -1 * jac0_3
+                         * (1 * jac1_2
+                             * (1 * jac3_0 * (-1 * jac4_4 * (1 * jac5_1 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))
+                                 + -1 * jac3_1 * (-1 * jac4_4 * (1 * jac5_0 * (1 * jac6_5 * (1 * jac7_7 * jac8_8)))))));
+    auto com7_2
+        = -1
+        * (1 * jac0_0
+                * (-1 * jac1_2
+                    * (-1 * jac3_3 * (-1 * jac4_4 * (1 * jac5_1 * (1 * jac6_5 * (-1 * jac7_8 * jac8_6))))
+                        + 1 * jac3_4 * (-1 * jac4_3 * (1 * jac5_1 * (1 * jac6_5 * (-1 * jac7_8 * jac8_6))))))
+            + -1 * jac0_3
+                  * (1 * jac1_2
+                      * (1 * jac3_0 * (-1 * jac4_4 * (1 * jac5_1 * (1 * jac6_5 * (-1 * jac7_8 * jac8_6))))
+                          + -1 * jac3_1 * (-1 * jac4_4 * (1 * jac5_0 * (1 * jac6_5 * (-1 * jac7_8 * jac8_6)))))));
+    auto com8_2
+        = (1 * jac0_0
+                * (-1 * jac1_2
+                    * (-1 * jac3_3 * (-1 * jac4_4 * (1 * jac5_1 * (1 * jac6_5 * (-1 * jac7_7 * jac8_6))))
+                        + 1 * jac3_4 * (-1 * jac4_3 * (1 * jac5_1 * (1 * jac6_5 * (-1 * jac7_7 * jac8_6))))))
+            + -1 * jac0_3
+                  * (1 * jac1_2
+                      * (1 * jac3_0 * (-1 * jac4_4 * (1 * jac5_1 * (1 * jac6_5 * (-1 * jac7_7 * jac8_6))))
+                          + -1 * jac3_1 * (-1 * jac4_4 * (1 * jac5_0 * (1 * jac6_5 * (-1 * jac7_7 * jac8_6)))))));
+    auto com0_3 = -1
+                * (1 * jac0_3
+                    * (-1 * jac1_2
+                        * (1 * jac2_1
+                            * (1 * jac4_4
+                                * (1 * jac5_5
+                                        * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                            + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                    + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8)))))));
+    auto com1_3 = (1 * jac0_3
+                   * (-1 * jac1_2
+                       * (1 * jac2_0
+                           * (1 * jac4_4
+                               * (1 * jac5_5
+                                       * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                           + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                   + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8)))))));
+    auto com2_3
+        = -1
+        * (1 * jac0_0
+                * (-1 * jac1_3
+                    * (1 * jac2_1
+                        * (1 * jac4_4
+                            * (1 * jac5_5
+                                    * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                        + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))))
+            + 1 * jac0_3
+                  * (-1 * jac1_1
+                          * (1 * jac2_0
+                              * (1 * jac4_4
+                                  * (1 * jac5_5
+                                          * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                              + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                      + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8)))))
+                      + -1 * jac1_5
+                            * (1 * jac2_0
+                                    * (-1 * jac4_4
+                                        * (1 * jac5_1
+                                            * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                                + -1 * jac2_1
+                                      * (-1 * jac4_4
+                                          * (1 * jac5_0
+                                              * (1 * jac6_6 * (1 * jac7_7 * jac8_8)
+                                                  + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                  + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))))
+            + 1 * jac0_5
+                  * (1 * jac1_3
+                      * (1 * jac2_0
+                              * (-1 * jac4_4
+                                  * (1 * jac5_1
+                                      * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                          + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                          + -1 * jac2_1
+                                * (-1 * jac4_4
+                                    * (1 * jac5_0
+                                        * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                            + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))));
+    auto com3_3
+        = (1 * jac0_0
+                * (-1 * jac1_2
+                    * (1 * jac2_1
+                        * (1 * jac4_4
+                            * (1 * jac5_5
+                                    * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                        + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))))
+            + 1 * jac0_5
+                  * (1 * jac1_2
+                      * (1 * jac2_0
+                              * (-1 * jac4_4
+                                  * (1 * jac5_1
+                                      * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                          + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                          + -1 * jac2_1
+                                * (-1 * jac4_4
+                                    * (1 * jac5_0
+                                        * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                            + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))));
+    auto com4_3
+        = -1
+        * (1 * jac0_0
+                * (-1 * jac1_2
+                    * (1 * jac2_1
+                        * (1 * jac4_3
+                            * (1 * jac5_5
+                                    * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                        + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))))
+            + 1 * jac0_5
+                  * (1 * jac1_2
+                      * (1 * jac2_0
+                              * (-1 * jac4_3
+                                  * (1 * jac5_1
+                                      * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                          + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                          + -1 * jac2_1
+                                * (-1 * jac4_3
+                                    * (1 * jac5_0
+                                        * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                            + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))));
+    auto com5_3 = (-1 * jac0_3
+                   * (1 * jac1_2
+                       * (1 * jac2_0
+                               * (-1 * jac4_4
+                                   * (1 * jac5_1
+                                       * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                           + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                           + -1 * jac2_1
+                                 * (-1 * jac4_4
+                                     * (1 * jac5_0
+                                         * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                             + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))));
+    auto com6_3 = -1
+                * (-1 * jac0_3
+                    * (1 * jac1_2
+                        * (1 * jac2_0 * (-1 * jac4_4 * (1 * jac5_1 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))
+                            + -1 * jac2_1 * (-1 * jac4_4 * (1 * jac5_0 * (1 * jac6_5 * (1 * jac7_7 * jac8_8)))))));
+    auto com7_3 = (-1 * jac0_3
+                   * (1 * jac1_2
+                       * (1 * jac2_0 * (-1 * jac4_4 * (1 * jac5_1 * (1 * jac6_5 * (-1 * jac7_8 * jac8_6))))
+                           + -1 * jac2_1 * (-1 * jac4_4 * (1 * jac5_0 * (1 * jac6_5 * (-1 * jac7_8 * jac8_6)))))));
+    auto com8_3 = -1
+                * (-1 * jac0_3
+                    * (1 * jac1_2
+                        * (1 * jac2_0 * (-1 * jac4_4 * (1 * jac5_1 * (1 * jac6_5 * (-1 * jac7_7 * jac8_6))))
+                            + -1 * jac2_1 * (-1 * jac4_4 * (1 * jac5_0 * (1 * jac6_5 * (-1 * jac7_7 * jac8_6)))))));
+    auto com0_4 = (1 * jac0_3
+                   * (-1 * jac1_2
+                       * (1 * jac2_1
+                           * (1 * jac3_4
+                               * (1 * jac5_5
+                                       * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                           + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                   + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8)))))));
+    auto com1_4 = -1
+                * (1 * jac0_3
+                    * (-1 * jac1_2
+                        * (1 * jac2_0
+                            * (1 * jac3_4
+                                * (1 * jac5_5
+                                        * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                            + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                    + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8)))))));
+    auto com2_4
+        = (1 * jac0_0
+                * (-1 * jac1_3
+                    * (1 * jac2_1
+                        * (1 * jac3_4
+                            * (1 * jac5_5
+                                    * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                        + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))))
+            + 1 * jac0_3
+                  * (-1 * jac1_1
+                          * (1 * jac2_0
+                              * (1 * jac3_4
+                                  * (1 * jac5_5
+                                          * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                              + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                      + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8)))))
+                      + -1 * jac1_5
+                            * (1 * jac2_0
+                                    * (-1 * jac3_4
+                                        * (1 * jac5_1
+                                            * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                                + -1 * jac2_1
+                                      * (-1 * jac3_4
+                                          * (1 * jac5_0
+                                              * (1 * jac6_6 * (1 * jac7_7 * jac8_8)
+                                                  + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                  + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))))
+            + 1 * jac0_5
+                  * (1 * jac1_3
+                      * (1 * jac2_0
+                              * (-1 * jac3_4
+                                  * (1 * jac5_1
+                                      * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                          + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                          + -1 * jac2_1
+                                * (-1 * jac3_4
+                                    * (1 * jac5_0
+                                        * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                            + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))));
+    auto com3_4
+        = -1
+        * (1 * jac0_0
+                * (-1 * jac1_2
+                    * (1 * jac2_1
+                        * (1 * jac3_4
+                            * (1 * jac5_5
+                                    * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                        + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))))
+            + 1 * jac0_5
+                  * (1 * jac1_2
+                      * (1 * jac2_0
+                              * (-1 * jac3_4
+                                  * (1 * jac5_1
+                                      * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                          + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                          + -1 * jac2_1
+                                * (-1 * jac3_4
+                                    * (1 * jac5_0
+                                        * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                            + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))));
+    auto com4_4
+        = (1 * jac0_0
+                * (-1 * jac1_2
+                    * (1 * jac2_1
+                        * (1 * jac3_3
+                            * (1 * jac5_5
+                                    * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                        + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))))
+            + -1 * jac0_3
+                  * (1 * jac1_2
+                      * (1 * jac2_0
+                              * (1 * jac3_1
+                                  * (1 * jac5_5
+                                          * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                              + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                      + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))
+                          + -1 * jac2_1
+                                * (1 * jac3_0
+                                    * (1 * jac5_5
+                                            * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))
+                                        + -1 * jac5_6 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))))
+            + 1 * jac0_5
+                  * (1 * jac1_2
+                      * (1 * jac2_0
+                              * (-1 * jac3_3
+                                  * (1 * jac5_1
+                                      * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                          + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                          + -1 * jac2_1
+                                * (-1 * jac3_3
+                                    * (1 * jac5_0
+                                        * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                            + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))));
+    auto com5_4 = -1
+                * (-1 * jac0_3
+                    * (1 * jac1_2
+                        * (1 * jac2_0
+                                * (-1 * jac3_4
+                                    * (1 * jac5_1
+                                        * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                            + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                            + -1 * jac2_1
+                                  * (-1 * jac3_4
+                                      * (1 * jac5_0
+                                          * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                              + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))));
+    auto com6_4 = (-1 * jac0_3
+                   * (1 * jac1_2
+                       * (1 * jac2_0 * (-1 * jac3_4 * (1 * jac5_1 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))
+                           + -1 * jac2_1 * (-1 * jac3_4 * (1 * jac5_0 * (1 * jac6_5 * (1 * jac7_7 * jac8_8)))))));
+    auto com7_4 = -1
+                * (-1 * jac0_3
+                    * (1 * jac1_2
+                        * (1 * jac2_0 * (-1 * jac3_4 * (1 * jac5_1 * (1 * jac6_5 * (-1 * jac7_8 * jac8_6))))
+                            + -1 * jac2_1 * (-1 * jac3_4 * (1 * jac5_0 * (1 * jac6_5 * (-1 * jac7_8 * jac8_6)))))));
+    auto com8_4 = (-1 * jac0_3
+                   * (1 * jac1_2
+                       * (1 * jac2_0 * (-1 * jac3_4 * (1 * jac5_1 * (1 * jac6_5 * (-1 * jac7_7 * jac8_6))))
+                           + -1 * jac2_1 * (-1 * jac3_4 * (1 * jac5_0 * (1 * jac6_5 * (-1 * jac7_7 * jac8_6)))))));
+    auto com0_5 = -1
+                * (1 * jac0_5
+                    * (-1 * jac1_2
+                        * (1 * jac2_1
+                            * (1 * jac3_3
+                                    * (1 * jac4_4
+                                        * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                            + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))
+                                + -1 * jac3_4
+                                      * (1 * jac4_3
+                                          * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                              + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))));
+    auto com1_5 = (1 * jac0_5
+                   * (-1 * jac1_2
+                       * (1 * jac2_0
+                           * (1 * jac3_3
+                                   * (1 * jac4_4
+                                       * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                           + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))
+                               + -1 * jac3_4
+                                     * (1 * jac4_3
+                                         * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                             + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))));
+    auto com2_5
+        = -1
+        * (1 * jac0_0
+                * (-1 * jac1_5
+                    * (1 * jac2_1
+                        * (1 * jac3_3
+                                * (1 * jac4_4
+                                    * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                        + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))
+                            + -1 * jac3_4
+                                  * (1 * jac4_3
+                                      * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                          + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))))
+            + 1 * jac0_3
+                  * (-1 * jac1_5
+                      * (1 * jac2_0
+                              * (1 * jac3_1
+                                  * (1 * jac4_4
+                                      * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                          + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                          + -1 * jac2_1
+                                * (1 * jac3_0
+                                    * (1 * jac4_4
+                                        * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                            + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))))
+            + 1 * jac0_5
+                  * (-1 * jac1_1
+                          * (1 * jac2_0
+                              * (1 * jac3_3
+                                      * (1 * jac4_4
+                                          * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                              + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))
+                                  + -1 * jac3_4
+                                        * (1 * jac4_3
+                                            * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))
+                      + 1 * jac1_3
+                            * (1 * jac2_0
+                                    * (1 * jac3_1
+                                        * (1 * jac4_4
+                                            * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                                + -1 * jac2_1
+                                      * (1 * jac3_0
+                                          * (1 * jac4_4
+                                              * (1 * jac6_6 * (1 * jac7_7 * jac8_8)
+                                                  + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                                  + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))));
+    auto com3_5 = (1 * jac0_5
+                   * (1 * jac1_2
+                       * (1 * jac2_0
+                               * (1 * jac3_1
+                                   * (1 * jac4_4
+                                       * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                           + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                           + -1 * jac2_1
+                                 * (1 * jac3_0
+                                     * (1 * jac4_4
+                                         * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                             + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))));
+    auto com4_5 = -1
+                * (1 * jac0_5
+                    * (1 * jac1_2
+                        * (1 * jac2_0
+                                * (1 * jac3_1
+                                    * (1 * jac4_3
+                                        * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                            + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                            + -1 * jac2_1
+                                  * (1 * jac3_0
+                                      * (1 * jac4_3
+                                          * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                              + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))));
+    auto com5_5
+        = (1 * jac0_0
+                * (-1 * jac1_2
+                    * (1 * jac2_1
+                        * (1 * jac3_3
+                                * (1 * jac4_4
+                                    * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                        + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))
+                            + -1 * jac3_4
+                                  * (1 * jac4_3
+                                      * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                          + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))))
+            + -1 * jac0_3
+                  * (1 * jac1_2
+                      * (1 * jac2_0
+                              * (1 * jac3_1
+                                  * (1 * jac4_4
+                                      * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                          + 1 * jac6_8 * (-1 * jac7_7 * jac8_6))))
+                          + -1 * jac2_1
+                                * (1 * jac3_0
+                                    * (1 * jac4_4
+                                        * (1 * jac6_6 * (1 * jac7_7 * jac8_8) + -1 * jac6_7 * (-1 * jac7_8 * jac8_6)
+                                            + 1 * jac6_8 * (-1 * jac7_7 * jac8_6)))))));
+    auto com6_5 = -1
+                * (1 * jac0_0
+                        * (-1 * jac1_2
+                            * (1 * jac2_1
+                                * (1 * jac3_3 * (1 * jac4_4 * (1 * jac6_5 * (1 * jac7_7 * jac8_8)))
+                                    + -1 * jac3_4 * (1 * jac4_3 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))))
+                    + -1 * jac0_3
+                          * (1 * jac1_2
+                              * (1 * jac2_0 * (1 * jac3_1 * (1 * jac4_4 * (1 * jac6_5 * (1 * jac7_7 * jac8_8))))
+                                  + -1 * jac2_1 * (1 * jac3_0 * (1 * jac4_4 * (1 * jac6_5 * (1 * jac7_7 * jac8_8)))))));
+    auto com7_5 = (1 * jac0_0
+                       * (-1 * jac1_2
+                           * (1 * jac2_1
+                               * (1 * jac3_3 * (1 * jac4_4 * (1 * jac6_5 * (-1 * jac7_8 * jac8_6)))
+                                   + -1 * jac3_4 * (1 * jac4_3 * (1 * jac6_5 * (-1 * jac7_8 * jac8_6))))))
+                   + -1 * jac0_3
+                         * (1 * jac1_2
+                             * (1 * jac2_0 * (1 * jac3_1 * (1 * jac4_4 * (1 * jac6_5 * (-1 * jac7_8 * jac8_6))))
+                                 + -1 * jac2_1 * (1 * jac3_0 * (1 * jac4_4 * (1 * jac6_5 * (-1 * jac7_8 * jac8_6)))))));
+    auto com8_5
+        = -1
+        * (1 * jac0_0
+                * (-1 * jac1_2
+                    * (1 * jac2_1
+                        * (1 * jac3_3 * (1 * jac4_4 * (1 * jac6_5 * (-1 * jac7_7 * jac8_6)))
+                            + -1 * jac3_4 * (1 * jac4_3 * (1 * jac6_5 * (-1 * jac7_7 * jac8_6))))))
+            + -1 * jac0_3
+                  * (1 * jac1_2
+                      * (1 * jac2_0 * (1 * jac3_1 * (1 * jac4_4 * (1 * jac6_5 * (-1 * jac7_7 * jac8_6))))
+                          + -1 * jac2_1 * (1 * jac3_0 * (1 * jac4_4 * (1 * jac6_5 * (-1 * jac7_7 * jac8_6)))))));
+    auto com0_6 = (1 * jac0_5
+                   * (-1 * jac1_2
+                       * (1 * jac2_1
+                           * (1 * jac3_3 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac7_7 * jac8_8)))
+                               + -1 * jac3_4 * (1 * jac4_3 * (1 * jac5_6 * (1 * jac7_7 * jac8_8)))))));
+    auto com1_6 = -1
+                * (1 * jac0_5
+                    * (-1 * jac1_2
+                        * (1 * jac2_0
+                            * (1 * jac3_3 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac7_7 * jac8_8)))
+                                + -1 * jac3_4 * (1 * jac4_3 * (1 * jac5_6 * (1 * jac7_7 * jac8_8)))))));
+    auto com2_6
+        = (1 * jac0_0
+                * (-1 * jac1_5
+                    * (1 * jac2_1
+                        * (1 * jac3_3 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac7_7 * jac8_8)))
+                            + -1 * jac3_4 * (1 * jac4_3 * (1 * jac5_6 * (1 * jac7_7 * jac8_8))))))
+            + 1 * jac0_3
+                  * (-1 * jac1_5
+                      * (1 * jac2_0 * (1 * jac3_1 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac7_7 * jac8_8))))
+                          + -1 * jac2_1 * (1 * jac3_0 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac7_7 * jac8_8))))))
+            + 1 * jac0_5
+                  * (-1 * jac1_1
+                          * (1 * jac2_0
+                              * (1 * jac3_3 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac7_7 * jac8_8)))
+                                  + -1 * jac3_4 * (1 * jac4_3 * (1 * jac5_6 * (1 * jac7_7 * jac8_8)))))
+                      + 1 * jac1_3
+                            * (1 * jac2_0 * (1 * jac3_1 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac7_7 * jac8_8))))
+                                + -1 * jac2_1 * (1 * jac3_0 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac7_7 * jac8_8)))))));
+    auto com3_6 = -1
+                * (1 * jac0_5
+                    * (1 * jac1_2
+                        * (1 * jac2_0 * (1 * jac3_1 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac7_7 * jac8_8))))
+                            + -1 * jac2_1 * (1 * jac3_0 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac7_7 * jac8_8)))))));
+    auto com4_6 = (1 * jac0_5
+                   * (1 * jac1_2
+                       * (1 * jac2_0 * (1 * jac3_1 * (1 * jac4_3 * (1 * jac5_6 * (1 * jac7_7 * jac8_8))))
+                           + -1 * jac2_1 * (1 * jac3_0 * (1 * jac4_3 * (1 * jac5_6 * (1 * jac7_7 * jac8_8)))))));
+    auto com5_6 = -1
+                * (1 * jac0_0
+                        * (-1 * jac1_2
+                            * (1 * jac2_1
+                                * (1 * jac3_3 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac7_7 * jac8_8)))
+                                    + -1 * jac3_4 * (1 * jac4_3 * (1 * jac5_6 * (1 * jac7_7 * jac8_8))))))
+                    + -1 * jac0_3
+                          * (1 * jac1_2
+                              * (1 * jac2_0 * (1 * jac3_1 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac7_7 * jac8_8))))
+                                  + -1 * jac2_1 * (1 * jac3_0 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac7_7 * jac8_8)))))));
+    auto com6_6 = (1 * jac0_0
+                       * (-1 * jac1_2
+                           * (1 * jac2_1
+                               * (1 * jac3_3 * (1 * jac4_4 * (1 * jac5_5 * (1 * jac7_7 * jac8_8)))
+                                   + -1 * jac3_4 * (1 * jac4_3 * (1 * jac5_5 * (1 * jac7_7 * jac8_8))))))
+                   + -1 * jac0_3
+                         * (1 * jac1_2
+                             * (1 * jac2_0 * (1 * jac3_1 * (1 * jac4_4 * (1 * jac5_5 * (1 * jac7_7 * jac8_8))))
+                                 + -1 * jac2_1 * (1 * jac3_0 * (1 * jac4_4 * (1 * jac5_5 * (1 * jac7_7 * jac8_8))))))
+                   + -1 * jac0_5
+                         * (1 * jac1_2
+                             * (1 * jac2_0
+                                     * (-1 * jac3_3 * (-1 * jac4_4 * (1 * jac5_1 * (1 * jac7_7 * jac8_8)))
+                                         + 1 * jac3_4 * (-1 * jac4_3 * (1 * jac5_1 * (1 * jac7_7 * jac8_8))))
+                                 + -1 * jac2_1
+                                       * (-1 * jac3_3 * (-1 * jac4_4 * (1 * jac5_0 * (1 * jac7_7 * jac8_8)))
+                                           + 1 * jac3_4 * (-1 * jac4_3 * (1 * jac5_0 * (1 * jac7_7 * jac8_8)))))));
+    auto com7_6 = -1
+                * (1 * jac0_0
+                        * (-1 * jac1_2
+                            * (1 * jac2_1
+                                * (1 * jac3_3 * (1 * jac4_4 * (1 * jac5_5 * (-1 * jac7_8 * jac8_6)))
+                                    + -1 * jac3_4 * (1 * jac4_3 * (1 * jac5_5 * (-1 * jac7_8 * jac8_6))))))
+                    + -1 * jac0_3
+                          * (1 * jac1_2
+                              * (1 * jac2_0 * (1 * jac3_1 * (1 * jac4_4 * (1 * jac5_5 * (-1 * jac7_8 * jac8_6))))
+                                  + -1 * jac2_1 * (1 * jac3_0 * (1 * jac4_4 * (1 * jac5_5 * (-1 * jac7_8 * jac8_6))))))
+                    + -1 * jac0_5
+                          * (1 * jac1_2
+                              * (1 * jac2_0
+                                      * (-1 * jac3_3 * (-1 * jac4_4 * (1 * jac5_1 * (-1 * jac7_8 * jac8_6)))
+                                          + 1 * jac3_4 * (-1 * jac4_3 * (1 * jac5_1 * (-1 * jac7_8 * jac8_6))))
+                                  + -1 * jac2_1
+                                        * (-1 * jac3_3 * (-1 * jac4_4 * (1 * jac5_0 * (-1 * jac7_8 * jac8_6)))
+                                            + 1 * jac3_4 * (-1 * jac4_3 * (1 * jac5_0 * (-1 * jac7_8 * jac8_6)))))));
+    auto com8_6 = (1 * jac0_0
+                       * (-1 * jac1_2
+                           * (1 * jac2_1
+                               * (1 * jac3_3 * (1 * jac4_4 * (1 * jac5_5 * (-1 * jac7_7 * jac8_6)))
+                                   + -1 * jac3_4 * (1 * jac4_3 * (1 * jac5_5 * (-1 * jac7_7 * jac8_6))))))
+                   + -1 * jac0_3
+                         * (1 * jac1_2
+                             * (1 * jac2_0 * (1 * jac3_1 * (1 * jac4_4 * (1 * jac5_5 * (-1 * jac7_7 * jac8_6))))
+                                 + -1 * jac2_1 * (1 * jac3_0 * (1 * jac4_4 * (1 * jac5_5 * (-1 * jac7_7 * jac8_6))))))
+                   + -1 * jac0_5
+                         * (1 * jac1_2
+                             * (1 * jac2_0
+                                     * (-1 * jac3_3 * (-1 * jac4_4 * (1 * jac5_1 * (-1 * jac7_7 * jac8_6)))
+                                         + 1 * jac3_4 * (-1 * jac4_3 * (1 * jac5_1 * (-1 * jac7_7 * jac8_6))))
+                                 + -1 * jac2_1
+                                       * (-1 * jac3_3 * (-1 * jac4_4 * (1 * jac5_0 * (-1 * jac7_7 * jac8_6)))
+                                           + 1 * jac3_4 * (-1 * jac4_3 * (1 * jac5_0 * (-1 * jac7_7 * jac8_6)))))));
+    auto com0_7 = -1
+                * (1 * jac0_5
+                    * (-1 * jac1_2
+                        * (1 * jac2_1
+                            * (1 * jac3_3 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac6_7 * jac8_8)))
+                                + -1 * jac3_4 * (1 * jac4_3 * (1 * jac5_6 * (1 * jac6_7 * jac8_8)))))));
+    auto com1_7 = (1 * jac0_5
+                   * (-1 * jac1_2
+                       * (1 * jac2_0
+                           * (1 * jac3_3 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac6_7 * jac8_8)))
+                               + -1 * jac3_4 * (1 * jac4_3 * (1 * jac5_6 * (1 * jac6_7 * jac8_8)))))));
+    auto com2_7
+        = -1
+        * (1 * jac0_0
+                * (-1 * jac1_5
+                    * (1 * jac2_1
+                        * (1 * jac3_3 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac6_7 * jac8_8)))
+                            + -1 * jac3_4 * (1 * jac4_3 * (1 * jac5_6 * (1 * jac6_7 * jac8_8))))))
+            + 1 * jac0_3
+                  * (-1 * jac1_5
+                      * (1 * jac2_0 * (1 * jac3_1 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac6_7 * jac8_8))))
+                          + -1 * jac2_1 * (1 * jac3_0 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac6_7 * jac8_8))))))
+            + 1 * jac0_5
+                  * (-1 * jac1_1
+                          * (1 * jac2_0
+                              * (1 * jac3_3 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac6_7 * jac8_8)))
+                                  + -1 * jac3_4 * (1 * jac4_3 * (1 * jac5_6 * (1 * jac6_7 * jac8_8)))))
+                      + 1 * jac1_3
+                            * (1 * jac2_0 * (1 * jac3_1 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac6_7 * jac8_8))))
+                                + -1 * jac2_1 * (1 * jac3_0 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac6_7 * jac8_8)))))));
+    auto com3_7 = (1 * jac0_5
+                   * (1 * jac1_2
+                       * (1 * jac2_0 * (1 * jac3_1 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac6_7 * jac8_8))))
+                           + -1 * jac2_1 * (1 * jac3_0 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac6_7 * jac8_8)))))));
+    auto com4_7 = -1
+                * (1 * jac0_5
+                    * (1 * jac1_2
+                        * (1 * jac2_0 * (1 * jac3_1 * (1 * jac4_3 * (1 * jac5_6 * (1 * jac6_7 * jac8_8))))
+                            + -1 * jac2_1 * (1 * jac3_0 * (1 * jac4_3 * (1 * jac5_6 * (1 * jac6_7 * jac8_8)))))));
+    auto com5_7 = (1 * jac0_0
+                       * (-1 * jac1_2
+                           * (1 * jac2_1
+                               * (1 * jac3_3 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac6_7 * jac8_8)))
+                                   + -1 * jac3_4 * (1 * jac4_3 * (1 * jac5_6 * (1 * jac6_7 * jac8_8))))))
+                   + -1 * jac0_3
+                         * (1 * jac1_2
+                             * (1 * jac2_0 * (1 * jac3_1 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac6_7 * jac8_8))))
+                                 + -1 * jac2_1 * (1 * jac3_0 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac6_7 * jac8_8)))))));
+    auto com6_7 = -1
+                * (1 * jac0_0
+                        * (-1 * jac1_2
+                            * (1 * jac2_1
+                                * (1 * jac3_3 * (1 * jac4_4 * (1 * jac5_5 * (1 * jac6_7 * jac8_8)))
+                                    + -1 * jac3_4 * (1 * jac4_3 * (1 * jac5_5 * (1 * jac6_7 * jac8_8))))))
+                    + -1 * jac0_3
+                          * (1 * jac1_2
+                              * (1 * jac2_0 * (1 * jac3_1 * (1 * jac4_4 * (1 * jac5_5 * (1 * jac6_7 * jac8_8))))
+                                  + -1 * jac2_1 * (1 * jac3_0 * (1 * jac4_4 * (1 * jac5_5 * (1 * jac6_7 * jac8_8))))))
+                    + -1 * jac0_5
+                          * (1 * jac1_2
+                              * (1 * jac2_0
+                                      * (-1 * jac3_3 * (-1 * jac4_4 * (1 * jac5_1 * (1 * jac6_7 * jac8_8)))
+                                          + 1 * jac3_4 * (-1 * jac4_3 * (1 * jac5_1 * (1 * jac6_7 * jac8_8))))
+                                  + -1 * jac2_1
+                                        * (-1 * jac3_3 * (-1 * jac4_4 * (1 * jac5_0 * (1 * jac6_7 * jac8_8)))
+                                            + 1 * jac3_4 * (-1 * jac4_3 * (1 * jac5_0 * (1 * jac6_7 * jac8_8)))))));
+    auto com7_7
+        = (1 * jac0_0
+                * (-1 * jac1_2
+                    * (1 * jac2_1
+                        * (1 * jac3_3
+                                * (1 * jac4_4
+                                    * (1 * jac5_5 * (1 * jac6_6 * jac8_8 + -1 * jac6_8 * jac8_6)
+                                        + -1 * jac5_6 * (1 * jac6_5 * jac8_8)))
+                            + -1 * jac3_4
+                                  * (1 * jac4_3
+                                      * (1 * jac5_5 * (1 * jac6_6 * jac8_8 + -1 * jac6_8 * jac8_6)
+                                          + -1 * jac5_6 * (1 * jac6_5 * jac8_8))))))
+            + -1 * jac0_3
+                  * (1 * jac1_2
+                      * (1 * jac2_0
+                              * (1 * jac3_1
+                                  * (1 * jac4_4
+                                      * (1 * jac5_5 * (1 * jac6_6 * jac8_8 + -1 * jac6_8 * jac8_6)
+                                          + -1 * jac5_6 * (1 * jac6_5 * jac8_8))))
+                          + -1 * jac2_1
+                                * (1 * jac3_0
+                                    * (1 * jac4_4
+                                        * (1 * jac5_5 * (1 * jac6_6 * jac8_8 + -1 * jac6_8 * jac8_6)
+                                            + -1 * jac5_6 * (1 * jac6_5 * jac8_8))))))
+            + -1 * jac0_5
+                  * (1 * jac1_2
+                      * (1 * jac2_0
+                              * (-1 * jac3_3
+                                      * (-1 * jac4_4 * (1 * jac5_1 * (1 * jac6_6 * jac8_8 + -1 * jac6_8 * jac8_6)))
+                                  + 1 * jac3_4
+                                        * (-1 * jac4_3 * (1 * jac5_1 * (1 * jac6_6 * jac8_8 + -1 * jac6_8 * jac8_6))))
+                          + -1 * jac2_1
+                                * (-1 * jac3_3
+                                        * (-1 * jac4_4 * (1 * jac5_0 * (1 * jac6_6 * jac8_8 + -1 * jac6_8 * jac8_6)))
+                                    + 1 * jac3_4
+                                          * (-1 * jac4_3
+                                              * (1 * jac5_0 * (1 * jac6_6 * jac8_8 + -1 * jac6_8 * jac8_6)))))));
+    auto com8_7 = -1
+                * (1 * jac0_0
+                        * (-1 * jac1_2
+                            * (1 * jac2_1
+                                * (1 * jac3_3 * (1 * jac4_4 * (1 * jac5_5 * (-1 * jac6_7 * jac8_6)))
+                                    + -1 * jac3_4 * (1 * jac4_3 * (1 * jac5_5 * (-1 * jac6_7 * jac8_6))))))
+                    + -1 * jac0_3
+                          * (1 * jac1_2
+                              * (1 * jac2_0 * (1 * jac3_1 * (1 * jac4_4 * (1 * jac5_5 * (-1 * jac6_7 * jac8_6))))
+                                  + -1 * jac2_1 * (1 * jac3_0 * (1 * jac4_4 * (1 * jac5_5 * (-1 * jac6_7 * jac8_6))))))
+                    + -1 * jac0_5
+                          * (1 * jac1_2
+                              * (1 * jac2_0
+                                      * (-1 * jac3_3 * (-1 * jac4_4 * (1 * jac5_1 * (-1 * jac6_7 * jac8_6)))
+                                          + 1 * jac3_4 * (-1 * jac4_3 * (1 * jac5_1 * (-1 * jac6_7 * jac8_6))))
+                                  + -1 * jac2_1
+                                        * (-1 * jac3_3 * (-1 * jac4_4 * (1 * jac5_0 * (-1 * jac6_7 * jac8_6)))
+                                            + 1 * jac3_4 * (-1 * jac4_3 * (1 * jac5_0 * (-1 * jac6_7 * jac8_6)))))));
+    auto com0_8
+        = (1 * jac0_5
+            * (-1 * jac1_2
+                * (1 * jac2_1
+                    * (1 * jac3_3 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7)))
+                        + -1 * jac3_4 * (1 * jac4_3 * (1 * jac5_6 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7)))))));
+    auto com1_8
+        = -1
+        * (1 * jac0_5
+            * (-1 * jac1_2
+                * (1 * jac2_0
+                    * (1 * jac3_3 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7)))
+                        + -1 * jac3_4 * (1 * jac4_3 * (1 * jac5_6 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7)))))));
+    auto com2_8
+        = (1 * jac0_0
+                * (-1 * jac1_5
+                    * (1 * jac2_1
+                        * (1 * jac3_3 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7)))
+                            + -1 * jac3_4
+                                  * (1 * jac4_3 * (1 * jac5_6 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7))))))
+            + 1 * jac0_3
+                  * (-1 * jac1_5
+                      * (1 * jac2_0
+                              * (1 * jac3_1
+                                  * (1 * jac4_4 * (1 * jac5_6 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7))))
+                          + -1 * jac2_1
+                                * (1 * jac3_0
+                                    * (1 * jac4_4 * (1 * jac5_6 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7))))))
+            + 1 * jac0_5
+                  * (-1 * jac1_1
+                          * (1 * jac2_0
+                              * (1 * jac3_3 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7)))
+                                  + -1 * jac3_4
+                                        * (1 * jac4_3 * (1 * jac5_6 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7)))))
+                      + 1 * jac1_3
+                            * (1 * jac2_0
+                                    * (1 * jac3_1
+                                        * (1 * jac4_4 * (1 * jac5_6 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7))))
+                                + -1 * jac2_1
+                                      * (1 * jac3_0
+                                          * (1 * jac4_4
+                                              * (1 * jac5_6 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7)))))));
+    auto com3_8
+        = -1
+        * (1 * jac0_5
+            * (1 * jac1_2
+                * (1 * jac2_0
+                        * (1 * jac3_1 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7))))
+                    + -1 * jac2_1
+                          * (1 * jac3_0
+                              * (1 * jac4_4 * (1 * jac5_6 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7)))))));
+    auto com4_8
+        = (1 * jac0_5
+            * (1 * jac1_2
+                * (1 * jac2_0
+                        * (1 * jac3_1 * (1 * jac4_3 * (1 * jac5_6 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7))))
+                    + -1 * jac2_1
+                          * (1 * jac3_0
+                              * (1 * jac4_3 * (1 * jac5_6 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7)))))));
+    auto com5_8
+        = -1
+        * (1 * jac0_0
+                * (-1 * jac1_2
+                    * (1 * jac2_1
+                        * (1 * jac3_3 * (1 * jac4_4 * (1 * jac5_6 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7)))
+                            + -1 * jac3_4
+                                  * (1 * jac4_3 * (1 * jac5_6 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7))))))
+            + -1 * jac0_3
+                  * (1 * jac1_2
+                      * (1 * jac2_0
+                              * (1 * jac3_1
+                                  * (1 * jac4_4 * (1 * jac5_6 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7))))
+                          + -1 * jac2_1
+                                * (1 * jac3_0
+                                    * (1 * jac4_4 * (1 * jac5_6 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7)))))));
+    auto com6_8
+        = (1 * jac0_0
+                * (-1 * jac1_2
+                    * (1 * jac2_1
+                        * (1 * jac3_3 * (1 * jac4_4 * (1 * jac5_5 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7)))
+                            + -1 * jac3_4
+                                  * (1 * jac4_3 * (1 * jac5_5 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7))))))
+            + -1 * jac0_3
+                  * (1 * jac1_2
+                      * (1 * jac2_0
+                              * (1 * jac3_1
+                                  * (1 * jac4_4 * (1 * jac5_5 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7))))
+                          + -1 * jac2_1
+                                * (1 * jac3_0
+                                    * (1 * jac4_4 * (1 * jac5_5 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7))))))
+            + -1 * jac0_5
+                  * (1 * jac1_2
+                      * (1 * jac2_0
+                              * (-1 * jac3_3
+                                      * (-1 * jac4_4 * (1 * jac5_1 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7)))
+                                  + 1 * jac3_4
+                                        * (-1 * jac4_3 * (1 * jac5_1 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7))))
+                          + -1 * jac2_1
+                                * (-1 * jac3_3
+                                        * (-1 * jac4_4 * (1 * jac5_0 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7)))
+                                    + 1 * jac3_4
+                                          * (-1 * jac4_3
+                                              * (1 * jac5_0 * (1 * jac6_7 * jac7_8 + -1 * jac6_8 * jac7_7)))))));
+    auto com7_8
+        = -1
+        * (1 * jac0_0
+                * (-1 * jac1_2
+                    * (1 * jac2_1
+                        * (1 * jac3_3
+                                * (1 * jac4_4
+                                    * (1 * jac5_5 * (1 * jac6_6 * jac7_8) + -1 * jac5_6 * (1 * jac6_5 * jac7_8)))
+                            + -1 * jac3_4
+                                  * (1 * jac4_3
+                                      * (1 * jac5_5 * (1 * jac6_6 * jac7_8) + -1 * jac5_6 * (1 * jac6_5 * jac7_8))))))
+            + -1 * jac0_3
+                  * (1 * jac1_2
+                      * (1 * jac2_0
+                              * (1 * jac3_1
+                                  * (1 * jac4_4
+                                      * (1 * jac5_5 * (1 * jac6_6 * jac7_8) + -1 * jac5_6 * (1 * jac6_5 * jac7_8))))
+                          + -1 * jac2_1
+                                * (1 * jac3_0
+                                    * (1 * jac4_4
+                                        * (1 * jac5_5 * (1 * jac6_6 * jac7_8) + -1 * jac5_6 * (1 * jac6_5 * jac7_8))))))
+            + -1 * jac0_5
+                  * (1 * jac1_2
+                      * (1 * jac2_0
+                              * (-1 * jac3_3 * (-1 * jac4_4 * (1 * jac5_1 * (1 * jac6_6 * jac7_8)))
+                                  + 1 * jac3_4 * (-1 * jac4_3 * (1 * jac5_1 * (1 * jac6_6 * jac7_8))))
+                          + -1 * jac2_1
+                                * (-1 * jac3_3 * (-1 * jac4_4 * (1 * jac5_0 * (1 * jac6_6 * jac7_8)))
+                                    + 1 * jac3_4 * (-1 * jac4_3 * (1 * jac5_0 * (1 * jac6_6 * jac7_8)))))));
+    auto com8_8
+        = (1 * jac0_0
+                * (-1 * jac1_2
+                    * (1 * jac2_1
+                        * (1 * jac3_3
+                                * (1 * jac4_4
+                                    * (1 * jac5_5 * (1 * jac6_6 * jac7_7) + -1 * jac5_6 * (1 * jac6_5 * jac7_7)))
+                            + -1 * jac3_4
+                                  * (1 * jac4_3
+                                      * (1 * jac5_5 * (1 * jac6_6 * jac7_7) + -1 * jac5_6 * (1 * jac6_5 * jac7_7))))))
+            + -1 * jac0_3
+                  * (1 * jac1_2
+                      * (1 * jac2_0
+                              * (1 * jac3_1
+                                  * (1 * jac4_4
+                                      * (1 * jac5_5 * (1 * jac6_6 * jac7_7) + -1 * jac5_6 * (1 * jac6_5 * jac7_7))))
+                          + -1 * jac2_1
+                                * (1 * jac3_0
+                                    * (1 * jac4_4
+                                        * (1 * jac5_5 * (1 * jac6_6 * jac7_7) + -1 * jac5_6 * (1 * jac6_5 * jac7_7))))))
+            + -1 * jac0_5
+                  * (1 * jac1_2
+                      * (1 * jac2_0
+                              * (-1 * jac3_3 * (-1 * jac4_4 * (1 * jac5_1 * (1 * jac6_6 * jac7_7)))
+                                  + 1 * jac3_4 * (-1 * jac4_3 * (1 * jac5_1 * (1 * jac6_6 * jac7_7))))
+                          + -1 * jac2_1
+                                * (-1 * jac3_3 * (-1 * jac4_4 * (1 * jac5_0 * (1 * jac6_6 * jac7_7)))
+                                    + 1 * jac3_4 * (-1 * jac4_3 * (1 * jac5_0 * (1 * jac6_6 * jac7_7)))))));
+    Eigen::Matrix<DataType, 9, 9> cojacobian(Eigen::Matrix<DataType, 9, 9>::Zero());
+
+    cojacobian << com0_0, com0_1, com0_2, com0_3, com0_4, com0_5, com0_6, com0_7, com0_8, com1_0, com1_1, com1_2,
+        com1_3, com1_4, com1_5, com1_6, com1_7, com1_8, com2_0, com2_1, com2_2, com2_3, com2_4, com2_5, com2_6, com2_7,
+        com2_8, com3_0, com3_1, com3_2, com3_3, com3_4, com3_5, com3_6, com3_7, com3_8, com4_0, com4_1, com4_2, com4_3,
+        com4_4, com4_5, com4_6, com4_7, com4_8, com5_0, com5_1, com5_2, com5_3, com5_4, com5_5, com5_6, com5_7, com5_8,
+        com6_0, com6_1, com6_2, com6_3, com6_4, com6_5, com6_6, com6_7, com6_8, com7_0, com7_1, com7_2, com7_3, com7_4,
+        com7_5, com7_6, com7_7, com7_8, com8_0, com8_1, com8_2, com8_3, com8_4, com8_5, com8_6, com8_7, com8_8;
+    Eigen::Matrix<DataType, 9, 1> delta = cojacobian * eqs * invdet;
 
     // Check if the update is big enough
     if((delta.array().abs() < EPS).all())
@@ -414,52 +1737,9 @@ public:
       return true;
     }
 
-    // Big variations are only in steady state mode
-    if(steady_state)
-    {
-      auto max_delta = delta.array().abs().maxCoeff();
-      if(max_delta > MAX_DELTA)
-      {
-        delta *= MAX_DELTA / max_delta;
-      }
-    }
-
     dynamic_state -= delta;
 
     return false;
-  }
-
-  void populate_sparse_jacobian(Eigen::SparseMatrix<DataType, Eigen::ColMajor>& sparse_jacobian)
-  {
-    std::vector<Eigen::Triplet<double>> coefficients{{0, 0},
-        {0, 3},
-        {0, 5},
-        {1, 1},
-        {1, 2},
-        {1, 3},
-        {1, 5},
-        {2, 0},
-        {2, 1},
-        {3, 0},
-        {3, 1},
-        {3, 3},
-        {3, 4},
-        {4, 3},
-        {4, 4},
-        {5, 0},
-        {5, 1},
-        {5, 5},
-        {5, 6},
-        {6, 5},
-        {6, 6},
-        {6, 7},
-        {6, 8},
-        {7, 7},
-        {7, 8},
-        {8, 6},
-        {8, 8}};
-    sparse_jacobian.setFromTriplets(coefficients.begin(), coefficients.end());
-    sparse_jacobian.makeCompressed();
   }
 };
 } // namespace

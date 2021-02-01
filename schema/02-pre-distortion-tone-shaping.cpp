@@ -12,16 +12,14 @@
 
 #include <Eigen/Eigen>
 
+namespace
+{
 constexpr gsl::index MAX_ITERATION = 10;
 constexpr gsl::index MAX_ITERATION_STEADY_STATE = 200;
 
 constexpr gsl::index INIT_WARMUP = 10;
 constexpr double EPS = 1e-8;
 constexpr double MAX_DELTA = 1e-1;
-
-namespace
-{
-using namespace ATK;
 
 class StaticFilter: public ATK::ModellerFilter<double>
 {
@@ -31,14 +29,14 @@ class StaticFilter: public ATK::ModellerFilter<double>
   Eigen::Matrix<DataType, 3, 1> static_state{Eigen::Matrix<DataType, 3, 1>::Zero()};
   mutable Eigen::Matrix<DataType, 1, 1> input_state{Eigen::Matrix<DataType, 1, 1>::Zero()};
   mutable Eigen::Matrix<DataType, 5, 1> dynamic_state{Eigen::Matrix<DataType, 5, 1>::Zero()};
-  StaticResistor<DataType> r044{220000};
-  StaticCapacitor<DataType> c032{1e-10};
-  StaticCapacitor<DataType> c034{2.7e-08};
-  StaticResistor<DataType> r046{2200};
-  StaticResistor<DataType> r054{10000};
-  StaticCapacitor<DataType> c035{1e-08};
-  StaticResistor<DataType> r053{47000};
-  StaticNPN<DataType> q010{1e-12, 0.026, 1, 1, 100};
+  ATK::StaticResistor<DataType> r044{220000};
+  ATK::StaticCapacitor<DataType> c032{1e-10};
+  ATK::StaticCapacitor<DataType> c034{2.7e-08};
+  ATK::StaticResistor<DataType> r046{2200};
+  ATK::StaticResistor<DataType> r054{10000};
+  ATK::StaticCapacitor<DataType> c035{1e-08};
+  ATK::StaticResistor<DataType> r053{47000};
+  ATK::StaticNPN<DataType> q010{1e-12, 0.026, 1, 1, 100};
 
 public:
   StaticFilter(): ModellerFilter<DataType>(5, 1)

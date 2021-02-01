@@ -6,9 +6,9 @@ cmap = plt.cm.cubehelix
 
 data = np.loadtxt(sys.argv[1])
 
-NFFT = 1024
+NFFT = 2048
 Fs = 48000
-noverlap = 128
+noverlap = 512
 vmin = -70
 vmax = -20
 

@@ -12,16 +12,14 @@
 
 #include <Eigen/Eigen>
 
+namespace
+{
 constexpr gsl::index MAX_ITERATION = 1;
 constexpr gsl::index MAX_ITERATION_STEADY_STATE = 1;
 
 constexpr gsl::index INIT_WARMUP = 1;
 constexpr double EPS = 1e-8;
 constexpr double MAX_DELTA = 1e-1;
-
-namespace
-{
-using namespace ATK;
 
 class StaticFilter: public ATK::ModellerFilter<double>
 {
@@ -32,11 +30,11 @@ class StaticFilter: public ATK::ModellerFilter<double>
   mutable Eigen::Matrix<DataType, 1, 1> input_state{Eigen::Matrix<DataType, 1, 1>::Zero()};
   mutable Eigen::Matrix<DataType, 2, 1> dynamic_state{Eigen::Matrix<DataType, 2, 1>::Zero()};
   Eigen::Matrix<DataType, 2, 2> inverse;
-  StaticResistor<DataType> r045{10000};
-  StaticResistor<DataType> r042{10000};
-  StaticCapacitor<DataType> c031{4.7e-08};
-  StaticCapacitor<DataType> c029{3.3e-08};
-  StaticResistor<DataType> r040{100000};
+  ATK::StaticResistor<DataType> r045{10000};
+  ATK::StaticResistor<DataType> r042{10000};
+  ATK::StaticCapacitor<DataType> c031{4.7e-08};
+  ATK::StaticCapacitor<DataType> c029{3.3e-08};
+  ATK::StaticResistor<DataType> r040{100000};
 
 public:
   StaticFilter(): ModellerFilter<DataType>(2, 1), inverse(2, 2)
@@ -252,16 +250,6 @@ public:
     if((delta.array().abs() < EPS).all())
     {
       return true;
-    }
-
-    // Big variations are only in steady state mode
-    if(steady_state)
-    {
-      auto max_delta = delta.array().abs().maxCoeff();
-      if(max_delta > MAX_DELTA)
-      {
-        delta *= MAX_DELTA / max_delta;
-      }
     }
 
     dynamic_state -= delta;

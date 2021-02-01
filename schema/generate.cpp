@@ -9,7 +9,7 @@
 #include <memory>
 #include <vector>
 
-constexpr gsl::index PROCESSSIZE = 1024 * 1024;
+constexpr gsl::index PROCESSSIZE = 4 * 1024 * 1024;
 constexpr size_t SAMPLING_RATE = 48000;
 
 extern "C"

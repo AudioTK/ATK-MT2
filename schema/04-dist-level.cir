@@ -6,6 +6,7 @@ Z3a	2	Vin	Vout
 C030	0	4	10uF
 R041	4	2	1k
 C028	Vout	2	47pF
-PR01	2	1	1	250k
-R051	1	Vout	1k
+PR01	2	Vout	Vout	251k
+* Simplified
+*R051	1	Vout	1k
 *
