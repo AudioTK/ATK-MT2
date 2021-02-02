@@ -70,7 +70,7 @@ private:
   std::unique_ptr<ATK::ModellerFilter<double>> bandPassFilter;
   std::unique_ptr<ATK::ModellerFilter<double>> distLevelFilter;
   std::unique_ptr<ATK::ModellerFilter<double>> distFilter;
-  std::unique_ptr<ATK::ModellerFilter<double>> postDistrotionToneShapingFilter;
+  std::unique_ptr<ATK::ModellerFilter<double>> postDistortionToneShapingFilter;
   ATK::IIRFilter<ATK::ButterworthLowPassCoefficients<double>> lowpassFilter;
   ATK::DecimationFilter<double> decimationFilter;
   std::unique_ptr<ATK::ModellerFilter<double>> lowHighToneControlFilter;

@@ -77,16 +77,17 @@
       </MODULEPATHS>
     </VS2017>
     <XCODE_MAC targetFolder="Builds/MacOSX" vst3Folder="../../../SDKs/VST3_SDK"
-               externalLibraries="" extraLinkerFlags="" extraCompilerFlags="-msse4.2"
-               extraDefs="ATK_NO_FFT" keepCustomXcodeSchemes="1" aaxFolder="../../../SDKs/AAX_SDK_2p3p0">
+               extraCompilerFlags="-msse4.2" extraDefs="ATK_NO_FFT" keepCustomXcodeSchemes="1"
+               aaxFolder="../../SDKs/AAX_SDK_2p3p0">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MT2" enablePluginBinaryCopyStep="1"
-                       headerPath="../../../&#10;../../../../AudioTK&#10;../../../../AudioTK/3rdParty/gsl/include&#10;../../../../AudioTK/3rdParty/eigen&#10;../../../../../local/boost_1_75_0&#10;../../../../AudioTK-Modeling&#10;"/>
+                       headerPath="../../../&#10;../../../../AudioTK&#10;../../../../AudioTK/3rdParty/gsl/include&#10;../../../../AudioTK/3rdParty/eigen&#10;../../../../../local/boost_1_75_0&#10;../../../../AudioTK-Modeling&#10;"
+                       osxArchitecture="64BitIntel"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MT2"
                        enablePluginBinaryCopyStep="1" stripLocalSymbols="1" fastMath="1"
                        headerPath="../../../&#10;../../../../AudioTK&#10;../../../../AudioTK/3rdParty/gsl/include&#10;../../../../AudioTK/3rdParty/eigen&#10;../../../../../local/boost_1_75_0&#10;../../../../AudioTK-Modeling&#10;"
                        aaxBinaryLocation="$(HOME)/Library/Application Support/Avid/Audio/Plug-Ins/"
-                       osxSDK="10.12 SDK" osxCompatibility="10.9 SDK" osxArchitecture="64BitUniversal"/>
+                       osxSDK="10.12 SDK" osxCompatibility="10.9 SDK" osxArchitecture="64BitIntel"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE/modules"/>

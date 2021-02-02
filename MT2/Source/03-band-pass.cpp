@@ -258,8 +258,10 @@ public:
   }
 };
 } // namespace
-
+namespace MT2
+{
 std::unique_ptr<ATK::ModellerFilter<double>> createStaticFilter_stage3()
 {
   return std::make_unique<StaticFilter>();
 }
+} // namespace MT2

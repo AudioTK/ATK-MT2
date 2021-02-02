@@ -10,6 +10,7 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "static_elements.h"
 
 //==============================================================================
 MT2AudioProcessor::MT2AudioProcessor()
@@ -26,6 +27,17 @@ MT2AudioProcessor::MT2AudioProcessor()
   ,
 #endif
   inFilter(nullptr, 1, 0, false)
+  , highPassFilter(MT2::createStaticFilter_stage1())
+  , oversamplingFilter(1)
+  , preDistortionToneShapingFilter(MT2::createStaticFilter_stage2())
+  , bandPassFilter(MT2::createStaticFilter_stage3())
+  , distLevelFilter(MT2::createStaticFilter_stage4())
+  , distFilter(MT2::createStaticFilter_stage5())
+  , postDistortionToneShapingFilter(MT2::createStaticFilter_stage6())
+  , lowpassFilter(1)
+  , decimationFilter(1)
+  , lowHighToneControlFilter(MT2::createStaticFilter_stage7())
+  , sweepableMidToneControlFilter(1)
   , outFilter(nullptr, 1, 0, false)
   , parameters(*this,
         nullptr,
@@ -37,8 +49,9 @@ MT2AudioProcessor::MT2AudioProcessor()
   preDistortionToneShapingFilter->set_input_port(0, &oversamplingFilter, 0);
   bandPassFilter->set_input_port(0, preDistortionToneShapingFilter.get(), 0);
   distLevelFilter->set_input_port(0, bandPassFilter.get(), 0);
-  postDistrotionToneShapingFilter->set_input_port(0, distLevelFilter.get(), 0);
-  lowpassFilter.set_input_port(0, postDistrotionToneShapingFilter.get(), 0);
+  distFilter->set_input_port(0, distLevelFilter.get(), 0);
+  postDistortionToneShapingFilter->set_input_port(0, distFilter.get(), 0);
+  lowpassFilter.set_input_port(0, postDistortionToneShapingFilter.get(), 0);
   decimationFilter.set_input_port(0, &lowpassFilter, 0);
   lowHighToneControlFilter->set_input_port(0, &decimationFilter, 0);
   sweepableMidToneControlFilter.set_input_port(0, lowHighToneControlFilter.get(), 0);
@@ -153,8 +166,8 @@ void MT2AudioProcessor::prepareToPlay(double dbSampleRate, int samplesPerBlock)
     bandPassFilter->set_output_sampling_rate(sampleRate * OVERSAMPLING);
     distLevelFilter->set_input_sampling_rate(sampleRate * OVERSAMPLING);
     distLevelFilter->set_output_sampling_rate(sampleRate * OVERSAMPLING);
-    postDistrotionToneShapingFilter->set_input_sampling_rate(sampleRate * OVERSAMPLING);
-    postDistrotionToneShapingFilter->set_output_sampling_rate(sampleRate * OVERSAMPLING);
+    postDistortionToneShapingFilter->set_input_sampling_rate(sampleRate * OVERSAMPLING);
+    postDistortionToneShapingFilter->set_output_sampling_rate(sampleRate * OVERSAMPLING);
     lowpassFilter.set_input_sampling_rate(sampleRate * OVERSAMPLING);
     lowpassFilter.set_output_sampling_rate(sampleRate * OVERSAMPLING);
     decimationFilter.set_input_sampling_rate(sampleRate * OVERSAMPLING);
