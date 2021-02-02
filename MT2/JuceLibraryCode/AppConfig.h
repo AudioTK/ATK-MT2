@@ -49,6 +49,7 @@
 
 //==============================================================================
 #define JUCE_MODULE_AVAILABLE_atk_core 1
+#define JUCE_MODULE_AVAILABLE_atk_eq 1
 #define JUCE_MODULE_AVAILABLE_atk_modelling 1
 #define JUCE_MODULE_AVAILABLE_atk_tools 1
 #define JUCE_MODULE_AVAILABLE_atk_utility 1

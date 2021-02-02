@@ -32,7 +32,20 @@ MT2AudioProcessor::MT2AudioProcessor()
         juce::Identifier("ATKMT2"),
         std::make_unique<juce::AudioParameterFloat>("gain", "Gain", 0.0f, 1.0f, .5f))
 {
-  outFilter.set_input_port(0, &inFilter, 0);
+  highPassFilter->set_input_port(0, &inFilter, 0);
+  oversamplingFilter.set_input_port(0, highPassFilter.get(), 0);
+  preDistortionToneShapingFilter->set_input_port(0, &oversamplingFilter, 0);
+  bandPassFilter->set_input_port(0, preDistortionToneShapingFilter.get(), 0);
+  distLevelFilter->set_input_port(0, bandPassFilter.get(), 0);
+  postDistrotionToneShapingFilter->set_input_port(0, distLevelFilter.get(), 0);
+  lowpassFilter.set_input_port(0, postDistrotionToneShapingFilter.get(), 0);
+  decimationFilter.set_input_port(0, &lowpassFilter, 0);
+  lowHighToneControlFilter->set_input_port(0, &decimationFilter, 0);
+  sweepableMidToneControlFilter.set_input_port(0, lowHighToneControlFilter.get(), 0);
+  outFilter.set_input_port(0, &sweepableMidToneControlFilter, 0);
+
+  lowpassFilter.set_cut_frequency(20000);
+  lowpassFilter.set_order(6);
 }
 
 MT2AudioProcessor::~MT2AudioProcessor() = default;
@@ -130,6 +143,26 @@ void MT2AudioProcessor::prepareToPlay(double dbSampleRate, int samplesPerBlock)
   {
     inFilter.set_input_sampling_rate(sampleRate);
     inFilter.set_output_sampling_rate(sampleRate);
+    highPassFilter->set_input_sampling_rate(sampleRate);
+    highPassFilter->set_output_sampling_rate(sampleRate);
+    oversamplingFilter.set_input_sampling_rate(sampleRate);
+    oversamplingFilter.set_output_sampling_rate(sampleRate * OVERSAMPLING);
+    preDistortionToneShapingFilter->set_input_sampling_rate(sampleRate * OVERSAMPLING);
+    preDistortionToneShapingFilter->set_output_sampling_rate(sampleRate * OVERSAMPLING);
+    bandPassFilter->set_input_sampling_rate(sampleRate * OVERSAMPLING);
+    bandPassFilter->set_output_sampling_rate(sampleRate * OVERSAMPLING);
+    distLevelFilter->set_input_sampling_rate(sampleRate * OVERSAMPLING);
+    distLevelFilter->set_output_sampling_rate(sampleRate * OVERSAMPLING);
+    postDistrotionToneShapingFilter->set_input_sampling_rate(sampleRate * OVERSAMPLING);
+    postDistrotionToneShapingFilter->set_output_sampling_rate(sampleRate * OVERSAMPLING);
+    lowpassFilter.set_input_sampling_rate(sampleRate * OVERSAMPLING);
+    lowpassFilter.set_output_sampling_rate(sampleRate * OVERSAMPLING);
+    decimationFilter.set_input_sampling_rate(sampleRate * OVERSAMPLING);
+    decimationFilter.set_output_sampling_rate(sampleRate);
+    lowHighToneControlFilter->set_input_sampling_rate(sampleRate);
+    lowHighToneControlFilter->set_output_sampling_rate(sampleRate);
+    sweepableMidToneControlFilter.set_input_sampling_rate(sampleRate);
+    sweepableMidToneControlFilter.set_output_sampling_rate(sampleRate);
     outFilter.set_input_sampling_rate(sampleRate);
     outFilter.set_output_sampling_rate(sampleRate);
   }
