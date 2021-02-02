@@ -166,6 +166,8 @@ void MT2AudioProcessor::prepareToPlay(double dbSampleRate, int samplesPerBlock)
     bandPassFilter->set_output_sampling_rate(sampleRate * OVERSAMPLING);
     distLevelFilter->set_input_sampling_rate(sampleRate * OVERSAMPLING);
     distLevelFilter->set_output_sampling_rate(sampleRate * OVERSAMPLING);
+    distFilter->set_input_sampling_rate(sampleRate * OVERSAMPLING);
+    distFilter->set_output_sampling_rate(sampleRate * OVERSAMPLING);
     postDistortionToneShapingFilter->set_input_sampling_rate(sampleRate * OVERSAMPLING);
     postDistortionToneShapingFilter->set_output_sampling_rate(sampleRate * OVERSAMPLING);
     lowpassFilter.set_input_sampling_rate(sampleRate * OVERSAMPLING);
