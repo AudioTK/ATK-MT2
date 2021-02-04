@@ -81,5 +81,9 @@ private:
   long sampleRate;
   int lastParameterSet;
 
-  //  float old_drywet{1};
+  float old_distLevel{1};
+  float old_lowLevel{1};
+  float old_highLevel{1};
+  float old_midLevel{1};
+  float old_midFreq{1};
 };

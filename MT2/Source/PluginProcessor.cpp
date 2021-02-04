@@ -42,7 +42,11 @@ MT2AudioProcessor::MT2AudioProcessor()
   , parameters(*this,
         nullptr,
         juce::Identifier("ATKMT2"),
-        std::make_unique<juce::AudioParameterFloat>("gain", "Gain", 0.0f, 1.0f, .5f))
+        {std::make_unique<juce::AudioParameterFloat>("distLevel", "Distortion Level", 0.01f, 0.99f, .5f),
+            std::make_unique<juce::AudioParameterFloat>("lowLevel", "Low Freq Level", -19.9f, 19.9f, .0f),
+            std::make_unique<juce::AudioParameterFloat>("highLevel", "High Freq Level", -19.9f, 19.9f, .0f),
+            std::make_unique<juce::AudioParameterFloat>("midLevel", "Mid Freq Level", -15.f, 15.0f, .0f),
+            std::make_unique<juce::AudioParameterFloat>("midFreq", "Mid Freq", 240.f, 6300.f, 1000.f)})
 {
   highPassFilter->set_input_port(0, &inFilter, 0);
   oversamplingFilter.set_input_port(0, highPassFilter.get(), 0);
@@ -104,42 +108,38 @@ int MT2AudioProcessor::getCurrentProgram()
 
 void MT2AudioProcessor::setCurrentProgram(int index)
 {
-  /*  if(index != lastParameterSet)
-    {
-      lastParameterSet = index;
-      if(index == 0)
-      {
-        const char* preset0 = "<MT2><PARAM id=\"power\" value=\"10\" /><PARAM id=\"attack\" value=\"10\" /><PARAM
-    id=\"release\" value=\"10\" /> <PARAM id=\"threshold\" value=\"0\" /><PARAM id=\"slope\" value=\"2\" /><PARAM
-    id=\"softness\" value=\"-2\" /><PARAM id=\"makeup\" value=\"0\" /><PARAM id=\"drywet\" value=\"100\" /></MT2>";
-        XmlDocument doc(preset0);
+  if(index != lastParameterSet)
+  {
+    /*      lastParameterSet = index;
+          if(index == 0)
+          {
+            const char* preset0 = "<MT2><PARAM id=\"power\" value=\"10\" /><PARAM id=\"attack\" value=\"10\" /><PARAM
+        id=\"release\" value=\"10\" /> <PARAM id=\"threshold\" value=\"0\" /><PARAM id=\"slope\" value=\"2\" /><PARAM
+        id=\"softness\" value=\"-2\" /><PARAM id=\"makeup\" value=\"0\" /><PARAM id=\"drywet\" value=\"100\" /></MT2>";
+            XmlDocument doc(preset0);
 
-        auto el = doc.getDocumentElement();
-        parameters.state = ValueTree::fromXml(*el);
-      }
-      else if (index == 1)
-      {
-        const char* preset1 = "<MT2><PARAM id=\"power\" value=\"10\" /><PARAM id=\"attack\" value=\"10\" /><PARAM
-    id=\"release\" value=\"10\" /> <PARAM id=\"threshold\" value=\"0\" /><PARAM id=\"slope\" value=\"2\" /><PARAM
-    id=\"softness\" value=\"-2\" /><PARAM id=\"makeup\" value=\"0\" /><PARAM id=\"drywet\" value=\"50\" /></MT2>";
-        XmlDocument doc(preset1);
+            auto el = doc.getDocumentElement();
+            parameters.state = ValueTree::fromXml(*el);
+          }
+          else if (index == 1)
+          {
+            const char* preset1 = "<MT2><PARAM id=\"power\" value=\"10\" /><PARAM id=\"attack\" value=\"10\" /><PARAM
+        id=\"release\" value=\"10\" /> <PARAM id=\"threshold\" value=\"0\" /><PARAM id=\"slope\" value=\"2\" /><PARAM
+        id=\"softness\" value=\"-2\" /><PARAM id=\"makeup\" value=\"0\" /><PARAM id=\"drywet\" value=\"50\" /></MT2>";
+            XmlDocument doc(preset1);
 
-        auto el = doc.getDocumentElement();
-        parameters.state = ValueTree::fromXml(*el);
-      }
-    }*/
+            auto el = doc.getDocumentElement();
+            parameters.state = ValueTree::fromXml(*el);
+          }*/
+  }
 }
 
 const String MT2AudioProcessor::getProgramName(int index)
 {
-  /*  if(index == 0)
-    {
-      return "Serial Compression";
+  if(index == 0)
+  {
+    return "Metal Compression";
     }
-    else if(index == 1)
-    {
-      return "Parallel Compression";
-    }*/
   return {};
 }
 
@@ -214,11 +214,31 @@ bool MT2AudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
 
 void MT2AudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
-  /*  if(*parameters.getRawParameterValue ("drywet") != old_drywet)
-    {
-      old_drywet = *parameters.getRawParameterValue ("drywet");
-      drywetFilter.set_dry(old_drywet / 100);
-    }*/
+  if(*parameters.getRawParameterValue("distLevel") != old_distLevel)
+  {
+    old_distLevel = *parameters.getRawParameterValue("distLevel");
+    distLevelFilter->set_parameter(0, old_distLevel);
+  }
+  if(*parameters.getRawParameterValue("lowLevel") != old_lowLevel)
+  {
+    old_lowLevel = *parameters.getRawParameterValue("lowLevel");
+    lowHighToneControlFilter->set_parameter(0, old_lowLevel / 40 + .5);
+  }
+  if(*parameters.getRawParameterValue("highLevel") != old_highLevel)
+  {
+    old_highLevel = *parameters.getRawParameterValue("highLevel");
+    lowHighToneControlFilter->set_parameter(1, old_highLevel / 40 + .5);
+  }
+  if(*parameters.getRawParameterValue("midLevel") != old_midLevel)
+  {
+    old_midLevel = *parameters.getRawParameterValue("midLevel");
+    sweepableMidToneControlFilter.set_gain(std::exp(old_midLevel / 20));
+  }
+  if(*parameters.getRawParameterValue("midFreq") != old_midFreq)
+  {
+    old_midFreq = *parameters.getRawParameterValue("midFreq");
+    sweepableMidToneControlFilter.set_cut_frequency(old_midFreq);
+  }
 
   const int totalNumInputChannels = getTotalNumInputChannels();
   const int totalNumOutputChannels = getTotalNumOutputChannels();
