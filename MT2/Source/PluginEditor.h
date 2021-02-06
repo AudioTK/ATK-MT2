@@ -13,7 +13,9 @@
 #include "JuceHeader.h"
 #include "PluginProcessor.h"
 
-//#include <ATKJUCEComponents/Tools/VolumeFilter.h>
+#include <ATKJUCEComponents/EQ/FrequencySelector.h>
+#include <ATKJUCEComponents/Tools/DryWetFilter.h>
+#include <ATKJUCEComponents/Tools/VolumeFilter.h>
 
 //==============================================================================
 /**
@@ -34,5 +36,9 @@ private:
   MT2AudioProcessor& processor;
   AudioProcessorValueTreeState& paramState;
 
-  //  ATK::juce::DryWetFilterComponent drywet;
+  ATK::juce::DryWetFilterComponent distLevel;
+  ATK::juce::VolumeFilterComponent lowLevel;
+  ATK::juce::VolumeFilterComponent highLevel;
+  ATK::juce::VolumeFilterComponent midLevel;
+  ATK::juce::FrequencySelectorComponent midFreq;
 };

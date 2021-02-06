@@ -13,19 +13,28 @@
 
 //==============================================================================
 MT2AudioProcessorEditor::MT2AudioProcessorEditor(MT2AudioProcessor& p, AudioProcessorValueTreeState& paramState)
-  : AudioProcessorEditor(&p), processor(p), paramState(paramState) //, drywet(paramState, "drywet")
+  : AudioProcessorEditor(&p)
+  , processor(p)
+  , paramState(paramState)
+  , distLevel(paramState, "distLevel", "Distortion")
+  , lowLevel(paramState, "lowLevel", "Low Level")
+  , highLevel(paramState, "highLevel", "High Level")
+  , midLevel(paramState, "midLevel", "Mid Level")
+  , midFreq(paramState, "midFreq", "Mid Freq")
 
 {
-  //  addAndMakeVisible(drywet);
+  addAndMakeVisible(distLevel);
+  addAndMakeVisible(lowLevel);
+  addAndMakeVisible(highLevel);
+  addAndMakeVisible(midLevel);
+  addAndMakeVisible(midFreq);
 
   // Make sure that before the constructor has finished, you've set the
   // editor's size to whatever you need it to be.
-  setSize(1000, 200);
+  setSize(600, 200);
 }
 
-MT2AudioProcessorEditor::~MT2AudioProcessorEditor()
-{
-}
+MT2AudioProcessorEditor::~MT2AudioProcessorEditor() = default;
 
 void MT2AudioProcessorEditor::paint(Graphics& g)
 {
@@ -38,5 +47,9 @@ void MT2AudioProcessorEditor::paint(Graphics& g)
 
 void MT2AudioProcessorEditor::resized()
 {
-  //  drywet.setBoundsRelative(7. / 8, 1. / 4, 1. / 8, 3. / 4);
+  distLevel.setBoundsRelative(0. / 5, 1. / 4, 1. / 5, 3. / 4);
+  lowLevel.setBoundsRelative(1. / 5, 1. / 4, 1. / 5, 3. / 4);
+  highLevel.setBoundsRelative(2. / 5, 1. / 4, 1. / 5, 3. / 4);
+  midLevel.setBoundsRelative(3. / 5, 1. / 4, 1. / 5, 3. / 4);
+  midFreq.setBoundsRelative(4. / 5, 1. / 4, 1. / 5, 3. / 4);
 }

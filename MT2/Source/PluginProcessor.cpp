@@ -42,7 +42,7 @@ MT2AudioProcessor::MT2AudioProcessor()
   , parameters(*this,
         nullptr,
         juce::Identifier("ATKMT2"),
-        {std::make_unique<juce::AudioParameterFloat>("distLevel", "Distortion Level", 0.01f, 0.99f, .5f),
+        {std::make_unique<juce::AudioParameterFloat>("distLevel", "Distortion Level", 1.f, 99.f, 50.f),
             std::make_unique<juce::AudioParameterFloat>("lowLevel", "Low Freq Level", -19.9f, 19.9f, .0f),
             std::make_unique<juce::AudioParameterFloat>("highLevel", "High Freq Level", -19.9f, 19.9f, .0f),
             std::make_unique<juce::AudioParameterFloat>("midLevel", "Mid Freq Level", -15.f, 15.0f, .0f),
@@ -217,7 +217,7 @@ void MT2AudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midi
   if(*parameters.getRawParameterValue("distLevel") != old_distLevel)
   {
     old_distLevel = *parameters.getRawParameterValue("distLevel");
-    distLevelFilter->set_parameter(0, old_distLevel);
+    distLevelFilter->set_parameter(0, old_distLevel / 100);
   }
   if(*parameters.getRawParameterValue("lowLevel") != old_lowLevel)
   {
