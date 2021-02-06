@@ -110,27 +110,27 @@ void MT2AudioProcessor::setCurrentProgram(int index)
 {
   if(index != lastParameterSet)
   {
-    /*      lastParameterSet = index;
-          if(index == 0)
-          {
-            const char* preset0 = "<MT2><PARAM id=\"power\" value=\"10\" /><PARAM id=\"attack\" value=\"10\" /><PARAM
-        id=\"release\" value=\"10\" /> <PARAM id=\"threshold\" value=\"0\" /><PARAM id=\"slope\" value=\"2\" /><PARAM
-        id=\"softness\" value=\"-2\" /><PARAM id=\"makeup\" value=\"0\" /><PARAM id=\"drywet\" value=\"100\" /></MT2>";
-            XmlDocument doc(preset0);
+    lastParameterSet = index;
+    if(index == 0)
+    {
+      const char* preset0
+          = "<MT2><PARAM id=\"distLevel\" value=\"1\" /><PARAM id=\"lowLevel\" value=\"0\" /><PARAM id=\"highLevel\" "
+            "value=\"0\" /> <PARAM id=\"midLevel\" value=\"0\" /><PARAM id=\"midFreq\" value=\"1000\" /></MT2>";
+      XmlDocument doc(preset0);
 
-            auto el = doc.getDocumentElement();
-            parameters.state = ValueTree::fromXml(*el);
+      auto el = doc.getDocumentElement();
+      parameters.state = ValueTree::fromXml(*el);
           }
           else if (index == 1)
           {
-            const char* preset1 = "<MT2><PARAM id=\"power\" value=\"10\" /><PARAM id=\"attack\" value=\"10\" /><PARAM
-        id=\"release\" value=\"10\" /> <PARAM id=\"threshold\" value=\"0\" /><PARAM id=\"slope\" value=\"2\" /><PARAM
-        id=\"softness\" value=\"-2\" /><PARAM id=\"makeup\" value=\"0\" /><PARAM id=\"drywet\" value=\"50\" /></MT2>";
+            const char* preset1 = "<MT2><PARAM id=\"distLevel\" value=\"99\" /><PARAM id=\"lowLevel\" value=\"19\" "
+                                  "/><PARAM id=\"highLevel\" value=\"19\" /> <PARAM id=\"midLevel\" value=\"15\" "
+                                  "/><PARAM id=\"midFreq\" value=\"1000\" /></MT2>";
             XmlDocument doc(preset1);
 
             auto el = doc.getDocumentElement();
             parameters.state = ValueTree::fromXml(*el);
-          }*/
+          }
   }
 }
 
@@ -138,8 +138,12 @@ const String MT2AudioProcessor::getProgramName(int index)
 {
   if(index == 0)
   {
-    return "Metal Compression";
-    }
+    return "Minimum distortion";
+  }
+  if(index == 0)
+  {
+    return "Maximum damage";
+  }
   return {};
 }
 

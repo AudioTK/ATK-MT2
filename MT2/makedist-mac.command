@@ -9,14 +9,17 @@ cd $BASEDIR
 
 #variables
 
-VERSION=`echo | grep "#define JucePlugin_Version " JuceLibraryCode/AppConfig.h`
-VERSION=${VERSION//\#define JucePlugin_Version }
-VERSION=${VERSION//\'}
+VERSION=`echo | grep "define JucePlugin_Version " JuceLibraryCode/JucePluginDefines.h`
+VERSION=${VERSION/\#/}
+VERSION=${VERSION/define/}
+VERSION=${VERSION/JucePlugin_Version/}
 
 FULL_VERSION=$(echo "${VERSION}" | tr -d '[:space:]')
 
-PLUGIN_NAME=`echo | grep "#define JucePlugin_Name " JuceLibraryCode/AppConfig.h`
-PLUGIN_NAME=${PLUGIN_NAME//\#define JucePlugin_Name }
+PLUGIN_NAME=`echo | grep "define JucePlugin_Name " JuceLibraryCode/JucePluginDefines.h`
+PLUGIN_NAME=${PLUGIN_NAME/\#/}
+PLUGIN_NAME=${PLUGIN_NAME/define/}
+PLUGIN_NAME=${PLUGIN_NAME/JucePlugin_Name/}
 PLUGIN_NAME=${PLUGIN_NAME//\"}
 PLUGIN_NAME=$(echo "${PLUGIN_NAME}" | tr -d '[:space:]')
 
@@ -39,7 +42,7 @@ echo ""
 
 # build xcode project. Change target to build individual formats
 echo "Build"
-xcodebuild -project Builds/MacOSX/$PLUGIN_NAME.xcodeproj -xcconfig $PLUGIN_NAME.xcconfig -target "$PLUGIN_NAME - All" -configuration Release 2> ./build-mac.log
+xcodebuild -project Builds/MacOSX/$PLUGIN_NAME.xcodeproj -target "$PLUGIN_NAME - All" -configuration Release 2> ./build-mac.log
 
 if [ -s build-mac.log ]
 then

@@ -3,7 +3,7 @@
 <JUCERPROJECT id="KHQl4f" name="MT2" displaySplashScreen="1" reportAppUsage="1"
               splashScreenColour="Dark" projectType="audioplug" version="1.0.0"
               bundleIdentifier="com.MatthieuBrucher.MT2" includeBinaryInAppConfig="1"
-              buildVST="1" buildVST3="1" buildAU="1" buildAUv3="1" buildRTAS="0"
+              buildVST="0" buildVST3="1" buildAU="1" buildAUv3="1" buildRTAS="0"
               buildAAX="1" buildStandalone="1" enableIAA="0" pluginName="MT2"
               pluginDesc="" pluginManufacturer="MatthieuBrucher" pluginManufacturerCode="MatB"
               pluginCode="u0yg" pluginChannelConfigs="{1,1}" pluginIsSynth="0"
@@ -12,8 +12,8 @@
               aaxIdentifier="com.MatthieuBrucher.MT2" pluginAAXCategory="0"
               companyName="Matthieu Brucher" companyWebsite="http://www.audio-tk.com/"
               cppLanguageStandard="17" companyCopyright="Matthieu Brucher"
-              pluginFormats="buildVST,buildVST3,buildAU,buildAUv3,buildAAX,buildStandalone"
-              jucerFormatVersion="1">
+              pluginFormats="buildAAX,buildAU,buildAUv3,buildStandalone,buildVST3"
+              jucerFormatVersion="1" defines="JUCE_VST3_CAN_REPLACE_VST2=0">
   <MAINGROUP id="H9V4ut" name="MT2">
     <GROUP id="{65FEA80A-F647-1916-F1CE-08CA719AE1BE}" name="Source">
       <FILE id="MvMVFL" name="01-high-pass.cpp" compile="1" resource="0"
@@ -99,7 +99,7 @@
                        enablePluginBinaryCopyStep="1" stripLocalSymbols="1" fastMath="1"
                        headerPath="../../../MT2&#10;../../../../AudioTK&#10;../../../../AudioTK/3rdParty/gsl/include&#10;../../../../AudioTK/3rdParty/eigen&#10;../../../../../local/boost_1_75_0&#10;../../../../AudioTK-Modeling&#10;"
                        aaxBinaryLocation="$(HOME)/Library/Application Support/Avid/Audio/Plug-Ins/"
-                       osxSDK="10.12 SDK" osxCompatibility="10.9 SDK" osxArchitecture="64BitIntel"/>
+                       osxSDK="10.15 SDK" osxCompatibility="10.9 SDK" osxArchitecture="64BitIntel"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
