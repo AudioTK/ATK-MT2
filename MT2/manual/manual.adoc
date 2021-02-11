@@ -15,6 +15,11 @@ image::MT2.png[GUI]
 Here is how the parameters interact with the plugin:
 
 [square]
+* *Distortion* is the distortion level your want
+* *Low level* is the amount of low frequency content
+* *High level* is the amount of high frequency content
+* *Mid level* is the amount of mid frequency content
+* *Mid frequency* is the central frequency content
 
 == Bugs
 

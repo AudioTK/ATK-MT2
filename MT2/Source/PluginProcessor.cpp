@@ -42,9 +42,9 @@ MT2AudioProcessor::MT2AudioProcessor()
   , parameters(*this,
         nullptr,
         juce::Identifier("ATKMT2"),
-        {std::make_unique<juce::AudioParameterFloat>("distLevel", "Distortion Level", 1.f, 99.f, 50.f),
-            std::make_unique<juce::AudioParameterFloat>("lowLevel", "Low Freq Level", -19.9f, 19.9f, .0f),
-            std::make_unique<juce::AudioParameterFloat>("highLevel", "High Freq Level", -19.9f, 19.9f, .0f),
+        {std::make_unique<juce::AudioParameterFloat>("distLevel", "Distortion Level", 0.f, 100.f, 50.f),
+            std::make_unique<juce::AudioParameterFloat>("lowLevel", "Low Freq Level", -20.0f, 20.0f, .0f),
+            std::make_unique<juce::AudioParameterFloat>("highLevel", "High Freq Level", -20.0f, 20.0f, .0f),
             std::make_unique<juce::AudioParameterFloat>("midLevel", "Mid Freq Level", -15.f, 15.0f, .0f),
             std::make_unique<juce::AudioParameterFloat>("midFreq", "Mid Freq", 240.f, 6300.f, 1000.f)})
 {
@@ -120,17 +120,17 @@ void MT2AudioProcessor::setCurrentProgram(int index)
 
       auto el = doc.getDocumentElement();
       parameters.state = ValueTree::fromXml(*el);
-          }
-          else if (index == 1)
-          {
-            const char* preset1 = "<MT2><PARAM id=\"distLevel\" value=\"99\" /><PARAM id=\"lowLevel\" value=\"19\" "
-                                  "/><PARAM id=\"highLevel\" value=\"19\" /> <PARAM id=\"midLevel\" value=\"15\" "
-                                  "/><PARAM id=\"midFreq\" value=\"1000\" /></MT2>";
-            XmlDocument doc(preset1);
+    }
+    else if(index == 1)
+    {
+      const char* preset1
+          = "<MT2><PARAM id=\"distLevel\" value=\"99\" /><PARAM id=\"lowLevel\" value=\"19\" /><PARAM id=\"highLevel\" "
+            "value=\"19\" /> <PARAM id=\"midLevel\" value=\"15\" /><PARAM id=\"midFreq\" value=\"1000\" /></MT2>";
+      XmlDocument doc(preset1);
 
-            auto el = doc.getDocumentElement();
-            parameters.state = ValueTree::fromXml(*el);
-          }
+      auto el = doc.getDocumentElement();
+      parameters.state = ValueTree::fromXml(*el);
+    }
   }
 }
 
@@ -221,17 +221,17 @@ void MT2AudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midi
   if(*parameters.getRawParameterValue("distLevel") != old_distLevel)
   {
     old_distLevel = *parameters.getRawParameterValue("distLevel");
-    distLevelFilter->set_parameter(0, old_distLevel / 100);
+    distLevelFilter->set_parameter(0, old_distLevel * .99 / 100 + .1);
   }
   if(*parameters.getRawParameterValue("lowLevel") != old_lowLevel)
   {
     old_lowLevel = *parameters.getRawParameterValue("lowLevel");
-    lowHighToneControlFilter->set_parameter(0, old_lowLevel / 40 + .5);
+    lowHighToneControlFilter->set_parameter(0, old_lowLevel * .99 / 40 + .5);
   }
   if(*parameters.getRawParameterValue("highLevel") != old_highLevel)
   {
     old_highLevel = *parameters.getRawParameterValue("highLevel");
-    lowHighToneControlFilter->set_parameter(1, old_highLevel / 40 + .5);
+    lowHighToneControlFilter->set_parameter(1, old_highLevel * .99 / 40 + .5);
   }
   if(*parameters.getRawParameterValue("midLevel") != old_midLevel)
   {

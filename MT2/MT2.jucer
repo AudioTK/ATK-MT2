@@ -6,7 +6,7 @@
               buildVST="0" buildVST3="1" buildAU="1" buildAUv3="1" buildRTAS="0"
               buildAAX="1" buildStandalone="1" enableIAA="0" pluginName="MT2"
               pluginDesc="" pluginManufacturer="MatthieuBrucher" pluginManufacturerCode="MatB"
-              pluginCode="u0yg" pluginChannelConfigs="{1,1}" pluginIsSynth="0"
+              pluginCode="aMT2" pluginChannelConfigs="{1,1}" pluginIsSynth="0"
               pluginWantsMidiIn="0" pluginProducesMidiOut="0" pluginIsMidiEffectPlugin="0"
               pluginEditorRequiresKeys="0" pluginAUExportPrefix="MT2" pluginRTASCategory=""
               aaxIdentifier="com.MatthieuBrucher.MT2" pluginAAXCategory="0"
@@ -59,12 +59,13 @@
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MT2" enablePluginBinaryCopyStep="1"
                        headerPath="../../../MT2&#10;../../../../AudioTK&#10;../../../../AudioTK/3rdParty/gsl/include&#10;../../../../AudioTK/3rdParty/eigen&#10;../../../../../local/boost_1_75_0&#10;../../../../AudioTK-Modeling&#10;"
-                       osxArchitecture="64BitIntel"/>
+                       osxArchitecture="64BitIntel" codeSigningIdentity="Brucher Matthieu"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MT2"
                        enablePluginBinaryCopyStep="1" stripLocalSymbols="1" fastMath="1"
                        headerPath="../../../MT2&#10;../../../../AudioTK&#10;../../../../AudioTK/3rdParty/gsl/include&#10;../../../../AudioTK/3rdParty/eigen&#10;../../../../../local/boost_1_75_0&#10;../../../../AudioTK-Modeling&#10;"
                        aaxBinaryLocation="$(HOME)/Library/Application Support/Avid/Audio/Plug-Ins/"
-                       osxSDK="10.15 SDK" osxCompatibility="10.9 SDK" osxArchitecture="64BitIntel"/>
+                       osxSDK="10.15 SDK" osxCompatibility="10.9 SDK" osxArchitecture="64BitIntel"
+                       codeSigningIdentity="Brucher Matthieu"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
