@@ -14,17 +14,17 @@
 
 namespace
 {
-constexpr gsl::index MAX_ITERATION = 1;
-constexpr gsl::index MAX_ITERATION_STEADY_STATE = 1;
+constexpr gsl::index MAX_ITERATION{1};
+constexpr gsl::index MAX_ITERATION_STEADY_STATE{1};
 
 constexpr gsl::index INIT_WARMUP = 1;
-constexpr double EPS = 1e-8;
-constexpr double MAX_DELTA = 1e-1;
+constexpr double EPS{1e-8};
+constexpr double MAX_DELTA{1e-1};
 
 class StaticFilter: public ATK::ModellerFilter<double>
 {
   using typename ATK::TypedBaseFilter<double>::DataType;
-  bool initialized = false;
+  bool initialized{false};
 
   Eigen::Matrix<DataType, 1, 1> static_state{Eigen::Matrix<DataType, 1, 1>::Zero()};
   mutable Eigen::Matrix<DataType, 1, 1> input_state{Eigen::Matrix<DataType, 1, 1>::Zero()};
@@ -247,7 +247,7 @@ public:
     Eigen::Matrix<DataType, 2, 1> delta = inverse * eqs;
 
     // Check if the update is big enough
-    if((delta.array().abs() < EPS).all())
+    if(delta.hasNaN() || (delta.array().abs() < EPS).all())
     {
       return true;
     }

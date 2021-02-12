@@ -9,7 +9,7 @@ data = np.loadtxt(sys.argv[1])
 NFFT = 2048
 Fs = 48000
 noverlap = 512
-vmin = -70
+vmin = -100
 vmax = -20
 
 fig = plt.figure(num=None, figsize=(8, 6), dpi=160, facecolor='w', edgecolor='k')
