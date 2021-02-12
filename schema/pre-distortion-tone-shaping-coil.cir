@@ -1,0 +1,12 @@
+*
+Vin	Vin	0	AC	1
+*
+*	V-	V+	Vout
+Z3b	2	Vin	Vout
+R044	2	Vout	220k
+
+* Gyrator
+C034	2	3	0.027u
+
+R046	3	4	2.2k
+L	4	0	1.034

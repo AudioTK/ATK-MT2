@@ -48,17 +48,25 @@ MT2AudioProcessor::MT2AudioProcessor()
             std::make_unique<juce::AudioParameterFloat>("midLevel", "Mid Freq Level", -15.f, 15.0f, .0f),
             std::make_unique<juce::AudioParameterFloat>("midFreq", "Mid Freq", 240.f, 6300.f, 1000.f)})
 {
-  highPassFilter->set_input_port(0, &inFilter, 0);
-  oversamplingFilter.set_input_port(0, highPassFilter.get(), 0);
-  preDistortionToneShapingFilter->set_input_port(0, &oversamplingFilter, 0);
-  bandPassFilter->set_input_port(0, preDistortionToneShapingFilter.get(), 0);
-  distLevelFilter->set_input_port(0, bandPassFilter.get(), 0);
-  distFilter->set_input_port(0, distLevelFilter.get(), 0);
-  postDistortionToneShapingFilter->set_input_port(0, distFilter.get(), 0);
-  lowpassFilter.set_input_port(0, postDistortionToneShapingFilter.get(), 0);
+  highPassFilter->set_input_port(highPassFilter->find_input_pin("vin"), &inFilter, 0);
+  oversamplingFilter.set_input_port(0, highPassFilter.get(), highPassFilter->find_dynamic_pin("vout"));
+  preDistortionToneShapingFilter->set_input_port(
+      preDistortionToneShapingFilter->find_input_pin("vin"), &oversamplingFilter, 0);
+  bandPassFilter->set_input_port(bandPassFilter->find_input_pin("vin"),
+      preDistortionToneShapingFilter.get(),
+      preDistortionToneShapingFilter->find_dynamic_pin("vout"));
+  distLevelFilter->set_input_port(
+      distLevelFilter->find_input_pin("vin"), bandPassFilter.get(), bandPassFilter->find_dynamic_pin("vout"));
+  distFilter->set_input_port(
+      distFilter->find_input_pin("vin"), distLevelFilter.get(), distLevelFilter->find_dynamic_pin("vout"));
+  postDistortionToneShapingFilter->set_input_port(
+      postDistortionToneShapingFilter->find_input_pin("vin"), distFilter.get(), distFilter->find_dynamic_pin("vout"));
+  lowpassFilter.set_input_port(
+      0, postDistortionToneShapingFilter.get(), postDistortionToneShapingFilter->find_dynamic_pin("vout"));
   decimationFilter.set_input_port(0, &lowpassFilter, 0);
-  lowHighToneControlFilter->set_input_port(0, &decimationFilter, 0);
-  sweepableMidToneControlFilter.set_input_port(0, lowHighToneControlFilter.get(), 0);
+  lowHighToneControlFilter->set_input_port(lowHighToneControlFilter->find_input_pin("vin"), &decimationFilter, 0);
+  sweepableMidToneControlFilter.set_input_port(
+      0, lowHighToneControlFilter.get(), lowHighToneControlFilter->find_dynamic_pin("vout"));
   outFilter.set_input_port(0, &sweepableMidToneControlFilter, 0);
 
   lowpassFilter.set_cut_frequency(20000);

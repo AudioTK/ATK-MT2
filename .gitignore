@@ -1,4 +1,6 @@
 Builds
-schema
 gyrator
 *.log
+*.exe
+*.dat
+*.png

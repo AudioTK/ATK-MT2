@@ -2,6 +2,10 @@
  * \file static_elements.h
  */
 
+#include <ATK/Modelling/ModellerFilter.h>
+
+#include <memory>
+
 #ifndef STATIC_ELEMENTS
 #define STATIC_ELEMENTS
 

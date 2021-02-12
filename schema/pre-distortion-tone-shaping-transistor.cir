@@ -1,0 +1,18 @@
+*
+Vin	Vin	0	AC	1
+Vdd Vdd	0	DC -4.5
+Vcc	Vcc	0	DC 4.5
+*
+*	V-	V+	Vout
+Z3b	2	Vin	Vout
+R044	2	Vout	220k
+
+* Gyrator
+C034	2	3	0.027u
+R046	3	4	2.2k
+R054	4	Vdd	10k
+C035	3	5	0.01u
+R053	0	5	47k
+Q010	Vcc	5	4	trans
+
+.model trans npn(vt=26e-3 is=1e-12 ne=1 br=1 bf=100)
