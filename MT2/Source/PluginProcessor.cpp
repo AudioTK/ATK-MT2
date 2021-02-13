@@ -73,6 +73,7 @@ MT2AudioProcessor::MT2AudioProcessor()
 
   lowpassFilter.set_cut_frequency(20000);
   lowpassFilter.set_order(6);
+  DCFilter.set_cut_frequency(5);
 }
 
 MT2AudioProcessor::~MT2AudioProcessor() = default;
