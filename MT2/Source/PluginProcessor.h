@@ -74,7 +74,8 @@ private:
   ATK::IIRFilter<ATK::ButterworthLowPassCoefficients<double>> lowpassFilter;
   ATK::DecimationFilter<double> decimationFilter;
   ATK::SecondOrderSVFFilter<ATK::SecondOrderSVFLowPassCoefficients<double>> DCFilter;
-  std::unique_ptr<ATK::ModellerFilter<double>> lowHighToneControlFilter;
+  ATK::SecondOrderSVFFilter<ATK::SecondOrderSVFBellCoefficients<double>> lowToneControlFilter;
+  ATK::SecondOrderSVFFilter<ATK::SecondOrderSVFHighShelfCoefficients<double>> highToneControlFilter;
   ATK::SecondOrderSVFFilter<ATK::SecondOrderSVFBellCoefficients<double>> sweepableMidToneControlFilter;
   ATK::OutPointerFilter<float> outFilter;
 
@@ -82,9 +83,9 @@ private:
   long sampleRate;
   int lastParameterSet;
 
-  float old_distLevel{1};
-  float old_lowLevel{1};
-  float old_highLevel{1};
-  float old_midLevel{1};
-  float old_midFreq{1};
+  float old_distLevel{1000};
+  float old_lowLevel{100};
+  float old_highLevel{100};
+  float old_midLevel{100};
+  float old_midFreq{0};
 };

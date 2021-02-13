@@ -37,7 +37,8 @@ MT2AudioProcessor::MT2AudioProcessor()
   , lowpassFilter(1)
   , decimationFilter(1)
   , DCFilter(1)
-  , lowHighToneControlFilter(MT2::createStaticFilter_stage7())
+  , lowToneControlFilter(1)
+  , highToneControlFilter(1)
   , sweepableMidToneControlFilter(1)
   , outFilter(nullptr, 1, 0, false)
   , parameters(*this,
@@ -66,14 +67,19 @@ MT2AudioProcessor::MT2AudioProcessor()
       0, postDistortionToneShapingFilter.get(), postDistortionToneShapingFilter->find_dynamic_pin("vout"));
   decimationFilter.set_input_port(0, &lowpassFilter, 0);
   DCFilter.set_input_port(0, &decimationFilter, 0);
-  lowHighToneControlFilter->set_input_port(lowHighToneControlFilter->find_input_pin("vin"), &DCFilter, 0);
-  sweepableMidToneControlFilter.set_input_port(
-      0, lowHighToneControlFilter.get(), lowHighToneControlFilter->find_dynamic_pin("vout"));
+  lowToneControlFilter.set_input_port(0, &DCFilter, 0);
+  highToneControlFilter.set_input_port(0, &lowToneControlFilter, 0);
+  sweepableMidToneControlFilter.set_input_port(0, &highToneControlFilter, 0);
   outFilter.set_input_port(0, &sweepableMidToneControlFilter, 0);
 
   lowpassFilter.set_cut_frequency(20000);
   lowpassFilter.set_order(6);
   DCFilter.set_cut_frequency(5);
+  lowToneControlFilter.set_cut_frequency(100);
+  lowToneControlFilter.set_Q(3.1);
+  highToneControlFilter.set_cut_frequency(10000); // To be checked
+  highToneControlFilter.set_Q(1);
+  sweepableMidToneControlFilter.set_Q(3.1); // To be checked manually
 }
 
 MT2AudioProcessor::~MT2AudioProcessor() = default;
@@ -125,7 +131,7 @@ void MT2AudioProcessor::setCurrentProgram(int index)
     if(index == 0)
     {
       const char* preset0
-          = "<MT2><PARAM id=\"distLevel\" value=\"1\" /><PARAM id=\"lowLevel\" value=\"0\" /><PARAM id=\"highLevel\" "
+          = "<MT2><PARAM id=\"distLevel\" value=\"0\" /><PARAM id=\"lowLevel\" value=\"0\" /><PARAM id=\"highLevel\" "
             "value=\"0\" /> <PARAM id=\"midLevel\" value=\"0\" /><PARAM id=\"midFreq\" value=\"1000\" /></MT2>";
       XmlDocument doc(preset0);
 
@@ -135,8 +141,9 @@ void MT2AudioProcessor::setCurrentProgram(int index)
     else if(index == 1)
     {
       const char* preset1
-          = "<MT2><PARAM id=\"distLevel\" value=\"99\" /><PARAM id=\"lowLevel\" value=\"19\" /><PARAM id=\"highLevel\" "
-            "value=\"19\" /> <PARAM id=\"midLevel\" value=\"15\" /><PARAM id=\"midFreq\" value=\"1000\" /></MT2>";
+          = "<MT2><PARAM id=\"distLevel\" value=\"100\" /><PARAM id=\"lowLevel\" value=\"20\" /><PARAM "
+            "id=\"highLevel\" "
+            "value=\"20\" /> <PARAM id=\"midLevel\" value=\"15\" /><PARAM id=\"midFreq\" value=\"1000\" /></MT2>";
       XmlDocument doc(preset1);
 
       auto el = doc.getDocumentElement();
@@ -191,8 +198,10 @@ void MT2AudioProcessor::prepareToPlay(double dbSampleRate, int samplesPerBlock)
     decimationFilter.set_output_sampling_rate(sampleRate);
     DCFilter.set_input_sampling_rate(sampleRate);
     DCFilter.set_output_sampling_rate(sampleRate);
-    lowHighToneControlFilter->set_input_sampling_rate(sampleRate);
-    lowHighToneControlFilter->set_output_sampling_rate(sampleRate);
+    lowToneControlFilter.set_input_sampling_rate(sampleRate);
+    lowToneControlFilter.set_output_sampling_rate(sampleRate);
+    highToneControlFilter.set_input_sampling_rate(sampleRate);
+    highToneControlFilter.set_output_sampling_rate(sampleRate);
     sweepableMidToneControlFilter.set_input_sampling_rate(sampleRate);
     sweepableMidToneControlFilter.set_output_sampling_rate(sampleRate);
     outFilter.set_input_sampling_rate(sampleRate);
@@ -234,17 +243,17 @@ void MT2AudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midi
   if(*parameters.getRawParameterValue("distLevel") != old_distLevel)
   {
     old_distLevel = *parameters.getRawParameterValue("distLevel");
-    distLevelFilter->set_parameter(0, old_distLevel * .99 / 100 + .1);
+    distLevelFilter->set_parameter(0, old_distLevel * .99 / 100 + .05);
   }
   if(*parameters.getRawParameterValue("lowLevel") != old_lowLevel)
   {
     old_lowLevel = *parameters.getRawParameterValue("lowLevel");
-    lowHighToneControlFilter->set_parameter(0, old_lowLevel * .99 / 40 + .5);
+    lowToneControlFilter.set_gain(std::exp(old_midLevel / 20));
   }
   if(*parameters.getRawParameterValue("highLevel") != old_highLevel)
   {
     old_highLevel = *parameters.getRawParameterValue("highLevel");
-    lowHighToneControlFilter->set_parameter(1, old_highLevel * .99 / 40 + .5);
+    highToneControlFilter.set_gain(std::exp(old_midLevel / 20));
   }
   if(*parameters.getRawParameterValue("midLevel") != old_midLevel)
   {

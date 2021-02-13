@@ -27,8 +27,6 @@
       <FILE id="TxwfYy" name="05-dist.cpp" compile="1" resource="0" file="Source/05-dist.cpp"/>
       <FILE id="DxhBNf" name="06-post-distortion-tone-shaping.cpp" compile="1"
             resource="0" file="Source/06-post-distortion-tone-shaping.cpp"/>
-      <FILE id="ayNky6" name="07-low-high-tone-control.cpp" compile="1" resource="0"
-            file="Source/07-low-high-tone-control.cpp"/>
       <FILE id="copDEO" name="static_elements.h" compile="0" resource="0"
             file="Source/static_elements.h"/>
       <FILE id="LX9XxX" name="PluginProcessor.cpp" compile="1" resource="0"
@@ -64,8 +62,7 @@
                        enablePluginBinaryCopyStep="1" stripLocalSymbols="1" fastMath="1"
                        headerPath="../../../MT2&#10;../../../../AudioTK&#10;../../../../AudioTK/3rdParty/gsl/include&#10;../../../../AudioTK/3rdParty/eigen&#10;../../../../../local/boost_1_75_0&#10;../../../../AudioTK-Modeling&#10;"
                        aaxBinaryLocation="$(HOME)/Library/Application Support/Avid/Audio/Plug-Ins/"
-                       osxSDK="10.15 SDK" osxCompatibility="10.9 SDK" osxArchitecture="64BitIntel"
-                       codeSigningIdentity="Brucher Matthieu"/>
+                       osxSDK="10.15 SDK" osxArchitecture="64BitIntel" codeSigningIdentity="Brucher Matthieu"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
