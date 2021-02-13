@@ -24,8 +24,8 @@ def main():
 
   FullVersionStr = ""
   for line in fileinput.input(scriptpath + "/JuceLibraryCode/JucePluginDefines.h",inplace=0):
-    if "#define JucePlugin_Version " in line:
-      FullVersionStr = line.lstrip("#define JucePlugin_Version ").strip()
+    if "JucePlugin_Version " in line:
+      FullVersionStr = line.split("JucePlugin_Version")[-1].strip()
     
   today = datetime.date.today()
   CFBundleGetInfoString = FullVersionStr + ", Copyright MatthieuBrucher, " + str(today.year)

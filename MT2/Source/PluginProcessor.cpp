@@ -36,6 +36,7 @@ MT2AudioProcessor::MT2AudioProcessor()
   , postDistortionToneShapingFilter(MT2::createStaticFilter_stage6())
   , lowpassFilter(1)
   , decimationFilter(1)
+  , DCFilter(1)
   , lowHighToneControlFilter(MT2::createStaticFilter_stage7())
   , sweepableMidToneControlFilter(1)
   , outFilter(nullptr, 1, 0, false)
@@ -64,7 +65,8 @@ MT2AudioProcessor::MT2AudioProcessor()
   lowpassFilter.set_input_port(
       0, postDistortionToneShapingFilter.get(), postDistortionToneShapingFilter->find_dynamic_pin("vout"));
   decimationFilter.set_input_port(0, &lowpassFilter, 0);
-  lowHighToneControlFilter->set_input_port(lowHighToneControlFilter->find_input_pin("vin"), &decimationFilter, 0);
+  DCFilter.set_input_port(0, &decimationFilter, 0);
+  lowHighToneControlFilter->set_input_port(lowHighToneControlFilter->find_input_pin("vin"), &DCFilter, 0);
   sweepableMidToneControlFilter.set_input_port(
       0, lowHighToneControlFilter.get(), lowHighToneControlFilter->find_dynamic_pin("vout"));
   outFilter.set_input_port(0, &sweepableMidToneControlFilter, 0);
@@ -186,6 +188,8 @@ void MT2AudioProcessor::prepareToPlay(double dbSampleRate, int samplesPerBlock)
     lowpassFilter.set_output_sampling_rate(sampleRate * OVERSAMPLING);
     decimationFilter.set_input_sampling_rate(sampleRate * OVERSAMPLING);
     decimationFilter.set_output_sampling_rate(sampleRate);
+    DCFilter.set_input_sampling_rate(sampleRate);
+    DCFilter.set_output_sampling_rate(sampleRate);
     lowHighToneControlFilter->set_input_sampling_rate(sampleRate);
     lowHighToneControlFilter->set_output_sampling_rate(sampleRate);
     sweepableMidToneControlFilter.set_input_sampling_rate(sampleRate);

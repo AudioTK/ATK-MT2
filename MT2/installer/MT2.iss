@@ -18,8 +18,6 @@ Name: "full"; Description: "Full installation"
 Name: "custom"; Description: "Custom installation"; Flags: iscustom
 
 [Components]
-Name: "vst2_32"; Description: "32-bit VST2 Plugin (.dll)"; Types: full custom;
-Name: "vst2_64"; Description: "64-bit VST2 Plugin (.dll)"; Types: full custom; Check: Is64BitInstallMode;
 Name: "vst3_32"; Description: "32-bit VST3 Plugin (.vst3)"; Types: full custom;
 Name: "vst3_64"; Description: "64-bit VST3 Plugin (.vst3)"; Types: full custom; Check: Is64BitInstallMode;
 ;Name: "aax_32"; Description: "32-bit AAX Plugin (.aaxplugin)"; Types: full custom;
@@ -27,9 +25,6 @@ Name: "vst3_64"; Description: "64-bit VST3 Plugin (.vst3)"; Types: full custom; 
 Name: "manual"; Description: "User guide"; Types: full custom; Flags: fixed
 
 [Files]
-Source: "..\Builds\VisualStudio2017\Win32\Release\VST\MT2.dll"; DestDir: {code:GetVST2Dir_32}; Components:vst2_32; Flags: ignoreversion;
-Source: "..\Builds\VisualStudio2017_x64\x64\Release\VST\MT2_x64.dll"; DestDir: {code:GetVST2Dir_64}; Check: Is64BitInstallMode; Components:vst2_64; Flags: ignoreversion;
-
 Source: "..\Builds\VisualStudio2017\Win32\Release\VST3\MT2.vst3"; DestDir: "{cf}\VST3\"; Check: not Is64BitInstallMode; Components:vst3_32; Flags: ignoreversion;
 Source: "..\Builds\VisualStudio2017\Win32\Release\VST3\MT2.vst3"; DestDir: "{cf32}\VST3\"; Check: Is64BitInstallMode; Components:vst3_32; Flags: ignoreversion;
 Source: "..\Builds\VisualStudio2017_x64\x64\Release\VST3\MT2_x64.vst3"; DestDir: "{cf64}\VST3\"; Check: Is64BitInstallMode; Components:vst3_64; Flags: ignoreversion;

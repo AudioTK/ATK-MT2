@@ -73,6 +73,7 @@ private:
   std::unique_ptr<ATK::ModellerFilter<double>> postDistortionToneShapingFilter;
   ATK::IIRFilter<ATK::ButterworthLowPassCoefficients<double>> lowpassFilter;
   ATK::DecimationFilter<double> decimationFilter;
+  ATK::SecondOrderSVFFilter<ATK::SecondOrderSVFLowPassCoefficients<double>> DCFilter;
   std::unique_ptr<ATK::ModellerFilter<double>> lowHighToneControlFilter;
   ATK::SecondOrderSVFFilter<ATK::SecondOrderSVFBellCoefficients<double>> sweepableMidToneControlFilter;
   ATK::OutPointerFilter<float> outFilter;
