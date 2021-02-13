@@ -1,4 +1,4 @@
-#include <../MT2/Source/static_elements.h>
+#include "../MT2/Source/static_elements.h"
 
 #include <ATK/Core/InPointerFilter.h>
 #include <ATK/Core/OutPointerFilter.h>
@@ -15,13 +15,8 @@
 #include <vector>
 
 constexpr gsl::index PROCESSSIZE = 4 * 1024 * 1024;
-constexpr size_t SAMPLING_RATE = 48000;
+constexpr size_t SAMPLING_RATE = 96000;
 constexpr size_t OVERSAMPLING = 8;
-
-extern "C"
-{
-  std::unique_ptr<ATK::ModellerFilter<double>> createStaticFilter();
-}
 
 int main(int argc, const char** argv)
 {
@@ -91,7 +86,10 @@ int main(int argc, const char** argv)
 
   distLevelFilter->set_parameter(0, 0.1);
 
-  outFilter.process(PROCESSSIZE);
+  for(gsl::index i = 0; i < PROCESSSIZE; i += 1024)
+  {
+    outFilter.process(1024);
+  }
 
   std::ofstream out(argv[1]);
   for(size_t i = 0; i < PROCESSSIZE; ++i)

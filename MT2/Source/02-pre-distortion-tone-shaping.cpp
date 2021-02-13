@@ -18,7 +18,7 @@ constexpr gsl::index MAX_ITERATION = 10;
 constexpr gsl::index MAX_ITERATION_STEADY_STATE{200};
 
 constexpr gsl::index INIT_WARMUP{10};
-constexpr double EPS{1e-8};
+constexpr double EPS{1e-6};
 constexpr double MAX_DELTA{1e-1};
 
 class StaticFilter: public ATK::ModellerFilter<double>

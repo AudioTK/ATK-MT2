@@ -1,8 +1,8 @@
 SRC_FILES := $(wildcard *.cir)
-CPP_FILES := $(patsubst %.cir,%.cpp,$(SRC_FILES))
-EXE_FILES := $(patsubst %.cir,%.exe,$(SRC_FILES))
-DAT_FILES := $(patsubst %.cir,%.dat,$(SRC_FILES))
-PNG_FILES := $(patsubst %.cir,%.png,$(SRC_FILES))
+CPP_FILES := $(patsubst %.cir,%.cpp,$(SRC_FILES)) 
+EXE_FILES := $(patsubst %.cpp,%.exe,$(CPP_FILES)) generate_full.exe
+DAT_FILES := $(patsubst %.exe,%.dat,$(EXE_FILES))
+PNG_FILES := $(patsubst %.exe,%.png,$(EXE_FILES))
 
 all: $(EXE_FILES) $(CPP_FILES) $(DAT_FILES) $(PNG_FILES)
 

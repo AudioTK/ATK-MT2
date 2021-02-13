@@ -10,7 +10,7 @@
 #include <vector>
 
 constexpr gsl::index PROCESSSIZE = 4 * 1024 * 1024;
-constexpr size_t SAMPLING_RATE = 48000;
+constexpr size_t SAMPLING_RATE = 96000;
 
 extern "C"
 {
@@ -43,7 +43,10 @@ int main(int argc, const char** argv)
   sink.set_input_sampling_rate(SAMPLING_RATE);
   sink.set_input_port(0, filter.get(), filter->find_dynamic_pin("vout"));
 
-  sink.process(PROCESSSIZE);
+  for(gsl::index i = 0; i < PROCESSSIZE; i += 1024)
+  {
+    sink.process(1024);
+  }
 
   std::ofstream out(argv[1]);
   for(size_t i = 0; i < PROCESSSIZE; ++i)

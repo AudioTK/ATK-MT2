@@ -18,7 +18,7 @@ constexpr gsl::index MAX_ITERATION = 10;
 constexpr gsl::index MAX_ITERATION_STEADY_STATE{200};
 
 constexpr gsl::index INIT_WARMUP{10};
-constexpr double EPS{1e-8};
+constexpr double EPS{1e-6};
 constexpr double MAX_DELTA{1e-1};
 
 class StaticFilter: public ATK::ModellerFilter<double>
@@ -31,8 +31,7 @@ class StaticFilter: public ATK::ModellerFilter<double>
   mutable Eigen::Matrix<DataType, 4, 1> dynamic_state{Eigen::Matrix<DataType, 4, 1>::Zero()};
   ATK::StaticCapacitor<DataType> c027{1e-05};
   ATK::StaticResistor<DataType> r033{2200};
-  ATK::StaticDiode<DataType, 1, 0> d003{1e-14, 1.24, 0.026};
-  ATK::StaticDiode<DataType, 1, 0> d004{1e-14, 1.24, 0.026};
+  ATK::StaticDiode<DataType, 1, 1> d003{1e-14, 1.24, 0.026};
   ATK::StaticResistor<DataType> r032{10000};
   ATK::StaticResistor<DataType> r031{4700};
   ATK::StaticCapacitor<DataType> c023{1.5e-08};
@@ -231,11 +230,10 @@ public:
 
     // Precomputes
     d003.precompute(static_state[0], dynamic_state[1]);
-    d004.precompute(dynamic_state[1], static_state[0]);
 
     Eigen::Matrix<DataType, 4, 1> eqs(Eigen::Matrix<DataType, 4, 1>::Zero());
     auto eq0 = -(steady_state ? 0 : c027.get_current(i0_, d0_)) + r033.get_current(d0_, d1_);
-    auto eq1 = -r033.get_current(d0_, d1_) - d003.get_current() + d004.get_current() + r032.get_current(d1_, d2_);
+    auto eq1 = -r033.get_current(d0_, d1_) - d003.get_current() + r032.get_current(d1_, d2_);
     auto eq2 = -r032.get_current(d1_, d2_) + r031.get_current(d2_, d3_);
     auto eq3 = -r031.get_current(d2_, d3_) + (steady_state ? 0 : c023.get_current(d3_, s0_));
     eqs << eq0, eq1, eq2, eq3;
@@ -251,7 +249,7 @@ public:
     auto jac0_2 = 0;
     auto jac0_3 = 0;
     auto jac1_0 = 0 + r033.get_gradient();
-    auto jac1_1 = 0 - r033.get_gradient() - d003.get_gradient() - d004.get_gradient() - r032.get_gradient();
+    auto jac1_1 = 0 - r033.get_gradient() - d003.get_gradient() - r032.get_gradient();
     auto jac1_2 = 0 + r032.get_gradient();
     auto jac1_3 = 0;
     auto jac2_0 = 0;
