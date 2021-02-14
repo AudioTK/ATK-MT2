@@ -140,10 +140,9 @@ void MT2AudioProcessor::setCurrentProgram(int index)
     }
     else if(index == 1)
     {
-      const char* preset1
-          = "<MT2><PARAM id=\"distLevel\" value=\"100\" /><PARAM id=\"lowLevel\" value=\"20\" /><PARAM "
-            "id=\"highLevel\" "
-            "value=\"20\" /> <PARAM id=\"midLevel\" value=\"15\" /><PARAM id=\"midFreq\" value=\"1000\" /></MT2>";
+      const char* preset1 = "<MT2><PARAM id=\"distLevel\" value=\"100\" /><PARAM id=\"lowLevel\" value=\"20\" /><PARAM "
+                            "id=\"highLevel\" value=\"20\" /> <PARAM id=\"midLevel\" value=\"15\" /><PARAM "
+                            "id=\"midFreq\" value=\"1000\" /></MT2>";
       XmlDocument doc(preset1);
 
       auto el = doc.getDocumentElement();
@@ -248,17 +247,17 @@ void MT2AudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midi
   if(*parameters.getRawParameterValue("lowLevel") != old_lowLevel)
   {
     old_lowLevel = *parameters.getRawParameterValue("lowLevel");
-    lowToneControlFilter.set_gain(std::exp(old_midLevel / 20));
+    lowToneControlFilter.set_gain(std::pow(10, old_midLevel / 20));
   }
   if(*parameters.getRawParameterValue("highLevel") != old_highLevel)
   {
     old_highLevel = *parameters.getRawParameterValue("highLevel");
-    highToneControlFilter.set_gain(std::exp(old_midLevel / 20));
+    highToneControlFilter.set_gain(std::pow(10, old_midLevel / 20));
   }
   if(*parameters.getRawParameterValue("midLevel") != old_midLevel)
   {
     old_midLevel = *parameters.getRawParameterValue("midLevel");
-    sweepableMidToneControlFilter.set_gain(std::exp(old_midLevel / 20));
+    sweepableMidToneControlFilter.set_gain(std::pow(10, old_midLevel / 20));
   }
   if(*parameters.getRawParameterValue("midFreq") != old_midFreq)
   {
