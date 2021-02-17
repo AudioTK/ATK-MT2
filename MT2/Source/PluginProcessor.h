@@ -73,7 +73,7 @@ private:
   std::unique_ptr<ATK::ModellerFilter<double>> postDistortionToneShapingFilter;
   ATK::IIRFilter<ATK::ButterworthLowPassCoefficients<double>> lowpassFilter;
   ATK::DecimationFilter<double> decimationFilter;
-  ATK::SecondOrderSVFFilter<ATK::SecondOrderSVFLowPassCoefficients<double>> DCFilter;
+  ATK::IIRFilter<ATK::ButterworthHighPassCoefficients<double>> DCFilter;
   ATK::SecondOrderSVFFilter<ATK::SecondOrderSVFBellCoefficients<double>> lowToneControlFilter;
   ATK::SecondOrderSVFFilter<ATK::SecondOrderSVFHighShelfCoefficients<double>> highToneControlFilter;
   ATK::SecondOrderSVFFilter<ATK::SecondOrderSVFBellCoefficients<double>> sweepableMidToneControlFilter;
@@ -87,7 +87,7 @@ private:
   float old_lowLevel{100};
   float old_highLevel{100};
   float old_midLevel{100};
-  float old_midFreq{0};
+  float old_midFreq{1};
   float old_lowQ{0};
   float old_highQ{0};
   float old_midQ{0};
