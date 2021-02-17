@@ -48,7 +48,10 @@ MT2AudioProcessor::MT2AudioProcessor()
             std::make_unique<juce::AudioParameterFloat>("lowLevel", "Low Freq Level", -20.0f, 20.0f, .0f),
             std::make_unique<juce::AudioParameterFloat>("highLevel", "High Freq Level", -20.0f, 20.0f, .0f),
             std::make_unique<juce::AudioParameterFloat>("midLevel", "Mid Freq Level", -15.f, 15.0f, .0f),
-            std::make_unique<juce::AudioParameterFloat>("midFreq", "Mid Freq", 240.f, 6300.f, 1000.f)})
+            std::make_unique<juce::AudioParameterFloat>("midFreq", "Mid Freq", 240.f, 6300.f, 1000.f),
+            std::make_unique<juce::AudioParameterFloat>("lowQ", "Low Q", 1.f, 4.f, 3.1f),
+            std::make_unique<juce::AudioParameterFloat>("highQ", "High Q", .1f, .5f, 0.25f),
+            std::make_unique<juce::AudioParameterFloat>("midQ", "MidQ", 240.f, 6300.f, 1000.f)})
 {
   highPassFilter->set_input_port(highPassFilter->find_input_pin("vin"), &inFilter, 0);
   oversamplingFilter.set_input_port(0, highPassFilter.get(), highPassFilter->find_dynamic_pin("vout"));
@@ -76,10 +79,7 @@ MT2AudioProcessor::MT2AudioProcessor()
   lowpassFilter.set_order(6);
   DCFilter.set_cut_frequency(5);
   lowToneControlFilter.set_cut_frequency(100);
-  lowToneControlFilter.set_Q(3.1);
-  highToneControlFilter.set_cut_frequency(10000); // To be checked
-  highToneControlFilter.set_Q(1);
-  sweepableMidToneControlFilter.set_Q(3.1); // To be checked manually
+  highToneControlFilter.set_cut_frequency(10000);
 }
 
 MT2AudioProcessor::~MT2AudioProcessor() = default;
@@ -247,22 +247,37 @@ void MT2AudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midi
   if(*parameters.getRawParameterValue("lowLevel") != old_lowLevel)
   {
     old_lowLevel = *parameters.getRawParameterValue("lowLevel");
-    lowToneControlFilter.set_gain(std::pow(10, old_midLevel / 20));
+    lowToneControlFilter.set_gain(std::pow(10, old_midLevel / 40));
   }
   if(*parameters.getRawParameterValue("highLevel") != old_highLevel)
   {
     old_highLevel = *parameters.getRawParameterValue("highLevel");
-    highToneControlFilter.set_gain(std::pow(10, old_midLevel / 20));
+    highToneControlFilter.set_gain(std::pow(10, old_midLevel / 40));
   }
   if(*parameters.getRawParameterValue("midLevel") != old_midLevel)
   {
     old_midLevel = *parameters.getRawParameterValue("midLevel");
-    sweepableMidToneControlFilter.set_gain(std::pow(10, old_midLevel / 20));
+    sweepableMidToneControlFilter.set_gain(std::pow(10, old_midLevel / 40));
   }
   if(*parameters.getRawParameterValue("midFreq") != old_midFreq)
   {
     old_midFreq = *parameters.getRawParameterValue("midFreq");
     sweepableMidToneControlFilter.set_cut_frequency(old_midFreq);
+  }
+  if(*parameters.getRawParameterValue("lowQ") != old_lowQ)
+  {
+    old_lowQ = *parameters.getRawParameterValue("lowQ");
+    lowToneControlFilter.set_Q(old_lowQ);
+  }
+  if(*parameters.getRawParameterValue("highQ") != old_highQ)
+  {
+    old_highQ = *parameters.getRawParameterValue("highQ");
+    highToneControlFilter.set_Q(old_highQ);
+  }
+  if(*parameters.getRawParameterValue("midQ") != old_midQ)
+  {
+    old_midQ = *parameters.getRawParameterValue("midQ");
+    sweepableMidToneControlFilter.set_Q(old_midQ);
   }
 
   const int totalNumInputChannels = getTotalNumInputChannels();

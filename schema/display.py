@@ -34,7 +34,7 @@ bode = []
 
 for i in range(pxx2.shape[1]):
   pos = np.argmax(pxx2[:, i])
-  bode.append((freq2[pos], pxx2[pos, i]))
+  bode.append((freq2[pos], pxx2[pos, i] / pxx1[pos, i]))
 
 data = np.array(bode).T
 plt.semilogx(data[0, :], 10 * np.log(data[1, :]))

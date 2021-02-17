@@ -21,6 +21,13 @@ Here is how the parameters interact with the plugin:
 * *Mid level* is the amount of mid frequency content
 * *Mid frequency* is the central frequency content
 
+There are a few advanced parameters that are not available on a regular MT2 pedal and thus are not accessible through the UI:
+
+[square]
+* *Low Q* changes the Q parameter of the low-tone bell filter
+* *High Q* changes the Q parameter of the high-tone shelf filter
+* *Mid Q* changes the Q parameter of the mid-tone bell filter
+
 == Bugs
 
 There shouldn’t be bugs, but you never know. Please contact me or leave a message on http://www.audio-tk.com[Audio ToolKit web site] or on http://blog.audio-tk.com/tags/mt2/[my blog, on the announcement page].

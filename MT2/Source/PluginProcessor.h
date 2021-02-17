@@ -88,4 +88,7 @@ private:
   float old_highLevel{100};
   float old_midLevel{100};
   float old_midFreq{0};
+  float old_lowQ{0};
+  float old_highQ{0};
+  float old_midQ{0};
 };
