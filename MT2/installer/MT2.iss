@@ -25,12 +25,12 @@ Name: "vst3_64"; Description: "64-bit VST3 Plugin (.vst3)"; Types: full custom; 
 Name: "manual"; Description: "User guide"; Types: full custom; Flags: fixed
 
 [Files]
-Source: "..\Builds\VisualStudio2017\Win32\Release\VST3\MT2.vst3"; DestDir: "{cf}\VST3\"; Check: not Is64BitInstallMode; Components:vst3_32; Flags: ignoreversion;
-Source: "..\Builds\VisualStudio2017\Win32\Release\VST3\MT2.vst3"; DestDir: "{cf32}\VST3\"; Check: Is64BitInstallMode; Components:vst3_32; Flags: ignoreversion;
-Source: "..\Builds\VisualStudio2017_x64\x64\Release\VST3\MT2_x64.vst3"; DestDir: "{cf64}\VST3\"; Check: Is64BitInstallMode; Components:vst3_64; Flags: ignoreversion;
+Source: "..\Builds\VisualStudio2019_32\Win32\Release\VST3\MT2.vst3"; DestDir: "{cf}\VST3\"; Check: not Is64BitInstallMode; Components:vst3_32; Flags: ignoreversion;
+Source: "..\Builds\VisualStudio2019_32\Win32\Release\VST3\MT2.vst3"; DestDir: "{cf32}\VST3\"; Check: Is64BitInstallMode; Components:vst3_32; Flags: ignoreversion;
+Source: "..\Builds\VisualStudio2019\x64\Release\VST3\MT2.vst3"; DestDir: "{cf64}\VST3\"; Check: Is64BitInstallMode; Components:vst3_64; Flags: ignoreversion;
 
-;Source: "..\Builds\VisualStudio2017\Win32\Release\aax\MT2.aaxplugin\*.*"; DestDir: "{cf32}\Avid\Audio\Plug-Ins\MT2.aaxplugin\"; Components:aax_32; Flags: ignoreversion recursesubdirs;
-;Source: "..\Builds\VisualStudio2017_x64\x64\Release\aax\MT2_x64.aaxplugin\*.*"; DestDir: "{cf}\Avid\Audio\Plug-Ins\MT2_x64.aaxplugin\"; Components:aax_64; Flags: ignoreversion recursesubdirs;
+;Source: "..\Builds\VisualStudio2019_32\Win32\Release\aax\MT2.aaxplugin\*.*"; DestDir: "{cf32}\Avid\Audio\Plug-Ins\MT2.aaxplugin\"; Components:aax_32; Flags: ignoreversion recursesubdirs;
+;Source: "..\Builds\VisualStudio2019\x64\Release\aax\MT2.aaxplugin\*.*"; DestDir: "{cf}\Avid\Audio\Plug-Ins\MT2_x64.aaxplugin\"; Components:aax_64; Flags: ignoreversion recursesubdirs;
 
 Source: "..\manual\MT2_manual.pdf"; DestDir: "{app}"
 Source: "changelog.txt"; DestDir: "{app}"
