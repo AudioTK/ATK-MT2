@@ -7,32 +7,33 @@
 #include <ATK/Modelling/StaticComponent/StaticCoil.h>
 #include <ATK/Modelling/StaticComponent/StaticCurrent.h>
 #include <ATK/Modelling/StaticComponent/StaticDiode.h>
+#include <ATK/Modelling/StaticComponent/StaticEbersMollTransistor.h>
+#include <ATK/Modelling/StaticComponent/StaticMOSFETTransistor.h>
 #include <ATK/Modelling/StaticComponent/StaticResistor.h>
-#include <ATK/Modelling/StaticComponent/StaticTransistor.h>
 
 #include <Eigen/Eigen>
 
 namespace
 {
-constexpr gsl::index MAX_ITERATION = 1;
-constexpr gsl::index MAX_ITERATION_STEADY_STATE = 1;
+constexpr gsl::index MAX_ITERATION{1};
+constexpr gsl::index MAX_ITERATION_STEADY_STATE{1};
 
 constexpr gsl::index INIT_WARMUP = 1;
-constexpr double EPS = 1e-8;
-constexpr double MAX_DELTA = 1e-1;
+constexpr double EPS{1e-8};
+constexpr double MAX_DELTA{1e-1};
 
 class StaticFilter: public ATK::ModellerFilter<double>
 {
   using typename ATK::TypedBaseFilter<double>::DataType;
-  bool initialized = false;
+  bool initialized{false};
 
   Eigen::Matrix<DataType, 1, 1> static_state{Eigen::Matrix<DataType, 1, 1>::Zero()};
   mutable Eigen::Matrix<DataType, 1, 1> input_state{Eigen::Matrix<DataType, 1, 1>::Zero()};
   mutable Eigen::Matrix<DataType, 2, 1> dynamic_state{Eigen::Matrix<DataType, 2, 1>::Zero()};
   Eigen::Matrix<DataType, 2, 2> inverse;
+  ATK::StaticResistor<DataType> r026{22000};
   ATK::StaticResistor<DataType> r028{22000};
   ATK::StaticCapacitor<DataType> c016{1e-11};
-  ATK::StaticResistor<DataType> r026{22000};
 
 public:
   StaticFilter(): ModellerFilter<DataType>(2, 1), inverse(2, 2)
@@ -156,8 +157,8 @@ public:
   void setup_inverse()
   {
     Eigen::Matrix<DataType, 2, 2> jacobian(Eigen::Matrix<DataType, 2, 2>::Zero());
-    auto jac0_0 = 0 - r028.get_gradient() - (steady_state ? 0 : c016.get_gradient()) - r026.get_gradient();
-    auto jac0_1 = 0 + (steady_state ? 0 : c016.get_gradient()) + r026.get_gradient();
+    auto jac0_0 = 0 - r026.get_gradient() - r028.get_gradient() - (steady_state ? 0 : c016.get_gradient());
+    auto jac0_1 = 0 + r026.get_gradient() + (steady_state ? 0 : c016.get_gradient());
     auto jac1_0 = 0 + -1;
     auto jac1_1 = 0;
     jacobian << jac0_0, jac0_1, jac1_0, jac1_1;
@@ -228,7 +229,7 @@ public:
 
     Eigen::Matrix<DataType, 2, 1> eqs(Eigen::Matrix<DataType, 2, 1>::Zero());
     auto eq0
-        = -r028.get_current(i0_, d0_) + (steady_state ? 0 : c016.get_current(d0_, d1_)) + r026.get_current(d0_, d1_);
+        = +r026.get_current(d0_, d1_) - r028.get_current(i0_, d0_) + (steady_state ? 0 : c016.get_current(d0_, d1_));
     auto eq1 = static_state[0] - dynamic_state[0];
     eqs << eq0, eq1;
 
@@ -241,7 +242,7 @@ public:
     Eigen::Matrix<DataType, 2, 1> delta = inverse * eqs;
 
     // Check if the update is big enough
-    if((delta.array().abs() < EPS).all())
+    if(delta.hasNaN() || (delta.array().abs() < EPS).all())
     {
       return true;
     }

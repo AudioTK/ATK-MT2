@@ -1,3 +1,7 @@
+export DYLD_LIBRARY_PATH=/Users/matthieu/local/lib:/Users/matthieu/local/boost_1_75_0/stage/lib
+
+CXXFLAGS= -I /Users/matthieu/local/lib -I /Users/matthieu/local/include -I /Users/matthieu/local/boost_1_75_0 -L /Users/matthieu/local/lib -L /Users/matthieu/local/lib
+
 SRC_FILES := $(wildcard *.cir)
 CPP_FILES := $(patsubst %.cir,%.cpp,$(SRC_FILES)) 
 EXE_FILES := $(patsubst %.cpp,%.exe,$(CPP_FILES)) generate_full.exe test_high_svf.exe test_mid_svf.exe
