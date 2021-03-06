@@ -259,13 +259,11 @@ public:
     return false;
   }
 };
-namespace MTB
-}
-
-extern "C"
-{
-  std::unique_ptr<ATK::ModellerFilter<double>> createStaticFilter()
-  {
-    return std::make_unique<StaticFilter>();
-}
 } // namespace
+namespace MTB
+{
+std::unique_ptr<ATK::ModellerFilter<double>> createStaticFilter_stage3()
+{
+  return std::make_unique<StaticFilter>();
+}
+} // namespace MTB
