@@ -1,4 +1,4 @@
-#include "../MT2/Source/static_elements.h"
+#include "../MTB/Source/static_elements.h"
 
 #include <ATK/Core/InPointerFilter.h>
 #include <ATK/Core/OutPointerFilter.h>
@@ -29,13 +29,13 @@ int main(int argc, const char** argv)
   }
 
   ATK::InPointerFilter<double> inFilter(input.data(), 1, PROCESSSIZE, false);
-  std::unique_ptr<ATK::ModellerFilter<double>> highPassFilter = MT2::createStaticFilter_stage1();
+  std::unique_ptr<ATK::ModellerFilter<double>> highPassFilter = MTB::createStaticFilter_stage1();
   ATK::OversamplingFilter<double, ATK::Oversampling6points5order_8<double>> oversamplingFilter;
-  std::unique_ptr<ATK::ModellerFilter<double>> preDistortionToneShapingFilter = MT2::createStaticFilter_stage2();
-  std::unique_ptr<ATK::ModellerFilter<double>> bandPassFilter = MT2::createStaticFilter_stage3();
-  std::unique_ptr<ATK::ModellerFilter<double>> distLevelFilter = MT2::createStaticFilter_stage4();
-  std::unique_ptr<ATK::ModellerFilter<double>> distFilter = MT2::createStaticFilter_stage5();
-  std::unique_ptr<ATK::ModellerFilter<double>> postDistortionToneShapingFilter = MT2::createStaticFilter_stage6();
+  std::unique_ptr<ATK::ModellerFilter<double>> preDistortionToneShapingFilter = MTB::createStaticFilter_stage2();
+  std::unique_ptr<ATK::ModellerFilter<double>> bandPassFilter = MTB::createStaticFilter_stage3();
+  std::unique_ptr<ATK::ModellerFilter<double>> distLevelFilter = MTB::createStaticFilter_stage4();
+  std::unique_ptr<ATK::ModellerFilter<double>> distFilter = MTB::createStaticFilter_stage5();
+  std::unique_ptr<ATK::ModellerFilter<double>> postDistortionToneShapingFilter = MTB::createStaticFilter_stage6();
   ATK::IIRFilter<ATK::ButterworthLowPassCoefficients<double>> lowpassFilter;
   ATK::DecimationFilter<double> decimationFilter;
   ATK::OutPointerFilter<double> outFilter(output.data(), 1, PROCESSSIZE, false);

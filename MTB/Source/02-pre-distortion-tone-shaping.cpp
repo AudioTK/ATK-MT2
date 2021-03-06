@@ -10,6 +10,7 @@
 #include <ATK/Modelling/StaticComponent/StaticEbersMollTransistor.h>
 #include <ATK/Modelling/StaticComponent/StaticMOSFETTransistor.h>
 #include <ATK/Modelling/StaticComponent/StaticResistor.h>
+#include <ATK/Modelling/StaticComponent/StaticResistorCapacitor.h>
 
 #include <Eigen/Eigen>
 
@@ -40,7 +41,7 @@ class StaticFilter: public ATK::ModellerFilter<double>
   ATK::StaticResistor<DataType> r053{47000};
   ATK::StaticCapacitor<DataType> c032{1e-10};
   ATK::StaticResistor<DataType> r046{2200};
-  ATK::StaticResistor<DataType> r044{220000};
+  ATK::StaticResistor<DataType> r044{22000};
   ATK::StaticCapacitor<DataType> c035{1e-08};
   ATK::StaticResistor<DataType> r054{10000};
   ATK::StaticCapacitor<DataType> c034{2.7e-08};

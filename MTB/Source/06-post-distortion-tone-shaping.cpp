@@ -10,6 +10,7 @@
 #include <ATK/Modelling/StaticComponent/StaticEbersMollTransistor.h>
 #include <ATK/Modelling/StaticComponent/StaticMOSFETTransistor.h>
 #include <ATK/Modelling/StaticComponent/StaticResistor.h>
+#include <ATK/Modelling/StaticComponent/StaticResistorCapacitor.h>
 
 #include <Eigen/Eigen>
 
@@ -60,7 +61,7 @@ class StaticFilter: public ATK::ModellerFilter<double>
 public:
   StaticFilter(): ModellerFilter<DataType>(8, 1)
   {
-    static_state << 0.000000, -4.500000, 4.500000;
+    static_state << 0.000000, 4.500000, -4.500000;
   }
 
   gsl::index get_nb_dynamic_pins() const override
@@ -128,9 +129,9 @@ public:
   {
     switch(identifier)
     {
-    case 1:
-      return "vdd";
     case 2:
+      return "vdd";
+    case 1:
       return "vcc";
     case 0:
       return "0";
@@ -277,12 +278,12 @@ public:
     auto d7_ = dynamic_state[7];
 
     // Precomputes
-    q008.precompute(dynamic_state[0], static_state[2], dynamic_state[1]);
-    q007.precompute(dynamic_state[4], static_state[2], dynamic_state[6]);
+    q008.precompute(dynamic_state[0], static_state[1], dynamic_state[1]);
+    q007.precompute(dynamic_state[4], static_state[1], dynamic_state[6]);
 
     Eigen::Matrix<DataType, 8, 1> eqs(Eigen::Matrix<DataType, 8, 1>::Zero());
     auto eq0 = -q008.ib() - r036.get_current(s0_, d0_) - (steady_state ? 0 : c025.get_current(d3_, d0_));
-    auto eq1 = +q008.ib() + q008.ic() + r037.get_current(d1_, s1_) - r034.get_current(d3_, d1_);
+    auto eq1 = +q008.ib() + q008.ic() + r037.get_current(d1_, s2_) - r034.get_current(d3_, d1_);
     auto eq2 = +(steady_state ? 0 : c024.get_current(d2_, d3_)) + (steady_state ? 0 : c020.get_current(d2_, d5_))
              + (steady_state ? 0 : c022.get_current(d2_, d7_)) + r030.get_current(d2_, d7_);
     auto eq3 = -(steady_state ? 0 : c024.get_current(d2_, d3_)) + (steady_state ? 0 : c025.get_current(d3_, d0_))
@@ -290,7 +291,7 @@ public:
     auto eq4 = -r025.get_current(s0_, d4_) - (steady_state ? 0 : c017.get_current(d5_, d4_)) - q007.ib();
     auto eq5 = +(steady_state ? 0 : c017.get_current(d5_, d4_)) + r027.get_current(d5_, d6_)
              - (steady_state ? 0 : c020.get_current(d2_, d5_));
-    auto eq6 = +r024.get_current(d6_, s1_) + q007.ib() + q007.ic() - r027.get_current(d5_, d6_);
+    auto eq6 = +r024.get_current(d6_, s2_) + q007.ib() + q007.ic() - r027.get_current(d5_, d6_);
     auto eq7 = input_state[0] - dynamic_state[2];
     eqs << eq0, eq1, eq2, eq3, eq4, eq5, eq6, eq7;
 

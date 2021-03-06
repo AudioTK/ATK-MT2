@@ -9,18 +9,18 @@ R030	2	Vout	3.3k
 C022	2	Vout	47p
 
 * Gyrator
-C020	2	3	0.022u
+C020	2	3	0.44u
 R027	3	4	470
 R024	4	Vdd	10k
-C017	3	5	0.047u
+C017	3	5	0.12u
 R025	0	5	470k
 Q007	Vcc	5	4	trans
 
 * Gyrator
-C024	2	6	0.015u
-R034	6	7	1k
+C024	2	6	0.15u
+R034	6	7	400
 R037	7	Vdd	10k
-C025	6	8	0.0015u
+C025	6	8	0.007u
 R036	0	8	47k
 Q008	Vcc	8	7	trans
 
