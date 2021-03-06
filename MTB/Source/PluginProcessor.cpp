@@ -48,7 +48,7 @@ MTBAudioProcessor::MTBAudioProcessor()
             std::make_unique<juce::AudioParameterFloat>("lowLevel", "Low Freq Level", -20.0f, 20.0f, .0f),
             std::make_unique<juce::AudioParameterFloat>("highLevel", "High Freq Level", -20.0f, 20.0f, .0f),
             std::make_unique<juce::AudioParameterFloat>("midLevel", "Mid Freq Level", -15.f, 15.0f, .0f),
-            std::make_unique<juce::AudioParameterFloat>("midFreq", "Mid Freq", 240.f, 6300.f, 1000.f),
+            std::make_unique<juce::AudioParameterFloat>("midFreq", "Mid Freq", 100.f, 1500.f, 500.f),
             std::make_unique<juce::AudioParameterFloat>("lowQ", "Low Q", 1.f, 4.f, 3.1f),
             std::make_unique<juce::AudioParameterFloat>("highQ", "High Q", .1f, .5f, 0.25f),
             std::make_unique<juce::AudioParameterFloat>("midQ", "MidQ", 0.5f, 4.f, 1.f)})
@@ -131,7 +131,7 @@ void MTBAudioProcessor::setCurrentProgram(int index)
     {
       const char* preset0
           = "<MTB><PARAM id=\"distLevel\" value=\"0\" /><PARAM id=\"lowLevel\" value=\"0\" /><PARAM id=\"highLevel\" "
-            "value=\"0\" /> <PARAM id=\"midLevel\" value=\"0\" /><PARAM id=\"midFreq\" value=\"1000\" /></MTB>";
+            "value=\"0\" /> <PARAM id=\"midLevel\" value=\"0\" /><PARAM id=\"midFreq\" value=\"500\" /></MTB>";
       XmlDocument doc(preset0);
 
       auto el = doc.getDocumentElement();
@@ -141,7 +141,7 @@ void MTBAudioProcessor::setCurrentProgram(int index)
     {
       const char* preset1 = "<MTB><PARAM id=\"distLevel\" value=\"100\" /><PARAM id=\"lowLevel\" value=\"20\" /><PARAM "
                             "id=\"highLevel\" value=\"20\" /> <PARAM id=\"midLevel\" value=\"15\" /><PARAM "
-                            "id=\"midFreq\" value=\"1000\" /></MTB>";
+                            "id=\"midFreq\" value=\"500\" /></MTB>";
       XmlDocument doc(preset1);
 
       auto el = doc.getDocumentElement();
@@ -205,8 +205,8 @@ void MTBAudioProcessor::prepareToPlay(double dbSampleRate, int samplesPerBlock)
     outFilter.set_input_sampling_rate(sampleRate);
     outFilter.set_output_sampling_rate(sampleRate);
 
-    lowToneControlFilter.set_cut_frequency(100);
-    highToneControlFilter.set_cut_frequency(10000);
+    lowToneControlFilter.set_cut_frequency(50);
+    highToneControlFilter.set_cut_frequency(2500);
   }
   outFilter.dryrun(samplesPerBlock);
 }
