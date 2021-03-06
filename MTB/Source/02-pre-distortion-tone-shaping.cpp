@@ -38,11 +38,11 @@ class StaticFilter: public ATK::ModellerFilter<double>
       1,
       100,
   };
-  ATK::StaticResistor<DataType> r053{47000};
+  ATK::StaticResistor<DataType> r053{56000};
   ATK::StaticCapacitor<DataType> c032{1e-10};
   ATK::StaticResistor<DataType> r046{4700};
   ATK::StaticResistor<DataType> r044{22000};
-  ATK::StaticCapacitor<DataType> c035{3e-08};
+  ATK::StaticCapacitor<DataType> c035{1e-08};
   ATK::StaticResistor<DataType> r054{10000};
   ATK::StaticCapacitor<DataType> c034{4.4e-08};
 

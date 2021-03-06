@@ -12,8 +12,8 @@ C032	2	Vout	100p
 C034	2	3	0.044u
 R046	3	4	4.7k
 R054	4	Vdd	10k
-C035	3	5	0.030u
-R053	0	5	47k
+C035	3	5	0.010u
+R053	0	5	56k
 Q010	Vcc	5	4	trans
 
 .model trans npn(vt=26e-3 is=1e-12 ne=1 br=1 bf=100)
