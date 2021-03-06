@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="KHQl4f" name="MTB" displaySplashScreen="1" reportAppUsage="1"
-              splashScreenColour="Dark" projectType="audioplug" version="1.0.0"
+              splashScreenColour="Dark" projectType="audioplug" version="1.0"
               bundleIdentifier="com.MatthieuBrucher.MTB" includeBinaryInAppConfig="1"
               buildVST="0" buildVST3="1" buildAU="1" buildAUv3="1" buildRTAS="0"
               buildAAX="1" buildStandalone="1" enableIAA="0" pluginName="MTB"

@@ -1,4 +1,4 @@
-= MTB 1.0.0
+= MTB 1.0
 Matthieu Brucher <matthieu.brucher@gmail.com>
 :doctype: book
 :source-highlighter: coderay
@@ -6,7 +6,7 @@ Matthieu Brucher <matthieu.brucher@gmail.com>
 // Uncomment next line to set page size (default is Letter)
 //:pdf-page-size: A4
 
-*MTB* is a free Open Source plugin emulating the MTB pedal.
+*MTB* is a free Open Source plugin Adapting the MT2 pedal for the bass guitar.
 
 image::MTB.png[GUI]
 

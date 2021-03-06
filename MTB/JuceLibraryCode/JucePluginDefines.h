@@ -38,7 +38,7 @@
 #  define JucePlugin_Enable_IAA 0
 #endif
 #ifndef JucePlugin_Name
-#  define JucePlugin_Name "MT2"
+#  define JucePlugin_Name "MTB"
 #endif
 #ifndef JucePlugin_Desc
 #  define JucePlugin_Desc ""
@@ -56,7 +56,7 @@
 #  define JucePlugin_ManufacturerCode 0x4d617442
 #endif
 #ifndef JucePlugin_PluginCode
-#  define JucePlugin_PluginCode 0x614d5432
+#  define JucePlugin_PluginCode 0x614d5442
 #endif
 #ifndef JucePlugin_IsSynth
 #  define JucePlugin_IsSynth 0
@@ -74,13 +74,13 @@
 #  define JucePlugin_EditorRequiresKeyboardFocus 0
 #endif
 #ifndef JucePlugin_Version
-#  define JucePlugin_Version 1.0.0
+#  define JucePlugin_Version 1.0
 #endif
 #ifndef JucePlugin_VersionCode
 #  define JucePlugin_VersionCode 0x10000
 #endif
 #ifndef JucePlugin_VersionString
-#  define JucePlugin_VersionString "1.0.0"
+#  define JucePlugin_VersionString "1.0"
 #endif
 #ifndef JucePlugin_VSTUniqueID
 #  define JucePlugin_VSTUniqueID JucePlugin_PluginCode
@@ -98,16 +98,16 @@
 #  define JucePlugin_AUSubType JucePlugin_PluginCode
 #endif
 #ifndef JucePlugin_AUExportPrefix
-#  define JucePlugin_AUExportPrefix MT2
+#  define JucePlugin_AUExportPrefix MTB
 #endif
 #ifndef JucePlugin_AUExportPrefixQuoted
-#  define JucePlugin_AUExportPrefixQuoted "MT2"
+#  define JucePlugin_AUExportPrefixQuoted "MTB"
 #endif
 #ifndef JucePlugin_AUManufacturerCode
 #  define JucePlugin_AUManufacturerCode JucePlugin_ManufacturerCode
 #endif
 #ifndef JucePlugin_CFBundleIdentifier
-#  define JucePlugin_CFBundleIdentifier com.MatthieuBrucher.MT2
+#  define JucePlugin_CFBundleIdentifier com.MatthieuBrucher.MTB
 #endif
 #ifndef JucePlugin_RTASCategory
 #  define JucePlugin_RTASCategory 0
@@ -125,7 +125,7 @@
 #  define JucePlugin_RTASDisableMultiMono 0
 #endif
 #ifndef JucePlugin_AAXIdentifier
-#  define JucePlugin_AAXIdentifier com.MatthieuBrucher.MT2
+#  define JucePlugin_AAXIdentifier com.MatthieuBrucher.MTB
 #endif
 #ifndef JucePlugin_AAXManufacturerCode
 #  define JucePlugin_AAXManufacturerCode JucePlugin_ManufacturerCode
@@ -149,7 +149,7 @@
 #  define JucePlugin_IAASubType JucePlugin_PluginCode
 #endif
 #ifndef JucePlugin_IAAName
-#  define JucePlugin_IAAName "MatthieuBrucher: MT2"
+#  define JucePlugin_IAAName "MatthieuBrucher: MTB"
 #endif
 #ifndef JucePlugin_VSTNumMidiInputs
 #  define JucePlugin_VSTNumMidiInputs 16
