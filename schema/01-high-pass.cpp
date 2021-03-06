@@ -7,31 +7,33 @@
 #include <ATK/Modelling/StaticComponent/StaticCoil.h>
 #include <ATK/Modelling/StaticComponent/StaticCurrent.h>
 #include <ATK/Modelling/StaticComponent/StaticDiode.h>
+#include <ATK/Modelling/StaticComponent/StaticEbersMollTransistor.h>
+#include <ATK/Modelling/StaticComponent/StaticMOSFETTransistor.h>
 #include <ATK/Modelling/StaticComponent/StaticResistor.h>
-#include <ATK/Modelling/StaticComponent/StaticTransistor.h>
+#include <ATK/Modelling/StaticComponent/StaticResistorCapacitor.h>
 
 #include <Eigen/Eigen>
 
 namespace
 {
-constexpr gsl::index MAX_ITERATION = 1;
-constexpr gsl::index MAX_ITERATION_STEADY_STATE = 1;
+constexpr gsl::index MAX_ITERATION{1};
+constexpr gsl::index MAX_ITERATION_STEADY_STATE{1};
 
 constexpr gsl::index INIT_WARMUP = 1;
-constexpr double EPS = 1e-8;
-constexpr double MAX_DELTA = 1e-1;
+constexpr double EPS{1e-8};
+constexpr double MAX_DELTA{1e-1};
 
 class StaticFilter: public ATK::ModellerFilter<double>
 {
   using typename ATK::TypedBaseFilter<double>::DataType;
-  bool initialized = false;
+  bool initialized{false};
 
   Eigen::Matrix<DataType, 1, 1> static_state{Eigen::Matrix<DataType, 1, 1>::Zero()};
   mutable Eigen::Matrix<DataType, 1, 1> input_state{Eigen::Matrix<DataType, 1, 1>::Zero()};
   mutable Eigen::Matrix<DataType, 1, 1> dynamic_state{Eigen::Matrix<DataType, 1, 1>::Zero()};
   Eigen::Matrix<DataType, 1, 1> inverse;
-  ATK::StaticResistor<DataType> r043{100000};
   ATK::StaticCapacitor<DataType> c033{1.5e-08};
+  ATK::StaticResistor<DataType> r043{100000};
 
 public:
   StaticFilter(): ModellerFilter<DataType>(1, 1), inverse(1, 1)
@@ -153,7 +155,7 @@ public:
   void setup_inverse()
   {
     Eigen::Matrix<DataType, 1, 1> jacobian(Eigen::Matrix<DataType, 1, 1>::Zero());
-    auto jac0_0 = 0 - r043.get_gradient() - (steady_state ? 0 : c033.get_gradient());
+    auto jac0_0 = 0 - (steady_state ? 0 : c033.get_gradient()) - r043.get_gradient();
     jacobian << jac0_0;
     inverse = jacobian.inverse();
   }
@@ -220,7 +222,7 @@ public:
     // Precomputes
 
     Eigen::Matrix<DataType, 1, 1> eqs(Eigen::Matrix<DataType, 1, 1>::Zero());
-    auto eq0 = -r043.get_current(s0_, d0_) - (steady_state ? 0 : c033.get_current(i0_, d0_));
+    auto eq0 = -(steady_state ? 0 : c033.get_current(i0_, d0_)) - r043.get_current(s0_, d0_);
     eqs << eq0;
 
     // Check if the equations have converged
@@ -232,7 +234,7 @@ public:
     Eigen::Matrix<DataType, 1, 1> delta = inverse * eqs;
 
     // Check if the update is big enough
-    if((delta.array().abs() < EPS).all())
+    if(delta.hasNaN() || (delta.array().abs() < EPS).all())
     {
       return true;
     }

@@ -7,8 +7,10 @@
 #include <ATK/Modelling/StaticComponent/StaticCoil.h>
 #include <ATK/Modelling/StaticComponent/StaticCurrent.h>
 #include <ATK/Modelling/StaticComponent/StaticDiode.h>
+#include <ATK/Modelling/StaticComponent/StaticEbersMollTransistor.h>
+#include <ATK/Modelling/StaticComponent/StaticMOSFETTransistor.h>
 #include <ATK/Modelling/StaticComponent/StaticResistor.h>
-#include <ATK/Modelling/StaticComponent/StaticTransistor.h>
+#include <ATK/Modelling/StaticComponent/StaticResistorCapacitor.h>
 
 #include <Eigen/Eigen>
 
@@ -30,11 +32,11 @@ class StaticFilter: public ATK::ModellerFilter<double>
   mutable Eigen::Matrix<DataType, 1, 1> input_state{Eigen::Matrix<DataType, 1, 1>::Zero()};
   mutable Eigen::Matrix<DataType, 5, 1> dynamic_state{Eigen::Matrix<DataType, 5, 1>::Zero()};
   Eigen::Matrix<DataType, 5, 5> inverse;
-  ATK::StaticResistor<DataType> r044{220000};
-  ATK::StaticCapacitor<DataType> c034{2.7e-08};
-  ATK::StaticResistor<DataType> r046{2200};
-  ATK::StaticCapacitor<DataType> c035{1e-08};
   ATK::StaticResistor<DataType> r053{47000};
+  ATK::StaticCapacitor<DataType> c035{1e-08};
+  ATK::StaticResistor<DataType> r044{220000};
+  ATK::StaticResistor<DataType> r046{2200};
+  ATK::StaticCapacitor<DataType> c034{2.7e-08};
 
 public:
   StaticFilter(): ModellerFilter<DataType>(5, 1), inverse(5, 5)
@@ -72,15 +74,15 @@ public:
     switch(identifier)
     {
     case 4:
-      return "5";
-    case 1:
-      return "vout";
-    case 3:
       return "4";
     case 2:
-      return "3";
-    case 0:
       return "2";
+    case 1:
+      return "3";
+    case 3:
+      return "vout";
+    case 0:
+      return "5";
     default:
       throw ATK::RuntimeError("No such pin");
     }
@@ -164,32 +166,32 @@ public:
   void setup_inverse()
   {
     Eigen::Matrix<DataType, 5, 5> jacobian(Eigen::Matrix<DataType, 5, 5>::Zero());
-    auto jac0_0 = 0 - r044.get_gradient() - (steady_state ? 0 : c034.get_gradient());
-    auto jac0_1 = 0 + r044.get_gradient();
-    auto jac0_2 = 0 + (steady_state ? 0 : c034.get_gradient());
+    auto jac0_0 = 0 - r053.get_gradient() - (steady_state ? 0 : c035.get_gradient());
+    auto jac0_1 = 0 + (steady_state ? 0 : c035.get_gradient());
+    auto jac0_2 = 0;
     auto jac0_3 = 0;
     auto jac0_4 = 0;
-    auto jac1_0 = 0 + -1;
-    auto jac1_1 = 0;
-    auto jac1_2 = 0;
+    auto jac1_0 = 0 + (steady_state ? 0 : c035.get_gradient());
+    auto jac1_1
+        = 0 - (steady_state ? 0 : c035.get_gradient()) - r046.get_gradient() - (steady_state ? 0 : c034.get_gradient());
+    auto jac1_2 = 0 + (steady_state ? 0 : c034.get_gradient());
     auto jac1_3 = 0;
-    auto jac1_4 = 0;
-    auto jac2_0 = 0 + (steady_state ? 0 : c034.get_gradient());
-    auto jac2_1 = 0;
-    auto jac2_2
-        = 0 - (steady_state ? 0 : c034.get_gradient()) - r046.get_gradient() - (steady_state ? 0 : c035.get_gradient());
-    auto jac2_3 = 0 + r046.get_gradient();
-    auto jac2_4 = 0 + (steady_state ? 0 : c035.get_gradient());
+    auto jac1_4 = 0 + r046.get_gradient();
+    auto jac2_0 = 0;
+    auto jac2_1 = 0 + (steady_state ? 0 : c034.get_gradient());
+    auto jac2_2 = 0 - r044.get_gradient() - (steady_state ? 0 : c034.get_gradient());
+    auto jac2_3 = 0 + r044.get_gradient();
+    auto jac2_4 = 0;
     auto jac3_0 = 0;
     auto jac3_1 = 0;
-    auto jac3_2 = 0;
-    auto jac3_3 = 0 + -1;
-    auto jac3_4 = 0 + 1;
-    auto jac4_0 = 0;
+    auto jac3_2 = 0 + -1;
+    auto jac3_3 = 0;
+    auto jac3_4 = 0;
+    auto jac4_0 = 0 + 1;
     auto jac4_1 = 0;
-    auto jac4_2 = 0 + (steady_state ? 0 : c035.get_gradient());
+    auto jac4_2 = 0;
     auto jac4_3 = 0;
-    auto jac4_4 = 0 - (steady_state ? 0 : c035.get_gradient()) - r053.get_gradient();
+    auto jac4_4 = 0 + -1;
     jacobian << jac0_0, jac0_1, jac0_2, jac0_3, jac0_4, jac1_0, jac1_1, jac1_2, jac1_3, jac1_4, jac2_0, jac2_1, jac2_2,
         jac2_3, jac2_4, jac3_0, jac3_1, jac3_2, jac3_3, jac3_4, jac4_0, jac4_1, jac4_2, jac4_3, jac4_4;
     inverse = jacobian.inverse();
@@ -198,14 +200,14 @@ public:
   void init()
   {
     // update_steady_state
-    c034.update_steady_state(1. / input_sampling_rate, dynamic_state[0], dynamic_state[2]);
-    c035.update_steady_state(1. / input_sampling_rate, dynamic_state[2], dynamic_state[4]);
+    c035.update_steady_state(1. / input_sampling_rate, dynamic_state[1], dynamic_state[0]);
+    c034.update_steady_state(1. / input_sampling_rate, dynamic_state[2], dynamic_state[1]);
 
     solve<true>();
 
     // update_steady_state
-    c034.update_steady_state(1. / input_sampling_rate, dynamic_state[0], dynamic_state[2]);
-    c035.update_steady_state(1. / input_sampling_rate, dynamic_state[2], dynamic_state[4]);
+    c035.update_steady_state(1. / input_sampling_rate, dynamic_state[1], dynamic_state[0]);
+    c034.update_steady_state(1. / input_sampling_rate, dynamic_state[2], dynamic_state[1]);
 
     initialized = true;
   }
@@ -222,8 +224,8 @@ public:
       solve<false>();
 
       // Update state
-      c034.update_state(dynamic_state[0], dynamic_state[2]);
-      c035.update_state(dynamic_state[2], dynamic_state[4]);
+      c035.update_state(dynamic_state[1], dynamic_state[0]);
+      c034.update_state(dynamic_state[2], dynamic_state[1]);
       for(gsl::index j = 0; j < nb_output_ports; ++j)
       {
         outputs[j][i] = dynamic_state[j];
@@ -264,12 +266,12 @@ public:
     // Precomputes
 
     Eigen::Matrix<DataType, 5, 1> eqs(Eigen::Matrix<DataType, 5, 1>::Zero());
-    auto eq0 = +r044.get_current(d0_, d1_) + (steady_state ? 0 : c034.get_current(d0_, d2_));
-    auto eq1 = input_state[0] - dynamic_state[0];
-    auto eq2 = -(steady_state ? 0 : c034.get_current(d0_, d2_)) + r046.get_current(d2_, d3_)
-             + (steady_state ? 0 : c035.get_current(d2_, d4_));
-    auto eq3 = dynamic_state[4] - dynamic_state[3];
-    auto eq4 = -(steady_state ? 0 : c035.get_current(d2_, d4_)) - r053.get_current(s0_, d4_);
+    auto eq0 = -r053.get_current(s0_, d0_) - (steady_state ? 0 : c035.get_current(d1_, d0_));
+    auto eq1 = +(steady_state ? 0 : c035.get_current(d1_, d0_)) + r046.get_current(d1_, d4_)
+             - (steady_state ? 0 : c034.get_current(d2_, d1_));
+    auto eq2 = +r044.get_current(d2_, d3_) + (steady_state ? 0 : c034.get_current(d2_, d1_));
+    auto eq3 = input_state[0] - dynamic_state[2];
+    auto eq4 = dynamic_state[0] - dynamic_state[4];
     eqs << eq0, eq1, eq2, eq3, eq4;
 
     // Check if the equations have converged
@@ -281,7 +283,7 @@ public:
     Eigen::Matrix<DataType, 5, 1> delta = inverse * eqs;
 
     // Check if the update is big enough
-    if((delta.array().abs() < EPS).all())
+    if(delta.hasNaN() || (delta.array().abs() < EPS).all())
     {
       return true;
     }

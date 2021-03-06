@@ -7,8 +7,10 @@
 #include <ATK/Modelling/StaticComponent/StaticCoil.h>
 #include <ATK/Modelling/StaticComponent/StaticCurrent.h>
 #include <ATK/Modelling/StaticComponent/StaticDiode.h>
+#include <ATK/Modelling/StaticComponent/StaticEbersMollTransistor.h>
+#include <ATK/Modelling/StaticComponent/StaticMOSFETTransistor.h>
 #include <ATK/Modelling/StaticComponent/StaticResistor.h>
-#include <ATK/Modelling/StaticComponent/StaticTransistor.h>
+#include <ATK/Modelling/StaticComponent/StaticResistorCapacitor.h>
 
 #include <Eigen/Eigen>
 
@@ -29,14 +31,20 @@ class StaticFilter: public ATK::ModellerFilter<double>
   Eigen::Matrix<DataType, 3, 1> static_state{Eigen::Matrix<DataType, 3, 1>::Zero()};
   mutable Eigen::Matrix<DataType, 1, 1> input_state{Eigen::Matrix<DataType, 1, 1>::Zero()};
   mutable Eigen::Matrix<DataType, 5, 1> dynamic_state{Eigen::Matrix<DataType, 5, 1>::Zero()};
-  ATK::StaticResistor<DataType> r044{220000};
-  ATK::StaticCapacitor<DataType> c032{1e-10};
-  ATK::StaticCapacitor<DataType> c034{2.7e-08};
-  ATK::StaticResistor<DataType> r046{2200};
-  ATK::StaticResistor<DataType> r054{10000};
-  ATK::StaticCapacitor<DataType> c035{1e-08};
+  ATK::StaticEBNPN<DataType> q010{
+      1e-12,
+      0.026,
+      1,
+      1,
+      100,
+  };
   ATK::StaticResistor<DataType> r053{47000};
-  ATK::StaticNPN<DataType> q010{1e-12, 0.026, 1, 1, 100};
+  ATK::StaticCapacitor<DataType> c032{1e-10};
+  ATK::StaticResistor<DataType> r046{2200};
+  ATK::StaticResistor<DataType> r044{220000};
+  ATK::StaticCapacitor<DataType> c035{1e-08};
+  ATK::StaticResistor<DataType> r054{10000};
+  ATK::StaticCapacitor<DataType> c034{2.7e-08};
 
 public:
   StaticFilter(): ModellerFilter<DataType>(5, 1)
@@ -74,15 +82,15 @@ public:
     switch(identifier)
     {
     case 4:
-      return "5";
-    case 1:
-      return "vout";
-    case 3:
-      return "4";
-    case 2:
       return "3";
-    case 0:
+    case 2:
       return "2";
+    case 1:
+      return "4";
+    case 3:
+      return "vout";
+    case 0:
+      return "5";
     default:
       throw ATK::RuntimeError("No such pin");
     }
@@ -174,16 +182,16 @@ public:
   void init()
   {
     // update_steady_state
-    c032.update_steady_state(1. / input_sampling_rate, dynamic_state[0], dynamic_state[1]);
-    c034.update_steady_state(1. / input_sampling_rate, dynamic_state[0], dynamic_state[2]);
-    c035.update_steady_state(1. / input_sampling_rate, dynamic_state[2], dynamic_state[4]);
+    c032.update_steady_state(1. / input_sampling_rate, dynamic_state[2], dynamic_state[3]);
+    c035.update_steady_state(1. / input_sampling_rate, dynamic_state[4], dynamic_state[0]);
+    c034.update_steady_state(1. / input_sampling_rate, dynamic_state[2], dynamic_state[4]);
 
     solve<true>();
 
     // update_steady_state
-    c032.update_steady_state(1. / input_sampling_rate, dynamic_state[0], dynamic_state[1]);
-    c034.update_steady_state(1. / input_sampling_rate, dynamic_state[0], dynamic_state[2]);
-    c035.update_steady_state(1. / input_sampling_rate, dynamic_state[2], dynamic_state[4]);
+    c032.update_steady_state(1. / input_sampling_rate, dynamic_state[2], dynamic_state[3]);
+    c035.update_steady_state(1. / input_sampling_rate, dynamic_state[4], dynamic_state[0]);
+    c034.update_steady_state(1. / input_sampling_rate, dynamic_state[2], dynamic_state[4]);
 
     initialized = true;
   }
@@ -200,9 +208,9 @@ public:
       solve<false>();
 
       // Update state
-      c032.update_state(dynamic_state[0], dynamic_state[1]);
-      c034.update_state(dynamic_state[0], dynamic_state[2]);
-      c035.update_state(dynamic_state[2], dynamic_state[4]);
+      c032.update_state(dynamic_state[2], dynamic_state[3]);
+      c035.update_state(dynamic_state[4], dynamic_state[0]);
+      c034.update_state(dynamic_state[2], dynamic_state[4]);
       for(gsl::index j = 0; j < nb_output_ports; ++j)
       {
         outputs[j][i] = dynamic_state[j];
@@ -243,16 +251,16 @@ public:
     auto d4_ = dynamic_state[4];
 
     // Precomputes
-    q010.precompute(dynamic_state[4], static_state[2], dynamic_state[3]);
+    q010.precompute(dynamic_state[0], static_state[2], dynamic_state[1]);
 
     Eigen::Matrix<DataType, 5, 1> eqs(Eigen::Matrix<DataType, 5, 1>::Zero());
-    auto eq0 = +r044.get_current(d0_, d1_) + (steady_state ? 0 : c032.get_current(d0_, d1_))
-             + (steady_state ? 0 : c034.get_current(d0_, d2_));
-    auto eq1 = input_state[0] - dynamic_state[0];
-    auto eq2 = -(steady_state ? 0 : c034.get_current(d0_, d2_)) + r046.get_current(d2_, d3_)
-             + (steady_state ? 0 : c035.get_current(d2_, d4_));
-    auto eq3 = -r046.get_current(d2_, d3_) + r054.get_current(d3_, s1_) + q010.ib() + q010.ic();
-    auto eq4 = -(steady_state ? 0 : c035.get_current(d2_, d4_)) - r053.get_current(s0_, d4_) - q010.ib();
+    auto eq0 = -q010.ib() - r053.get_current(s0_, d0_) - (steady_state ? 0 : c035.get_current(d4_, d0_));
+    auto eq1 = +q010.ib() + q010.ic() - r046.get_current(d4_, d1_) + r054.get_current(d1_, s1_);
+    auto eq2 = +(steady_state ? 0 : c032.get_current(d2_, d3_)) + r044.get_current(d2_, d3_)
+             + (steady_state ? 0 : c034.get_current(d2_, d4_));
+    auto eq3 = input_state[0] - dynamic_state[2];
+    auto eq4 = +r046.get_current(d4_, d1_) + (steady_state ? 0 : c035.get_current(d4_, d0_))
+             - (steady_state ? 0 : c034.get_current(d2_, d4_));
     eqs << eq0, eq1, eq2, eq3, eq4;
 
     // Check if the equations have converged
@@ -261,76 +269,102 @@ public:
       return true;
     }
 
-    auto jac0_0
-        = 0 - r044.get_gradient() - (steady_state ? 0 : c032.get_gradient()) - (steady_state ? 0 : c034.get_gradient());
-    auto jac0_1 = 0 + r044.get_gradient() + (steady_state ? 0 : c032.get_gradient());
-    auto jac0_2 = 0 + (steady_state ? 0 : c034.get_gradient());
+    auto jac0_0 = 0 - q010.ib_Vbc() - q010.ib_Vbe() - r053.get_gradient() - (steady_state ? 0 : c035.get_gradient());
+    auto jac0_1 = 0 + q010.ib_Vbe();
+    auto jac0_2 = 0;
     auto jac0_3 = 0;
-    auto jac0_4 = 0;
-    auto jac1_0 = 0 + -1;
-    auto jac1_1 = 0;
+    auto jac0_4 = 0 + (steady_state ? 0 : c035.get_gradient());
+    auto jac1_0 = 0 + q010.ib_Vbc() + q010.ib_Vbe() + q010.ic_Vbc() + q010.ic_Vbe();
+    auto jac1_1 = 0 - q010.ib_Vbe() - q010.ic_Vbe() - r046.get_gradient() - r054.get_gradient();
     auto jac1_2 = 0;
     auto jac1_3 = 0;
-    auto jac1_4 = 0;
-    auto jac2_0 = 0 + (steady_state ? 0 : c034.get_gradient());
+    auto jac1_4 = 0 + r046.get_gradient();
+    auto jac2_0 = 0;
     auto jac2_1 = 0;
     auto jac2_2
-        = 0 - (steady_state ? 0 : c034.get_gradient()) - r046.get_gradient() - (steady_state ? 0 : c035.get_gradient());
-    auto jac2_3 = 0 + r046.get_gradient();
-    auto jac2_4 = 0 + (steady_state ? 0 : c035.get_gradient());
+        = 0 - (steady_state ? 0 : c032.get_gradient()) - r044.get_gradient() - (steady_state ? 0 : c034.get_gradient());
+    auto jac2_3 = 0 + (steady_state ? 0 : c032.get_gradient()) + r044.get_gradient();
+    auto jac2_4 = 0 + (steady_state ? 0 : c034.get_gradient());
     auto jac3_0 = 0;
     auto jac3_1 = 0;
-    auto jac3_2 = 0 + r046.get_gradient();
-    auto jac3_3 = 0 - r046.get_gradient() - r054.get_gradient() - q010.ib_Vbe() - q010.ic_Vbe();
-    auto jac3_4 = 0 + q010.ib_Vbc() + q010.ib_Vbe() + q010.ic_Vbc() + q010.ic_Vbe();
-    auto jac4_0 = 0;
-    auto jac4_1 = 0;
-    auto jac4_2 = 0 + (steady_state ? 0 : c035.get_gradient());
-    auto jac4_3 = 0 + q010.ib_Vbe();
-    auto jac4_4 = 0 - (steady_state ? 0 : c035.get_gradient()) - r053.get_gradient() - q010.ib_Vbc() - q010.ib_Vbe();
-    auto det = (-1 * jac0_1
-                * (1 * jac1_0
-                    * (1 * jac2_2 * (1 * jac3_3 * jac4_4 + -1 * jac3_4 * jac4_3)
-                        + -1 * jac2_3 * (1 * jac3_2 * jac4_4 + -1 * jac3_4 * jac4_2)
-                        + 1 * jac2_4 * (1 * jac3_2 * jac4_3 + -1 * jac3_3 * jac4_2))));
+    auto jac3_2 = 0 + -1;
+    auto jac3_3 = 0;
+    auto jac3_4 = 0;
+    auto jac4_0 = 0 + (steady_state ? 0 : c035.get_gradient());
+    auto jac4_1 = 0 + r046.get_gradient();
+    auto jac4_2 = 0 + (steady_state ? 0 : c034.get_gradient());
+    auto jac4_3 = 0;
+    auto jac4_4
+        = 0 - r046.get_gradient() - (steady_state ? 0 : c035.get_gradient()) - (steady_state ? 0 : c034.get_gradient());
+    auto det = (1 * jac0_0
+                    * (1 * jac1_1 * (-1 * jac2_3 * (1 * jac3_2 * jac4_4))
+                        + -1 * jac1_4 * (1 * jac2_3 * (-1 * jac3_2 * jac4_1)))
+                + -1 * jac0_1
+                      * (1 * jac1_0 * (-1 * jac2_3 * (1 * jac3_2 * jac4_4))
+                          + -1 * jac1_4 * (1 * jac2_3 * (-1 * jac3_2 * jac4_0)))
+                + 1 * jac0_4
+                      * (1 * jac1_0 * (1 * jac2_3 * (-1 * jac3_2 * jac4_1))
+                          + -1 * jac1_1 * (1 * jac2_3 * (-1 * jac3_2 * jac4_0))));
     auto invdet = 1 / det;
-    auto com0_0 = 0;
-    auto com1_0 = -1
-                * (1 * jac1_0
-                    * (1 * jac2_2 * (1 * jac3_3 * jac4_4 + -1 * jac3_4 * jac4_3)
-                        + -1 * jac2_3 * (1 * jac3_2 * jac4_4 + -1 * jac3_4 * jac4_2)
-                        + 1 * jac2_4 * (1 * jac3_2 * jac4_3 + -1 * jac3_3 * jac4_2)));
+    auto com0_0
+        = (1 * jac1_1 * (-1 * jac2_3 * (1 * jac3_2 * jac4_4)) + -1 * jac1_4 * (1 * jac2_3 * (-1 * jac3_2 * jac4_1)));
+    auto com1_0
+        = -1
+        * (1 * jac1_0 * (-1 * jac2_3 * (1 * jac3_2 * jac4_4)) + -1 * jac1_4 * (1 * jac2_3 * (-1 * jac3_2 * jac4_0)));
     auto com2_0 = 0;
-    auto com3_0 = -1 * 0;
-    auto com4_0 = 0;
-    auto com0_1 = -1
-                * (1 * jac0_1
-                    * (1 * jac2_2 * (1 * jac3_3 * jac4_4 + -1 * jac3_4 * jac4_3)
-                        + -1 * jac2_3 * (1 * jac3_2 * jac4_4 + -1 * jac3_4 * jac4_2)
-                        + 1 * jac2_4 * (1 * jac3_2 * jac4_3 + -1 * jac3_3 * jac4_2)));
-    auto com1_1 = (1 * jac0_0
-                       * (1 * jac2_2 * (1 * jac3_3 * jac4_4 + -1 * jac3_4 * jac4_3)
-                           + -1 * jac2_3 * (1 * jac3_2 * jac4_4 + -1 * jac3_4 * jac4_2)
-                           + 1 * jac2_4 * (1 * jac3_2 * jac4_3 + -1 * jac3_3 * jac4_2))
-                   + -1 * jac0_2 * (1 * jac2_0 * (1 * jac3_3 * jac4_4 + -1 * jac3_4 * jac4_3)));
-    auto com2_1 = -1 * (-1 * jac0_1 * (1 * jac2_0 * (1 * jac3_3 * jac4_4 + -1 * jac3_4 * jac4_3)));
-    auto com3_1 = (-1 * jac0_1 * (1 * jac2_0 * (1 * jac3_2 * jac4_4 + -1 * jac3_4 * jac4_2)));
-    auto com4_1 = -1 * (-1 * jac0_1 * (1 * jac2_0 * (1 * jac3_2 * jac4_3 + -1 * jac3_3 * jac4_2)));
+    auto com3_0
+        = -1
+        * (1 * jac1_0 * (1 * jac2_4 * (-1 * jac3_2 * jac4_1)) + -1 * jac1_1 * (1 * jac2_4 * (-1 * jac3_2 * jac4_0)));
+    auto com4_0
+        = (1 * jac1_0 * (1 * jac2_3 * (-1 * jac3_2 * jac4_1)) + -1 * jac1_1 * (1 * jac2_3 * (-1 * jac3_2 * jac4_0)));
+    auto com0_1
+        = -1
+        * (1 * jac0_1 * (-1 * jac2_3 * (1 * jac3_2 * jac4_4)) + -1 * jac0_4 * (1 * jac2_3 * (-1 * jac3_2 * jac4_1)));
+    auto com1_1
+        = (1 * jac0_0 * (-1 * jac2_3 * (1 * jac3_2 * jac4_4)) + -1 * jac0_4 * (1 * jac2_3 * (-1 * jac3_2 * jac4_0)));
+    auto com2_1 = -1 * 0;
+    auto com3_1
+        = (1 * jac0_0 * (1 * jac2_4 * (-1 * jac3_2 * jac4_1)) + -1 * jac0_1 * (1 * jac2_4 * (-1 * jac3_2 * jac4_0)));
+    auto com4_1
+        = -1
+        * (1 * jac0_0 * (1 * jac2_3 * (-1 * jac3_2 * jac4_1)) + -1 * jac0_1 * (1 * jac2_3 * (-1 * jac3_2 * jac4_0)));
     auto com0_2 = 0;
-    auto com1_2 = -1 * (-1 * jac0_2 * (1 * jac1_0 * (1 * jac3_3 * jac4_4 + -1 * jac3_4 * jac4_3)));
-    auto com2_2 = (-1 * jac0_1 * (1 * jac1_0 * (1 * jac3_3 * jac4_4 + -1 * jac3_4 * jac4_3)));
-    auto com3_2 = -1 * (-1 * jac0_1 * (1 * jac1_0 * (1 * jac3_2 * jac4_4 + -1 * jac3_4 * jac4_2)));
-    auto com4_2 = (-1 * jac0_1 * (1 * jac1_0 * (1 * jac3_2 * jac4_3 + -1 * jac3_3 * jac4_2)));
-    auto com0_3 = -1 * 0;
-    auto com1_3 = (-1 * jac0_2 * (1 * jac1_0 * (1 * jac2_3 * jac4_4 + -1 * jac2_4 * jac4_3)));
-    auto com2_3 = -1 * (-1 * jac0_1 * (1 * jac1_0 * (1 * jac2_3 * jac4_4 + -1 * jac2_4 * jac4_3)));
-    auto com3_3 = (-1 * jac0_1 * (1 * jac1_0 * (1 * jac2_2 * jac4_4 + -1 * jac2_4 * jac4_2)));
-    auto com4_3 = -1 * (-1 * jac0_1 * (1 * jac1_0 * (1 * jac2_2 * jac4_3 + -1 * jac2_3 * jac4_2)));
-    auto com0_4 = 0;
-    auto com1_4 = -1 * (-1 * jac0_2 * (1 * jac1_0 * (1 * jac2_3 * jac3_4 + -1 * jac2_4 * jac3_3)));
-    auto com2_4 = (-1 * jac0_1 * (1 * jac1_0 * (1 * jac2_3 * jac3_4 + -1 * jac2_4 * jac3_3)));
-    auto com3_4 = -1 * (-1 * jac0_1 * (1 * jac1_0 * (1 * jac2_2 * jac3_4 + -1 * jac2_4 * jac3_2)));
-    auto com4_4 = (-1 * jac0_1 * (1 * jac1_0 * (1 * jac2_2 * jac3_3 + -1 * jac2_3 * jac3_2)));
+    auto com1_2 = -1 * 0;
+    auto com2_2 = 0;
+    auto com3_2 = -1
+                * (1 * jac0_0 * (1 * jac1_1 * (1 * jac3_2 * jac4_4) + 1 * jac1_4 * (-1 * jac3_2 * jac4_1))
+                    + -1 * jac0_1 * (1 * jac1_0 * (1 * jac3_2 * jac4_4) + 1 * jac1_4 * (-1 * jac3_2 * jac4_0))
+                    + -1 * jac0_4 * (1 * jac1_0 * (-1 * jac3_2 * jac4_1) + -1 * jac1_1 * (-1 * jac3_2 * jac4_0)));
+    auto com4_2 = 0;
+    auto com0_3
+        = -1
+        * (1 * jac0_1 * (1 * jac1_4 * (-1 * jac2_3 * jac4_2)) + -1 * jac0_4 * (1 * jac1_1 * (-1 * jac2_3 * jac4_2)));
+    auto com1_3
+        = (1 * jac0_0 * (1 * jac1_4 * (-1 * jac2_3 * jac4_2)) + -1 * jac0_4 * (1 * jac1_0 * (-1 * jac2_3 * jac4_2)));
+    auto com2_3 = -1
+                * (1 * jac0_0 * (1 * jac1_1 * (1 * jac2_3 * jac4_4) + 1 * jac1_4 * (-1 * jac2_3 * jac4_1))
+                    + -1 * jac0_1 * (1 * jac1_0 * (1 * jac2_3 * jac4_4) + 1 * jac1_4 * (-1 * jac2_3 * jac4_0))
+                    + -1 * jac0_4 * (1 * jac1_0 * (-1 * jac2_3 * jac4_1) + -1 * jac1_1 * (-1 * jac2_3 * jac4_0)));
+    auto com3_3
+        = (1 * jac0_0
+                * (1 * jac1_1 * (1 * jac2_2 * jac4_4 + -1 * jac2_4 * jac4_2) + 1 * jac1_4 * (-1 * jac2_2 * jac4_1))
+            + -1 * jac0_1
+                  * (1 * jac1_0 * (1 * jac2_2 * jac4_4 + -1 * jac2_4 * jac4_2) + 1 * jac1_4 * (-1 * jac2_2 * jac4_0))
+            + -1 * jac0_4 * (1 * jac1_0 * (-1 * jac2_2 * jac4_1) + -1 * jac1_1 * (-1 * jac2_2 * jac4_0)));
+    auto com4_3
+        = -1
+        * (1 * jac0_0 * (1 * jac1_1 * (-1 * jac2_3 * jac4_2)) + -1 * jac0_1 * (1 * jac1_0 * (-1 * jac2_3 * jac4_2)));
+    auto com0_4
+        = (1 * jac0_1 * (1 * jac1_4 * (-1 * jac2_3 * jac3_2)) + -1 * jac0_4 * (1 * jac1_1 * (-1 * jac2_3 * jac3_2)));
+    auto com1_4
+        = -1
+        * (1 * jac0_0 * (1 * jac1_4 * (-1 * jac2_3 * jac3_2)) + -1 * jac0_4 * (1 * jac1_0 * (-1 * jac2_3 * jac3_2)));
+    auto com2_4 = 0;
+    auto com3_4
+        = -1
+        * (1 * jac0_0 * (1 * jac1_1 * (-1 * jac2_4 * jac3_2)) + -1 * jac0_1 * (1 * jac1_0 * (-1 * jac2_4 * jac3_2)));
+    auto com4_4
+        = (1 * jac0_0 * (1 * jac1_1 * (-1 * jac2_3 * jac3_2)) + -1 * jac0_1 * (1 * jac1_0 * (-1 * jac2_3 * jac3_2)));
     Eigen::Matrix<DataType, 5, 5> cojacobian(Eigen::Matrix<DataType, 5, 5>::Zero());
 
     cojacobian << com0_0, com0_1, com0_2, com0_3, com0_4, com1_0, com1_1, com1_2, com1_3, com1_4, com2_0, com2_1,
