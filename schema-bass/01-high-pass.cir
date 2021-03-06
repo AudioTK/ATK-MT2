@@ -1,0 +1,6 @@
+*
+Vin	Vin	0	AC	1V
+*
+R043	0	Vout	100K
+C033	Vin	Vout	0.0022UF
+*
