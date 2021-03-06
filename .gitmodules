@@ -1,3 +1,6 @@
 [submodule "MT2/ATKJUCEComponents"]
 	path = MT2/ATKJUCEComponents
 	url = https://github.com/AudioTK/ATKJUCEComponents.git
+[submodule "MTB/ATKJUCEComponents"]
+	path = MTB/ATKJUCEComponents
+	url = https://github.com/AudioTK/ATKJUCEComponents.git
