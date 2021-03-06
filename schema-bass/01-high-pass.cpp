@@ -32,7 +32,7 @@ class StaticFilter: public ATK::ModellerFilter<double>
   mutable Eigen::Matrix<DataType, 1, 1> input_state{Eigen::Matrix<DataType, 1, 1>::Zero()};
   mutable Eigen::Matrix<DataType, 1, 1> dynamic_state{Eigen::Matrix<DataType, 1, 1>::Zero()};
   Eigen::Matrix<DataType, 1, 1> inverse;
-  ATK::StaticCapacitor<DataType> c033{2.2e-07};
+  ATK::StaticCapacitor<DataType> c033{4.4e-07};
   ATK::StaticResistor<DataType> r043{100000};
 
 public:

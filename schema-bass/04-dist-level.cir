@@ -3,7 +3,7 @@ Vin	Vin	0	AC	1
 *
 *	V-	V+	Vout
 Z3a	2	Vin	Vout
-C030	0	4	10uF
+C030	0	4	100uF
 R041	4	2	1k
 C028	Vout	2	47pF
 PR01	2	Vout	Vout	251k

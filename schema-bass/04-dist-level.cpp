@@ -34,7 +34,7 @@ class StaticFilter: public ATK::ModellerFilter<double>
   DataType pr01{251000};
   DataType pr01_trimmer{0};
   ATK::StaticCapacitor<DataType> c028{4.7e-11};
-  ATK::StaticResistorCapacitor<DataType> r041c030{1000, 1e-05};
+  ATK::StaticResistorCapacitor<DataType> r041c030{1000, 0.0001};
 
 public:
   StaticFilter(): ModellerFilter<DataType>(2, 1)

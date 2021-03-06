@@ -33,7 +33,7 @@ class StaticFilter: public ATK::ModellerFilter<double>
   mutable Eigen::Matrix<DataType, 2, 1> dynamic_state{Eigen::Matrix<DataType, 2, 1>::Zero()};
   Eigen::Matrix<DataType, 2, 2> inverse;
   ATK::StaticResistor<DataType> r040{100000};
-  ATK::StaticCapacitor<DataType> c031{4.7e-08};
+  ATK::StaticCapacitor<DataType> c031{4.7e-07};
   ATK::StaticResistor<DataType> r042{10000};
   ATK::StaticCapacitor<DataType> c029{3.3e-08};
   ATK::StaticResistor<DataType> r045{10000};
@@ -259,11 +259,13 @@ public:
     return false;
   }
 };
-} // namespace
 namespace MTB
-{
-std::unique_ptr<ATK::ModellerFilter<double>> createStaticFilter_stage3()
-{
-  return std::make_unique<StaticFilter>();
 }
-} // namespace MTB
+
+extern "C"
+{
+  std::unique_ptr<ATK::ModellerFilter<double>> createStaticFilter()
+  {
+    return std::make_unique<StaticFilter>();
+}
+} // namespace
