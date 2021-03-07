@@ -41,7 +41,7 @@ class StaticFilter: public ATK::ModellerFilter<double>
   ATK::StaticResistor<DataType> r036{47000};
   ATK::StaticCapacitor<DataType> c024{1.5e-07};
   ATK::StaticResistor<DataType> r025{470000};
-  ATK::StaticCapacitor<DataType> c017{1.2e-07};
+  ATK::StaticCapacitor<DataType> c017{4.7e-08};
   ATK::StaticResistor<DataType> r024{10000};
   ATK::StaticResistor<DataType> r037{10000};
   ATK::StaticEBNPN<DataType> q007{
@@ -53,7 +53,7 @@ class StaticFilter: public ATK::ModellerFilter<double>
   };
   ATK::StaticResistor<DataType> r027{470};
   ATK::StaticCapacitor<DataType> c025{7e-09};
-  ATK::StaticCapacitor<DataType> c020{4.4e-07};
+  ATK::StaticCapacitor<DataType> c020{2.2e-07};
   ATK::StaticCapacitor<DataType> c022{4.7e-11};
   ATK::StaticResistor<DataType> r030{3300};
   ATK::StaticResistor<DataType> r034{400};
