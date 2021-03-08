@@ -3,7 +3,7 @@
 <JUCERPROJECT id="KHQl4f" name="MTB" displaySplashScreen="1" reportAppUsage="1"
               splashScreenColour="Dark" projectType="audioplug" version="1.0"
               bundleIdentifier="com.MatthieuBrucher.MTB" includeBinaryInAppConfig="1"
-              buildVST="0" buildVST3="1" buildAU="1" buildAUv3="1" buildRTAS="0"
+              buildVST="0" buildVST3="1" buildAU="0" buildAUv3="1" buildRTAS="0"
               buildAAX="0" buildStandalone="1" enableIAA="0" pluginName="MTB"
               pluginDesc="" pluginManufacturer="MatthieuBrucher" pluginManufacturerCode="MatB"
               pluginCode="aMTB" pluginChannelConfigs="{1,1}" pluginIsSynth="0"
@@ -12,7 +12,7 @@
               aaxIdentifier="com.MatthieuBrucher.MTB" pluginAAXCategory="0"
               companyName="Matthieu Brucher" companyWebsite="http://www.audio-tk.com/"
               cppLanguageStandard="17" companyCopyright="Matthieu Brucher"
-              pluginFormats="buildAU,buildAUv3,buildStandalone,buildVST3" jucerFormatVersion="1"
+              pluginFormats="buildAUv3,buildStandalone,buildVST3" jucerFormatVersion="1"
               defines="JUCE_VST3_CAN_REPLACE_VST2=0">
   <MAINGROUP id="H9V4ut" name="MTB">
     <GROUP id="{65FEA80A-F647-1916-F1CE-08CA719AE1BE}" name="Source">
