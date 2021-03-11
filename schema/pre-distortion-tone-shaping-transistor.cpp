@@ -10,6 +10,7 @@
 #include <ATK/Modelling/StaticComponent/StaticEbersMollTransistor.h>
 #include <ATK/Modelling/StaticComponent/StaticMOSFETTransistor.h>
 #include <ATK/Modelling/StaticComponent/StaticResistor.h>
+#include <ATK/Modelling/StaticComponent/StaticResistorCapacitor.h>
 
 #include <Eigen/Eigen>
 

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="KHQl4f" name="MT2" displaySplashScreen="1" reportAppUsage="1"
-              splashScreenColour="Dark" projectType="audioplug" version="1.0.0"
+              splashScreenColour="Dark" projectType="audioplug" version="1.1"
               bundleIdentifier="com.MatthieuBrucher.MT2" includeBinaryInAppConfig="1"
-              buildVST="0" buildVST3="1" buildAU="1" buildAUv3="1" buildRTAS="0"
-              buildAAX="1" buildStandalone="1" enableIAA="0" pluginName="MT2"
+              buildVST="0" buildVST3="1" buildAU="0" buildAUv3="1" buildRTAS="0"
+              buildAAX="0" buildStandalone="1" enableIAA="0" pluginName="MT2"
               pluginDesc="" pluginManufacturer="MatthieuBrucher" pluginManufacturerCode="MatB"
               pluginCode="aMT2" pluginChannelConfigs="{1,1}" pluginIsSynth="0"
               pluginWantsMidiIn="0" pluginProducesMidiOut="0" pluginIsMidiEffectPlugin="0"
@@ -12,8 +12,8 @@
               aaxIdentifier="com.MatthieuBrucher.MT2" pluginAAXCategory="0"
               companyName="Matthieu Brucher" companyWebsite="http://www.audio-tk.com/"
               cppLanguageStandard="17" companyCopyright="Matthieu Brucher"
-              pluginFormats="buildAAX,buildAU,buildAUv3,buildStandalone,buildVST3"
-              jucerFormatVersion="1" defines="JUCE_VST3_CAN_REPLACE_VST2=0">
+              pluginFormats="buildAUv3,buildStandalone,buildVST3" jucerFormatVersion="1"
+              defines="JUCE_VST3_CAN_REPLACE_VST2=0&#10;ATK_NO_FFT">
   <MAINGROUP id="H9V4ut" name="MT2">
     <GROUP id="{65FEA80A-F647-1916-F1CE-08CA719AE1BE}" name="Source">
       <FILE id="MvMVFL" name="01-high-pass.cpp" compile="1" resource="0"
@@ -52,15 +52,14 @@
   </MAINGROUP>
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX" vst3Folder="../../../SDKs/VST3_SDK"
-               extraCompilerFlags="-msse4.2" extraDefs="ATK_NO_FFT" keepCustomXcodeSchemes="1"
-               aaxFolder="../../SDKs/AAX_SDK_2p3p0">
+               extraCompilerFlags="-msse4.2" keepCustomXcodeSchemes="1" aaxFolder="../../SDKs/AAX_SDK_2p3p0">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MT2" enablePluginBinaryCopyStep="1"
-                       headerPath="../../../MT2&#10;../../../../AudioTK&#10;../../../../AudioTK/3rdParty/gsl/include&#10;../../../../AudioTK/3rdParty/eigen&#10;../../../../../local/boost_1_75_0&#10;../../../../AudioTK-Modeling&#10;"
+                       headerPath="../../../MT2&#10;../../../../../AudioTK&#10;../../../../../AudioTK/3rdParty/gsl/include&#10;../../../../../AudioTK/3rdParty/eigen&#10;../../../../../../local/boost_1_75_0&#10;../../../../../AudioTK-Modeling&#10;"
                        osxArchitecture="64BitIntel" codeSigningIdentity="Brucher Matthieu"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MT2"
                        enablePluginBinaryCopyStep="1" stripLocalSymbols="1" fastMath="1"
-                       headerPath="../../../MT2&#10;../../../../AudioTK&#10;../../../../AudioTK/3rdParty/gsl/include&#10;../../../../AudioTK/3rdParty/eigen&#10;../../../../../local/boost_1_75_0&#10;../../../../AudioTK-Modeling&#10;"
+                       headerPath="../../../MT2&#10;../../../../../AudioTK&#10;../../../../../AudioTK/3rdParty/gsl/include&#10;../../../../../AudioTK/3rdParty/eigen&#10;../../../../../../local/boost_1_75_0&#10;../../../../../AudioTK-Modeling&#10;"
                        aaxBinaryLocation="$(HOME)/Library/Application Support/Avid/Audio/Plug-Ins/"
                        osxSDK="10.15 SDK" osxArchitecture="64BitIntel" codeSigningIdentity="Brucher Matthieu"/>
       </CONFIGURATIONS>
@@ -78,19 +77,17 @@
         <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_plugin_client" path="../../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_utils" path="../../JUCE/modules"/>
-        <MODULEPATH id="atk_core" path="../../AudioTK/modules/JUCE"/>
-        <MODULEPATH id="atk_utility" path="../../AudioTK/modules/JUCE"/>
-        <MODULEPATH id="atk_tools" path="../../AudioTK/modules/JUCE"/>
-        <MODULEPATH id="atk_modelling" path="../../AudioTK-Modeling/modules/JUCE"/>
-        <MODULEPATH id="atk_eq" path="../../AudioTK/modules/JUCE"/>
+        <MODULEPATH id="atk_core" path="../../../AudioTK/modules/JUCE"/>
+        <MODULEPATH id="atk_utility" path="../../../AudioTK/modules/JUCE"/>
+        <MODULEPATH id="atk_tools" path="../../../AudioTK/modules/JUCE"/>
+        <MODULEPATH id="atk_modelling" path="../../../AudioTK-Modeling/modules/JUCE"/>
+        <MODULEPATH id="atk_eq" path="../../../AudioTK/modules/JUCE"/>
       </MODULEPATHS>
     </XCODE_MAC>
     <VS2019 targetFolder="Builds/VisualStudio2019">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" headerPath="C:\Dev\ATK-MT2\MT2&#10;C:\Dev\AudioTK&#10;C:\Dev\AudioTK\3rdParty\gsl\include&#10;C:\Dev\AudioTK\3rdParty\eigen&#10;C:\Dev\boost_1_75_0&#10;C:\Dev\ATK-Modelling&#10;"
-                       defines="ATK_NO_FFT"/>
-        <CONFIGURATION isDebug="0" name="Release" headerPath="C:\Dev\ATK-MT2\MT2&#10;C:\Dev\AudioTK&#10;C:\Dev\AudioTK\3rdParty\gsl\include&#10;C:\Dev\AudioTK\3rdParty\eigen&#10;C:\Dev\boost_1_75_0&#10;C:\Dev\ATK-Modelling&#10;"
-                       defines="ATK_NO_FFT"/>
+        <CONFIGURATION isDebug="1" name="Debug" headerPath="C:\Dev\ATK-MT2\MT2&#10;C:\Dev\AudioTK&#10;C:\Dev\AudioTK\3rdParty\gsl\include&#10;C:\Dev\AudioTK\3rdParty\eigen&#10;C:\Dev\boost_1_75_0&#10;C:\Dev\ATK-Modelling&#10;"/>
+        <CONFIGURATION isDebug="0" name="Release" headerPath="C:\Dev\ATK-MT2\MT2&#10;C:\Dev\AudioTK&#10;C:\Dev\AudioTK\3rdParty\gsl\include&#10;C:\Dev\AudioTK\3rdParty\eigen&#10;C:\Dev\boost_1_75_0&#10;C:\Dev\ATK-Modelling&#10;"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_gui_extra"/>
@@ -116,9 +113,9 @@
     <VS2019 targetFolder="Builds/VisualStudio2019_32">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" headerPath="C:\Dev\ATK-MT2\MT2&#10;C:\Dev\AudioTK&#10;C:\Dev\AudioTK\3rdParty\gsl\include&#10;C:\Dev\AudioTK\3rdParty\eigen&#10;C:\Dev\boost_1_75_0&#10;C:\Dev\ATK-Modelling&#10;"
-                       defines="ATK_NO_FFT" winArchitecture="Win32"/>
+                       winArchitecture="Win32"/>
         <CONFIGURATION isDebug="0" name="Release" headerPath="C:\Dev\ATK-MT2\MT2&#10;C:\Dev\AudioTK&#10;C:\Dev\AudioTK\3rdParty\gsl\include&#10;C:\Dev\AudioTK\3rdParty\eigen&#10;C:\Dev\boost_1_75_0&#10;C:\Dev\ATK-Modelling&#10;"
-                       defines="ATK_NO_FFT" winArchitecture="Win32"/>
+                       winArchitecture="Win32"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_gui_extra"/>

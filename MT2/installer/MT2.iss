@@ -1,6 +1,6 @@
 [Setup]
 AppName=MT2
-AppVersion=1.0.0
+AppVersion=1.1
 
 
 DefaultDirName={pf}\MT2

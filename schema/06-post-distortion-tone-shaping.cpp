@@ -1336,10 +1336,11 @@ public:
   }
 };
 } // namespace
-namespace MT2
+
+extern "C"
 {
-std::unique_ptr<ATK::ModellerFilter<double>> createStaticFilter_stage6()
-{
-  return std::make_unique<StaticFilter>();
-}
-} // namespace MT2
+  std::unique_ptr<ATK::ModellerFilter<double>> createStaticFilter()
+  {
+    return std::make_unique<StaticFilter>();
+  }
+} // namespace

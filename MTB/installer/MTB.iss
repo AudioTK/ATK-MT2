@@ -1,6 +1,6 @@
 [Setup]
 AppName=MTB
-AppVersion=1.0
+AppVersion=1.0.0
 
 
 DefaultDirName={pf}\MTB
