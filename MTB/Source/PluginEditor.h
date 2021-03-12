@@ -20,25 +20,27 @@
 //==============================================================================
 /**
  */
-class MTBAudioProcessorEditor: public AudioProcessorEditor
+class MTBAudioProcessorEditor: public juce::AudioProcessorEditor
 {
 public:
-  MTBAudioProcessorEditor(MTBAudioProcessor& p, AudioProcessorValueTreeState& paramState);
-  ~MTBAudioProcessorEditor();
+  MTBAudioProcessorEditor(MTBAudioProcessor&, juce::AudioProcessorValueTreeState& paramState);
+  ~MTBAudioProcessorEditor() override;
 
   //==============================================================================
-  void paint(Graphics&) override;
+  void paint(juce::Graphics&) override;
   void resized() override;
 
 private:
   // This reference is provided as a quick way for your editor to
   // access the processor object that created it.
   MTBAudioProcessor& processor;
-  AudioProcessorValueTreeState& paramState;
+  juce::AudioProcessorValueTreeState& paramState;
 
   ATK::juce::DryWetFilterComponent distLevel;
   ATK::juce::VolumeFilterComponent lowLevel;
   ATK::juce::VolumeFilterComponent highLevel;
   ATK::juce::VolumeFilterComponent midLevel;
   ATK::juce::FrequencySelectorComponent midFreq;
+
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MTBAudioProcessorEditor)
 };

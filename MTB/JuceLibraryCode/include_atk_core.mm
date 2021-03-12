@@ -5,5 +5,4 @@
 
 */
 
-#include "AppConfig.h"
 #include <atk_core/atk_core.mm>

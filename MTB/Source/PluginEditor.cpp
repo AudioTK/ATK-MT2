@@ -12,7 +12,7 @@
 #include "PluginProcessor.h"
 
 //==============================================================================
-MTBAudioProcessorEditor::MTBAudioProcessorEditor(MTBAudioProcessor& p, AudioProcessorValueTreeState& paramState)
+MTBAudioProcessorEditor::MTBAudioProcessorEditor(MTBAudioProcessor& p, juce::AudioProcessorValueTreeState& paramState)
   : AudioProcessorEditor(&p)
   , processor(p)
   , paramState(paramState)
@@ -31,18 +31,18 @@ MTBAudioProcessorEditor::MTBAudioProcessorEditor(MTBAudioProcessor& p, AudioProc
 
   // Make sure that before the constructor has finished, you've set the
   // editor's size to whatever you need it to be.
-  setSize(600, 200);
+  setSize(800, 400);
 }
 
 MTBAudioProcessorEditor::~MTBAudioProcessorEditor() = default;
 
-void MTBAudioProcessorEditor::paint(Graphics& g)
+void MTBAudioProcessorEditor::paint(juce::Graphics& g)
 {
   // (Our component is opaque, so we must completely fill the background with a solid colour)
-  g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
-  g.setFont(Font("Times New Roman", 30.0f, Font::bold | Font::italic));
-  g.setColour(Colours::whitesmoke);
-  g.drawText("ATK MTB", 20, 10, 400, 30, Justification::verticallyCentred);
+  g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
+  g.setFont(juce::Font("Times New Roman", 30.0f, juce::Font::bold | juce::Font::italic));
+  g.setColour(juce::Colours::whitesmoke);
+  g.drawText("ATK MTB", 20, 10, 200, 30, juce::Justification::verticallyCentred);
 }
 
 void MTBAudioProcessorEditor::resized()

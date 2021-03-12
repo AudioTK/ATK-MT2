@@ -1,9 +1,7 @@
 /*
   ==============================================================================
 
-    This file was auto-generated!
-
-    It contains the basic framework code for a JUCE plugin processor.
+    This file contains the basic framework code for a JUCE plugin processor.
 
   ==============================================================================
 */
@@ -16,12 +14,12 @@
 MTBAudioProcessor::MTBAudioProcessor()
   :
 #ifndef JucePlugin_PreferredChannelConfigurations
-  AudioProcessor(BusesProperties()
+  juce::AudioProcessor(BusesProperties()
 #  if !JucePlugin_IsMidiEffect
 #    if !JucePlugin_IsSynth
-                     .withInput("Input", AudioChannelSet::stereo(), true)
+                           .withInput("Input", juce::AudioChannelSet::mono(), true)
 #    endif
-                     .withOutput("Output", AudioChannelSet::stereo(), true)
+                           .withOutput("Output", juce::AudioChannelSet::mono(), true)
 #  endif
           )
   ,
@@ -81,10 +79,12 @@ MTBAudioProcessor::MTBAudioProcessor()
   DCFilter.set_order(2);
 }
 
-MTBAudioProcessor::~MTBAudioProcessor() = default;
+MTBAudioProcessor::~MTBAudioProcessor()
+{
+}
 
 //==============================================================================
-const String MTBAudioProcessor::getName() const
+const juce::String MTBAudioProcessor::getName() const
 {
   return JucePlugin_Name;
 }
@@ -101,6 +101,15 @@ bool MTBAudioProcessor::acceptsMidi() const
 bool MTBAudioProcessor::producesMidi() const
 {
 #if JucePlugin_ProducesMidiOutput
+  return true;
+#else
+  return false;
+#endif
+}
+
+bool MTBAudioProcessor::isMidiEffect() const
+{
+#if JucePlugin_IsMidiEffect
   return true;
 #else
   return false;
@@ -150,7 +159,7 @@ void MTBAudioProcessor::setCurrentProgram(int index)
   }
 }
 
-const String MTBAudioProcessor::getProgramName(int index)
+const juce::String MTBAudioProcessor::getProgramName(int index)
 {
   if(index == 0)
   {
@@ -163,7 +172,7 @@ const String MTBAudioProcessor::getProgramName(int index)
   return {};
 }
 
-void MTBAudioProcessor::changeProgramName(int index, const String& newName)
+void MTBAudioProcessor::changeProgramName(int index, const juce::String& newName)
 {
 }
 
@@ -221,11 +230,15 @@ void MTBAudioProcessor::releaseResources()
 bool MTBAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
 {
 #  if JucePlugin_IsMidiEffect
-  ignoreUnused(layouts);
+  juce::ignoreUnused(layouts);
   return true;
 #  else
   // This is the place where you check if the layout is supported.
-  if(layouts.getMainOutputChannelSet() != AudioChannelSet::stereo())
+  // In this template code we only support mono or stereo.
+  // Some plugin hosts, such as certain GarageBand versions, will only
+  // load plugins that support stereo bus layouts.
+  if(layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
+      && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
     return false;
 
     // This checks if the input layout matches the output layout
@@ -239,7 +252,7 @@ bool MTBAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
 }
 #endif
 
-void MTBAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
+void MTBAudioProcessor::processBlock(juce::AudioSampleBuffer& buffer, juce::MidiBuffer& midiMessages)
 {
   if(*parameters.getRawParameterValue("distLevel") != old_distLevel)
   {
@@ -300,13 +313,13 @@ bool MTBAudioProcessor::hasEditor() const
   return true; // (change this to false if you choose to not supply an editor)
 }
 
-AudioProcessorEditor* MTBAudioProcessor::createEditor()
+juce::AudioProcessorEditor* MTBAudioProcessor::createEditor()
 {
   return new MTBAudioProcessorEditor(*this, parameters);
 }
 
 //==============================================================================
-void MTBAudioProcessor::getStateInformation(MemoryBlock& destData)
+void MTBAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
 {
   auto state = parameters.copyState();
   std::unique_ptr<juce::XmlElement> xml(state.createXml());
@@ -332,7 +345,7 @@ void MTBAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
 
 //==============================================================================
 // This creates new instances of the plugin..
-AudioProcessor* JUCE_CALLTYPE createPluginFilter()
+juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
   return new MTBAudioProcessor();
 }

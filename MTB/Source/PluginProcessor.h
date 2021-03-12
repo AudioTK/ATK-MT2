@@ -1,17 +1,14 @@
 /*
   ==============================================================================
 
-    This file was auto-generated!
-
-    It contains the basic framework code for a JUCE plugin processor.
+    This file contains the basic framework code for a JUCE plugin editor.
 
   ==============================================================================
 */
 
 #pragma once
 
-#include "JuceHeader.h"
-
+#include <JuceHeader.h>
 #include <atk_core/atk_core.h>
 #include <atk_eq/atk_eq.h>
 #include <atk_tools/atk_tools.h>
@@ -21,12 +18,13 @@
 //==============================================================================
 /**
  */
-class MTBAudioProcessor: public AudioProcessor
+
+class MTBAudioProcessor: public juce::AudioProcessor
 {
 public:
   //==============================================================================
   MTBAudioProcessor();
-  ~MTBAudioProcessor();
+  ~MTBAudioProcessor() override;
 
   //==============================================================================
   void prepareToPlay(double sampleRate, int samplesPerBlock) override;
@@ -36,15 +34,16 @@ public:
   bool isBusesLayoutSupported(const BusesLayout& layouts) const override;
 #endif
 
-  void processBlock(AudioSampleBuffer&, MidiBuffer&) override;
+  void processBlock(juce::AudioSampleBuffer&, juce::MidiBuffer&) override;
 
   //==============================================================================
-  AudioProcessorEditor* createEditor() override;
+  juce::AudioProcessorEditor* createEditor() override;
   bool hasEditor() const override;
 
   //==============================================================================
-  const String getName() const override;
+  const juce::String getName() const override;
 
+  bool isMidiEffect() const override;
   bool acceptsMidi() const override;
   bool producesMidi() const override;
   double getTailLengthSeconds() const override;
@@ -53,15 +52,16 @@ public:
   int getNumPrograms() override;
   int getCurrentProgram() override;
   void setCurrentProgram(int index) override;
-  const String getProgramName(int index) override;
-  void changeProgramName(int index, const String& newName) override;
+  const juce::String getProgramName(int index) override;
+  void changeProgramName(int index, const juce::String& newName) override;
 
   //==============================================================================
-  void getStateInformation(MemoryBlock& destData) override;
+  void getStateInformation(juce::MemoryBlock& destData) override;
   void setStateInformation(const void* data, int sizeInBytes) override;
 
 private:
-  static constexpr int OVERSAMPLING = 8;
+  //==============================================================================
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MTBAudioProcessor)
 
   ATK::InPointerFilter<float> inFilter;
   std::unique_ptr<ATK::ModellerFilter<double>> highPassFilter;
@@ -79,7 +79,7 @@ private:
   ATK::SecondOrderSVFFilter<ATK::SecondOrderSVFBellCoefficients<double>> sweepableMidToneControlFilter;
   ATK::OutPointerFilter<float> outFilter;
 
-  AudioProcessorValueTreeState parameters;
+  juce::AudioProcessorValueTreeState parameters;
   long sampleRate;
   int lastParameterSet;
 
