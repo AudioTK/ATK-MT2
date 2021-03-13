@@ -1,4 +1,4 @@
-= MT2 1.1
+= MT2 1.2
 Matthieu Brucher <matthieu.brucher@gmail.com>
 :doctype: book
 :source-highlighter: coderay

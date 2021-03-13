@@ -5,6 +5,9 @@
 BASEDIR=$(dirname $0)
 cd $BASEDIR
 
+#call python script to update version numbers
+./update_version.py
+
 #---------------------------------------------------------------------------------------------------------
 
 #variables
