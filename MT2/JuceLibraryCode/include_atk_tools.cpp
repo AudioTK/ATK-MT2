@@ -5,5 +5,4 @@
 
 */
 
-#include "AppConfig.h"
 #include <atk_tools/atk_tools.cpp>

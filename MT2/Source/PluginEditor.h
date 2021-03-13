@@ -13,32 +13,34 @@
 #include "JuceHeader.h"
 #include "PluginProcessor.h"
 
-#include <ATKJUCEComponents/EQ/FrequencySelector.h>
-#include <ATKJUCEComponents/Tools/DryWetFilter.h>
-#include <ATKJUCEComponents/Tools/VolumeFilter.h>
+#include <ATKJUCEComponents/JUCE/ImageLookAndFeel.h>
+#include <ATKJUCEComponents/JUCE/Slider.h>
 
 //==============================================================================
 /**
  */
-class MT2AudioProcessorEditor: public AudioProcessorEditor
+class MT2AudioProcessorEditor: public juce::AudioProcessorEditor
 {
 public:
-  MT2AudioProcessorEditor(MT2AudioProcessor& p, AudioProcessorValueTreeState& paramState);
+  MT2AudioProcessorEditor(MT2AudioProcessor& p, juce::AudioProcessorValueTreeState& paramState);
   ~MT2AudioProcessorEditor();
 
   //==============================================================================
-  void paint(Graphics&) override;
+  void paint(juce::Graphics&) override;
   void resized() override;
 
 private:
   // This reference is provided as a quick way for your editor to
   // access the processor object that created it.
   MT2AudioProcessor& processor;
-  AudioProcessorValueTreeState& paramState;
+  juce::AudioProcessorValueTreeState& paramState;
 
-  ATK::juce::DryWetFilterComponent distLevel;
-  ATK::juce::VolumeFilterComponent lowLevel;
-  ATK::juce::VolumeFilterComponent highLevel;
-  ATK::juce::VolumeFilterComponent midLevel;
-  ATK::juce::FrequencySelectorComponent midFreq;
+  ATK::juce::ImageLookAndFeel knob;
+  juce::Image bckgndImage;
+
+  ATK::juce::SliderComponent distLevel;
+  ATK::juce::SliderComponent lowLevel;
+  ATK::juce::SliderComponent highLevel;
+  ATK::juce::SliderComponent midLevel;
+  ATK::juce::SliderComponent midFreq;
 };

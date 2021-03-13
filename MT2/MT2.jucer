@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="KHQl4f" name="MT2" displaySplashScreen="1" reportAppUsage="1"
-              splashScreenColour="Dark" projectType="audioplug" version="1.1"
+              splashScreenColour="Dark" projectType="audioplug" version="1.2"
               bundleIdentifier="com.MatthieuBrucher.MT2" includeBinaryInAppConfig="1"
               buildVST="0" buildVST3="1" buildAU="0" buildAUv3="1" buildRTAS="0"
               buildAAX="0" buildStandalone="1" enableIAA="0" pluginName="MT2"
@@ -13,7 +13,8 @@
               companyName="Matthieu Brucher" companyWebsite="http://www.audio-tk.com/"
               cppLanguageStandard="17" companyCopyright="Matthieu Brucher"
               pluginFormats="buildAUv3,buildStandalone,buildVST3" jucerFormatVersion="1"
-              defines="JUCE_VST3_CAN_REPLACE_VST2=0&#10;ATK_NO_FFT">
+              defines="JUCE_VST3_CAN_REPLACE_VST2=0&#10;ATK_NO_FFT" useAppConfig="0"
+              addUsingNamespaceToJuceHeader="0">
   <MAINGROUP id="H9V4ut" name="MT2">
     <GROUP id="{65FEA80A-F647-1916-F1CE-08CA719AE1BE}" name="Source">
       <FILE id="MvMVFL" name="01-high-pass.cpp" compile="1" resource="0"
@@ -37,31 +38,28 @@
             file="Source/PluginEditor.cpp"/>
       <FILE id="Js7KLE" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
     </GROUP>
-    <FILE id="A5yQXn" name="DryWetFilter.cpp" compile="1" resource="0"
-          file="ATKJUCEComponents/Tools/DryWetFilter.cpp"/>
-    <FILE id="sEUn0M" name="DryWetFilter.h" compile="0" resource="0" file="ATKJUCEComponents/Tools/DryWetFilter.h"/>
-    <FILE id="iGkoMG" name="FrequencySelector.cpp" compile="1" resource="0"
-          file="ATKJUCEComponents/EQ/FrequencySelector.cpp"/>
-    <FILE id="MYc7sG" name="FrequencySelector.h" compile="0" resource="0"
-          file="ATKJUCEComponents/EQ/FrequencySelector.h"/>
-    <FILE id="tDRU5c" name="LookAndFeel.cpp" compile="1" resource="0" file="ATKJUCEComponents/JUCE/LookAndFeel.cpp"/>
-    <FILE id="UbNpqG" name="LookAndFeel.h" compile="0" resource="0" file="ATKJUCEComponents/JUCE/LookAndFeel.h"/>
-    <FILE id="pmwLzO" name="VolumeFilter.cpp" compile="1" resource="0"
-          file="ATKJUCEComponents/Tools/VolumeFilter.cpp"/>
-    <FILE id="s1WeL5" name="VolumeFilter.h" compile="0" resource="0" file="ATKJUCEComponents/Tools/VolumeFilter.h"/>
+    <FILE id="xBIMRF" name="background.jpg" compile="0" resource="1" file="resources/background.jpg"/>
+    <FILE id="gIBvzj" name="ImageLookAndFeel.cpp" compile="1" resource="0"
+          file="../ATKJUCEComponents/JUCE/ImageLookAndFeel.cpp"/>
+    <FILE id="ThLgEC" name="ImageLookAndFeel.h" compile="0" resource="0"
+          file="../ATKJUCEComponents/JUCE/ImageLookAndFeel.h"/>
+    <FILE id="whbcbT" name="KNB_Pitt_L.png" compile="0" resource="1" file="resources/KNB_Pitt_L.png"/>
+    <FILE id="iCwshp" name="Slider.cpp" compile="1" resource="0" file="../ATKJUCEComponents/JUCE/Slider.cpp"/>
+    <FILE id="yDVbgj" name="Slider.h" compile="0" resource="0" file="../ATKJUCEComponents/JUCE/Slider.h"/>
   </MAINGROUP>
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX" vst3Folder="../../../SDKs/VST3_SDK"
-               extraCompilerFlags="-msse4.2" keepCustomXcodeSchemes="1" aaxFolder="../../SDKs/AAX_SDK_2p3p0">
+               keepCustomXcodeSchemes="1" aaxFolder="../../SDKs/AAX_SDK_2p3p0"
+               xcodeValidArchs="arm64,arm64e,x86_64" extraCompilerFlags="-fno-aligned-allocation">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MT2" enablePluginBinaryCopyStep="1"
-                       headerPath="../../../MT2&#10;../../../../../AudioTK&#10;../../../../../AudioTK/3rdParty/gsl/include&#10;../../../../../AudioTK/3rdParty/eigen&#10;../../../../../../local/boost_1_75_0&#10;../../../../../AudioTK-Modeling&#10;"
+                       headerPath="../../../&#10;../../../../../AudioTK&#10;../../../../../AudioTK/3rdParty/gsl/include&#10;../../../../../AudioTK/3rdParty/eigen&#10;../../../../../../local/boost_1_75_0&#10;../../../../../AudioTK-Modeling&#10;"
                        osxArchitecture="64BitIntel" codeSigningIdentity="Brucher Matthieu"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MT2"
                        enablePluginBinaryCopyStep="1" stripLocalSymbols="1" fastMath="1"
-                       headerPath="../../../MT2&#10;../../../../../AudioTK&#10;../../../../../AudioTK/3rdParty/gsl/include&#10;../../../../../AudioTK/3rdParty/eigen&#10;../../../../../../local/boost_1_75_0&#10;../../../../../AudioTK-Modeling&#10;"
+                       headerPath="../../../&#10;../../../../../AudioTK&#10;../../../../../AudioTK/3rdParty/gsl/include&#10;../../../../../AudioTK/3rdParty/eigen&#10;../../../../../../local/boost_1_75_0&#10;../../../../../AudioTK-Modeling&#10;"
                        aaxBinaryLocation="$(HOME)/Library/Application Support/Avid/Audio/Plug-Ins/"
-                       osxSDK="10.15 SDK" osxArchitecture="64BitIntel" codeSigningIdentity="Brucher Matthieu"/>
+                       osxSDK="11.1 SDK" codeSigningIdentity="Brucher Matthieu" customXcodeFlags="OTHER_CODE_SIGN_FLAGS= --options=runtime --timestamp"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE/modules"/>

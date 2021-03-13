@@ -84,7 +84,7 @@ MT2AudioProcessor::MT2AudioProcessor()
 MT2AudioProcessor::~MT2AudioProcessor() = default;
 
 //==============================================================================
-const String MT2AudioProcessor::getName() const
+const juce::String MT2AudioProcessor::getName() const
 {
   return JucePlugin_Name;
 }
@@ -101,6 +101,15 @@ bool MT2AudioProcessor::acceptsMidi() const
 bool MT2AudioProcessor::producesMidi() const
 {
 #if JucePlugin_ProducesMidiOutput
+  return true;
+#else
+  return false;
+#endif
+}
+
+bool MT2AudioProcessor::isMidiEffect() const
+{
+#if JucePlugin_IsMidiEffect
   return true;
 #else
   return false;
@@ -132,25 +141,25 @@ void MT2AudioProcessor::setCurrentProgram(int index)
       const char* preset0
           = "<MT2><PARAM id=\"distLevel\" value=\"0\" /><PARAM id=\"lowLevel\" value=\"0\" /><PARAM id=\"highLevel\" "
             "value=\"0\" /> <PARAM id=\"midLevel\" value=\"0\" /><PARAM id=\"midFreq\" value=\"1000\" /></MT2>";
-      XmlDocument doc(preset0);
+      juce::XmlDocument doc(preset0);
 
       auto el = doc.getDocumentElement();
-      parameters.state = ValueTree::fromXml(*el);
+      parameters.state = juce::ValueTree::fromXml(*el);
     }
     else if(index == 1)
     {
       const char* preset1 = "<MT2><PARAM id=\"distLevel\" value=\"100\" /><PARAM id=\"lowLevel\" value=\"20\" /><PARAM "
                             "id=\"highLevel\" value=\"20\" /> <PARAM id=\"midLevel\" value=\"15\" /><PARAM "
                             "id=\"midFreq\" value=\"1000\" /></MT2>";
-      XmlDocument doc(preset1);
+      juce::XmlDocument doc(preset1);
 
       auto el = doc.getDocumentElement();
-      parameters.state = ValueTree::fromXml(*el);
+      parameters.state = juce::ValueTree::fromXml(*el);
     }
   }
 }
 
-const String MT2AudioProcessor::getProgramName(int index)
+const juce::String MT2AudioProcessor::getProgramName(int index)
 {
   if(index == 0)
   {
@@ -163,7 +172,7 @@ const String MT2AudioProcessor::getProgramName(int index)
   return {};
 }
 
-void MT2AudioProcessor::changeProgramName(int index, const String& newName)
+void MT2AudioProcessor::changeProgramName(int index, const juce::String& newName)
 {
 }
 
@@ -218,7 +227,7 @@ void MT2AudioProcessor::releaseResources()
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
-bool MT2AudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
+bool MT2AudioProcessor::isBusesLayoutSupported(const juce::BusesLayout& layouts) const
 {
 #  if JucePlugin_IsMidiEffect
   ignoreUnused(layouts);
@@ -239,7 +248,7 @@ bool MT2AudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
 }
 #endif
 
-void MT2AudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
+void MT2AudioProcessor::processBlock(juce::AudioSampleBuffer& buffer, juce::MidiBuffer& midiMessages)
 {
   if(*parameters.getRawParameterValue("distLevel") != old_distLevel)
   {
@@ -300,13 +309,13 @@ bool MT2AudioProcessor::hasEditor() const
   return true; // (change this to false if you choose to not supply an editor)
 }
 
-AudioProcessorEditor* MT2AudioProcessor::createEditor()
+juce::AudioProcessorEditor* MT2AudioProcessor::createEditor()
 {
   return new MT2AudioProcessorEditor(*this, parameters);
 }
 
 //==============================================================================
-void MT2AudioProcessor::getStateInformation(MemoryBlock& destData)
+void MT2AudioProcessor::getStateInformation(juce::MemoryBlock& destData)
 {
   auto state = parameters.copyState();
   std::unique_ptr<juce::XmlElement> xml(state.createXml());
@@ -332,7 +341,7 @@ void MT2AudioProcessor::setStateInformation(const void* data, int sizeInBytes)
 
 //==============================================================================
 // This creates new instances of the plugin..
-AudioProcessor* JUCE_CALLTYPE createPluginFilter()
+juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
   return new MT2AudioProcessor();
 }

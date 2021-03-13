@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include "AppConfig.h"
-
 #include <atk_core/atk_core.h>
 #include <atk_eq/atk_eq.h>
 #include <atk_modelling/atk_modelling.h>
@@ -33,6 +31,8 @@
 #include <juce_gui_basics/juce_gui_basics.h>
 #include <juce_gui_extra/juce_gui_extra.h>
 
+#include "BinaryData.h"
+
 #if defined(JUCE_PROJUCER_VERSION) && JUCE_PROJUCER_VERSION < JUCE_VERSION
 /** If you've hit this error then the version of the Projucer that was used to generate this project is
     older than the version of the JUCE modules being included. To fix this error, re-save your project
@@ -43,18 +43,12 @@
       "This project was last saved using an outdated version of the Projucer! Re-save this project with the latest version to fix this error."
 #endif
 
-#if !DONT_SET_USING_JUCE_NAMESPACE
-// If your code uses a lot of JUCE classes, then this will obviously save you
-// a lot of typing, but can be disabled by setting DONT_SET_USING_JUCE_NAMESPACE.
-using namespace juce;
-#endif
-
 #if !JUCE_DONT_DECLARE_PROJECTINFO
 namespace ProjectInfo
 {
 const char* const projectName = "MT2";
 const char* const companyName = "Matthieu Brucher";
-const char* const versionString = "1.1";
-const int versionNumber = 0x10100;
+const char* const versionString = "1.2";
+const int versionNumber = 0x10200;
 } // namespace ProjectInfo
 #endif

@@ -23,7 +23,7 @@ constexpr gsl::index INIT_WARMUP{10};
 constexpr double EPS{1e-8};
 constexpr double MAX_DELTA{1e-1};
 
-class StaticFilter: public ATK::ModellerFilter<double>
+class StaticFilter final: public ATK::ModellerFilter<double>
 {
   using typename ATK::TypedBaseFilter<double>::DataType;
   bool initialized{false};
@@ -63,6 +63,8 @@ public:
   {
     static_state << 0.000000, 4.500000, -4.500000;
   }
+
+  ~StaticFilter() override = default;
 
   gsl::index get_nb_dynamic_pins() const override
   {
