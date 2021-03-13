@@ -13,9 +13,8 @@
 #include "JuceHeader.h"
 #include "PluginProcessor.h"
 
-/*#include <ATKJUCEComponents/EQ/FrequencySelector.h>
-#include <ATKJUCEComponents/Tools/DryWetFilter.h>
-#include <ATKJUCEComponents/Tools/VolumeFilter.h>*/
+#include <ATKJUCEComponents/JUCE/ImageLookAndFeel.h>
+#include <ATKJUCEComponents/JUCE/Slider.h>
 
 //==============================================================================
 /**
@@ -36,20 +35,14 @@ private:
   MTBAudioProcessor& processor;
   juce::AudioProcessorValueTreeState& paramState;
 
-  /*ATK::juce::ImageLookAndFeel bigKnob;
-  ATK::juce::ImageLookAndFeel smallKnob;
-
-  ATK::juce::SliderComponent drive;
-  ATK::juce::SliderComponent tone;
-  ATK::juce::SliderComponent level;*/
-
+  ATK::juce::ImageLookAndFeel knob;
   juce::Image bckgndImage;
 
-  /*ATK::juce::DryWetFilterComponent distLevel;
-  ATK::juce::VolumeFilterComponent lowLevel;
-  ATK::juce::VolumeFilterComponent highLevel;
-  ATK::juce::VolumeFilterComponent midLevel;
-  ATK::juce::FrequencySelectorComponent midFreq;*/
+  ATK::juce::SliderComponent distLevel;
+  ATK::juce::SliderComponent lowLevel;
+  ATK::juce::SliderComponent highLevel;
+  ATK::juce::SliderComponent midLevel;
+  ATK::juce::SliderComponent midFreq;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MTBAudioProcessorEditor)
 };

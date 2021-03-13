@@ -43,6 +43,7 @@
           file="../ATKJUCEComponents/JUCE/ImageLookAndFeel.cpp"/>
     <FILE id="JQIyCq" name="ImageLookAndFeel.h" compile="0" resource="0"
           file="../ATKJUCEComponents/JUCE/ImageLookAndFeel.h"/>
+    <FILE id="H9acfW" name="KNB_Pitt_L.png" compile="0" resource="1" file="resources/KNB_Pitt_L.png"/>
     <FILE id="wnRNYw" name="Slider.cpp" compile="1" resource="0" file="../ATKJUCEComponents/JUCE/Slider.cpp"/>
     <FILE id="tbYNkj" name="Slider.h" compile="0" resource="0" file="../ATKJUCEComponents/JUCE/Slider.h"/>
   </MAINGROUP>
