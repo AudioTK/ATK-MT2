@@ -39,18 +39,12 @@
       <FILE id="Js7KLE" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
     </GROUP>
     <FILE id="NEAGjP" name="background.jpg" compile="0" resource="1" file="resources/background.jpg"/>
-    <FILE id="A5yQXn" name="DryWetFilter.cpp" compile="1" resource="0"
-          file="ATKJUCEComponents/Tools/DryWetFilter.cpp"/>
-    <FILE id="sEUn0M" name="DryWetFilter.h" compile="0" resource="0" file="ATKJUCEComponents/Tools/DryWetFilter.h"/>
-    <FILE id="iGkoMG" name="FrequencySelector.cpp" compile="1" resource="0"
-          file="ATKJUCEComponents/EQ/FrequencySelector.cpp"/>
-    <FILE id="MYc7sG" name="FrequencySelector.h" compile="0" resource="0"
-          file="ATKJUCEComponents/EQ/FrequencySelector.h"/>
-    <FILE id="tDRU5c" name="LookAndFeel.cpp" compile="1" resource="0" file="ATKJUCEComponents/JUCE/LookAndFeel.cpp"/>
-    <FILE id="UbNpqG" name="LookAndFeel.h" compile="0" resource="0" file="ATKJUCEComponents/JUCE/LookAndFeel.h"/>
-    <FILE id="pmwLzO" name="VolumeFilter.cpp" compile="1" resource="0"
-          file="ATKJUCEComponents/Tools/VolumeFilter.cpp"/>
-    <FILE id="s1WeL5" name="VolumeFilter.h" compile="0" resource="0" file="ATKJUCEComponents/Tools/VolumeFilter.h"/>
+    <FILE id="fkBzaw" name="ImageLookAndFeel.cpp" compile="1" resource="0"
+          file="../ATKJUCEComponents/JUCE/ImageLookAndFeel.cpp"/>
+    <FILE id="JQIyCq" name="ImageLookAndFeel.h" compile="0" resource="0"
+          file="../ATKJUCEComponents/JUCE/ImageLookAndFeel.h"/>
+    <FILE id="wnRNYw" name="Slider.cpp" compile="1" resource="0" file="../ATKJUCEComponents/JUCE/Slider.cpp"/>
+    <FILE id="tbYNkj" name="Slider.h" compile="0" resource="0" file="../ATKJUCEComponents/JUCE/Slider.h"/>
   </MAINGROUP>
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX" vst3Folder="../../../SDKs/VST3_SDK"
@@ -58,12 +52,12 @@
                xcodeValidArchs="arm64,arm64e,x86_64">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MTB" enablePluginBinaryCopyStep="1"
-                       headerPath="../../../MTB&#10;../../../../../AudioTK&#10;../../../../../AudioTK/3rdParty/gsl/include&#10;../../../../../AudioTK/3rdParty/eigen&#10;../../../../../../local/boost_1_75_0&#10;../../../../../AudioTK-Modeling&#10;"
+                       headerPath="../../../&#10;../../../../../AudioTK&#10;../../../../../AudioTK/3rdParty/gsl/include&#10;../../../../../AudioTK/3rdParty/eigen&#10;../../../../../../local/boost_1_75_0&#10;../../../../../AudioTK-Modeling&#10;"
                        osxArchitecture="64BitIntel" codeSigningIdentity="Brucher Matthieu"
                        osxSDK="11.1 SDK" osxCompatibility="10.14 SDK"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MTB"
                        enablePluginBinaryCopyStep="1" stripLocalSymbols="1" fastMath="1"
-                       headerPath="../../../MTB&#10;../../../../../AudioTK&#10;../../../../../AudioTK/3rdParty/gsl/include&#10;../../../../../AudioTK/3rdParty/eigen&#10;../../../../../../local/boost_1_75_0&#10;../../../../../AudioTK-Modeling&#10;"
+                       headerPath="../../../&#10;../../../../../AudioTK&#10;../../../../../AudioTK/3rdParty/gsl/include&#10;../../../../../AudioTK/3rdParty/eigen&#10;../../../../../../local/boost_1_75_0&#10;../../../../../AudioTK-Modeling&#10;"
                        aaxBinaryLocation="$(HOME)/Library/Application Support/Avid/Audio/Plug-Ins/"
                        osxSDK="11.1 SDK" osxArchitecture="64BitIntel" codeSigningIdentity="Brucher Matthieu"
                        osxCompatibility="10.14 SDK"/>

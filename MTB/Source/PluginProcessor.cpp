@@ -141,20 +141,20 @@ void MTBAudioProcessor::setCurrentProgram(int index)
       const char* preset0
           = "<MTB><PARAM id=\"distLevel\" value=\"0\" /><PARAM id=\"lowLevel\" value=\"0\" /><PARAM id=\"highLevel\" "
             "value=\"0\" /> <PARAM id=\"midLevel\" value=\"0\" /><PARAM id=\"midFreq\" value=\"500\" /></MTB>";
-      XmlDocument doc(preset0);
+      juce::XmlDocument doc(preset0);
 
       auto el = doc.getDocumentElement();
-      parameters.state = ValueTree::fromXml(*el);
+      parameters.state = juce::ValueTree::fromXml(*el);
     }
     else if(index == 1)
     {
       const char* preset1 = "<MTB><PARAM id=\"distLevel\" value=\"100\" /><PARAM id=\"lowLevel\" value=\"20\" /><PARAM "
                             "id=\"highLevel\" value=\"20\" /> <PARAM id=\"midLevel\" value=\"15\" /><PARAM "
                             "id=\"midFreq\" value=\"500\" /></MTB>";
-      XmlDocument doc(preset1);
+      juce::XmlDocument doc(preset1);
 
       auto el = doc.getDocumentElement();
-      parameters.state = ValueTree::fromXml(*el);
+      parameters.state = juce::ValueTree::fromXml(*el);
     }
   }
 }
