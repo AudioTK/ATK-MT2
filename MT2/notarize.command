@@ -17,8 +17,8 @@ PLUGIN_NAME=$(echo "${PLUGIN_NAME}" | tr -d '[:space:]')
 
 # work out the paths to the binaries
 
-PKG="installer/build-mac/$PLUGIN_NAME Installer.pkg"
+PKG="installer/$PLUGIN_NAME-mac.dmg"
 
-xcrun altool --notarize-app -f "${PKG}" --primary-bundle-id com.BUNDLE.pkg --username "matthieu.brucher@gmail.com" --password "$1"
+xcrun altool --notarize-app -f "${PKG}" --primary-bundle-id com.MatthieuBrucher.$PLUGIN_NAME.dmg --username "matthieu.brucher@gmail.com" --password "$1"
 
 echo "done"
