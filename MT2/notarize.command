@@ -19,6 +19,6 @@ PLUGIN_NAME=$(echo "${PLUGIN_NAME}" | tr -d '[:space:]')
 
 PKG="installer/$PLUGIN_NAME-mac.dmg"
 
-xcrun altool --notarize-app -f "${PKG}" --primary-bundle-id com.MatthieuBrucher.$PLUGIN_NAME.dmg --username "matthieu.brucher@gmail.com" --password "$1"
+xcrun altool --notarize-app -f "${PKG}" --primary-bundle-id com.MatthieuBrucher.$PLUGIN_NAME.dmg -u "matthieu.brucher@gmail.com" -p "@keychain:AC_PASSWORD"
 
 echo "done"
