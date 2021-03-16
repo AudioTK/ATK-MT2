@@ -17,7 +17,7 @@ PLUGIN_NAME=$(echo "${PLUGIN_NAME}" | tr -d '[:space:]')
 
 # work out the paths to the binaries
 
-PKG="installer/build-mac/$PLUGIN_NAME Installer.pkg"
+PKG="installer/$PLUGIN_NAME-mac.dmg"
 
 xcrun stapler staple "${PKG}"
 spctl -a -vvv -t install "${PKG}"

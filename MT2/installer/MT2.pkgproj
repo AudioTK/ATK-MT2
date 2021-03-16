@@ -773,26 +773,26 @@
 									<key>UID</key>
 									<integer>0</integer>
 								</dict>
-								<dict>
-									<key>CHILDREN</key>
-									<array>
+				<dict>
+					<key>CHILDREN</key>
+					<array>
 									</array>
-									<key>GID</key>
+							<key>GID</key>
 									<integer>0</integer>
-									<key>PATH</key>
+							<key>PATH</key>
 									<string>Documentation</string>
-									<key>PATH_TYPE</key>
-									<integer>0</integer>
-									<key>PERMISSIONS</key>
+							<key>PATH_TYPE</key>
+							<integer>0</integer>
+							<key>PERMISSIONS</key>
 									<integer>493</integer>
-									<key>TYPE</key>
-									<integer>1</integer>
-									<key>UID</key>
-									<integer>0</integer>
-								</dict>
-								<dict>
-									<key>CHILDREN</key>
-									<array>
+							<key>TYPE</key>
+							<integer>1</integer>
+							<key>UID</key>
+							<integer>0</integer>
+						</dict>
+						<dict>
+							<key>CHILDREN</key>
+							<array>
 									</array>
 									<key>GID</key>
 									<integer>0</integer>
@@ -1097,6 +1097,43 @@
 									<integer>0</integer>
 								</dict>
 							</array>
+									<key>GID</key>
+									<integer>0</integer>
+									<key>PATH</key>
+							<string>Library</string>
+									<key>PATH_TYPE</key>
+									<integer>0</integer>
+									<key>PERMISSIONS</key>
+									<integer>493</integer>
+									<key>TYPE</key>
+									<integer>1</integer>
+									<key>UID</key>
+									<integer>0</integer>
+								</dict>
+								<dict>
+									<key>CHILDREN</key>
+							<array>
+								<dict>
+									<key>CHILDREN</key>
+									<array>
+										<dict>
+											<key>CHILDREN</key>
+											<array>
+											</array>
+									<key>GID</key>
+									<integer>0</integer>
+									<key>PATH</key>
+											<string>Extensions</string>
+									<key>PATH_TYPE</key>
+									<integer>0</integer>
+									<key>PERMISSIONS</key>
+									<integer>493</integer>
+									<key>TYPE</key>
+									<integer>1</integer>
+									<key>UID</key>
+									<integer>0</integer>
+								</dict>
+							</array>
 							<key>GID</key>
 							<integer>0</integer>
 							<key>PATH</key>
@@ -1110,43 +1147,6 @@
 							<key>UID</key>
 							<integer>0</integer>
 						</dict>
-						<dict>
-							<key>CHILDREN</key>
-							<array>
-								<dict>
-									<key>CHILDREN</key>
-									<array>
-										<dict>
-											<key>CHILDREN</key>
-											<array>
-											</array>
-											<key>GID</key>
-											<integer>0</integer>
-											<key>PATH</key>
-											<string>Extensions</string>
-											<key>PATH_TYPE</key>
-											<integer>0</integer>
-											<key>PERMISSIONS</key>
-											<integer>493</integer>
-											<key>TYPE</key>
-											<integer>1</integer>
-											<key>UID</key>
-											<integer>0</integer>
-										</dict>
-									</array>
-									<key>GID</key>
-									<integer>0</integer>
-									<key>PATH</key>
-									<string>Library</string>
-									<key>PATH_TYPE</key>
-									<integer>0</integer>
-									<key>PERMISSIONS</key>
-									<integer>493</integer>
-									<key>TYPE</key>
-									<integer>1</integer>
-									<key>UID</key>
-									<integer>0</integer>
-								</dict>
 							</array>
 							<key>GID</key>
 							<integer>0</integer>
@@ -1286,13 +1286,6 @@
 					<dict>
 						<key>ALIGNMENT</key>
 						<integer>2</integer>
-						<key>BACKGROUND_PATH</key>
-						<dict>
-							<key>PATH</key>
-							<string>MT2-installer-bg.png</string>
-							<key>PATH_TYPE</key>
-							<integer>1</integer>
-						</dict>
 						<key>CUSTOM</key>
 						<true/>
 						<key>LAYOUT_DIRECTION</key>
@@ -1304,13 +1297,6 @@
 					<dict>
 						<key>ALIGNMENT</key>
 						<integer>2</integer>
-						<key>BACKGROUND_PATH</key>
-						<dict>
-							<key>PATH</key>
-							<string>MT2-installer-bg.png</string>
-							<key>PATH_TYPE</key>
-							<integer>1</integer>
-						</dict>
 						<key>CUSTOM</key>
 						<true/>
 						<key>LAYOUT_DIRECTION</key>
@@ -1318,13 +1304,6 @@
 						<key>SCALING</key>
 						<integer>0</integer>
 					</dict>
-				</dict>
-				<key>BACKGROUND_PATH</key>
-				<dict>
-					<key>PATH</key>
-					<string>MT2-installer-bg.png</string>
-					<key>PATH_TYPE</key>
-					<integer>1</integer>
 				</dict>
 				<key>CUSTOM</key>
 				<true/>
@@ -1639,13 +1618,29 @@
 							<key>TYPE</key>
 							<integer>1</integer>
 						</dict>
+						<dict>
+							<key>REGULAR_EXPRESSION</key>
+							<false/>
+							<key>STRING</key>
+							<string>.git</string>
+							<key>TYPE</key>
+							<integer>1</integer>
+						</dict>
+						<dict>
+							<key>REGULAR_EXPRESSION</key>
+							<false/>
+							<key>STRING</key>
+							<string>.gitignore</string>
+							<key>TYPE</key>
+							<integer>0</integer>
+						</dict>
 					</array>
 					<key>PROTECTED</key>
 					<true/>
 					<key>PROXY_NAME</key>
 					<string>Remove SCM metadata</string>
 					<key>PROXY_TOOLTIP</key>
-					<string>Remove helper files and folders used by the CVS and SVN Source Code Management systems.</string>
+					<string>Remove helper files and folders used by the CVS, SVN or Git Source Code Management systems.</string>
 					<key>STATE</key>
 					<true/>
 				</dict>

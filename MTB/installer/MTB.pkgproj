@@ -1235,13 +1235,6 @@
 					<dict>
 						<key>ALIGNMENT</key>
 						<integer>2</integer>
-						<key>BACKGROUND_PATH</key>
-						<dict>
-							<key>PATH</key>
-							<string>MTB-installer-bg.png</string>
-							<key>PATH_TYPE</key>
-							<integer>1</integer>
-						</dict>
 						<key>CUSTOM</key>
 						<true/>
 						<key>LAYOUT_DIRECTION</key>
@@ -1253,13 +1246,6 @@
 					<dict>
 						<key>ALIGNMENT</key>
 						<integer>2</integer>
-						<key>BACKGROUND_PATH</key>
-						<dict>
-							<key>PATH</key>
-							<string>MTB-installer-bg.png</string>
-							<key>PATH_TYPE</key>
-							<integer>1</integer>
-						</dict>
 						<key>CUSTOM</key>
 						<true/>
 						<key>LAYOUT_DIRECTION</key>
@@ -1267,13 +1253,6 @@
 						<key>SCALING</key>
 						<integer>0</integer>
 					</dict>
-				</dict>
-				<key>BACKGROUND_PATH</key>
-				<dict>
-					<key>PATH</key>
-					<string>MTB-installer-bg.png</string>
-					<key>PATH_TYPE</key>
-					<integer>1</integer>
 				</dict>
 				<key>CUSTOM</key>
 				<true/>
@@ -1578,13 +1557,29 @@
 							<key>TYPE</key>
 							<integer>1</integer>
 						</dict>
+						<dict>
+							<key>REGULAR_EXPRESSION</key>
+							<false/>
+							<key>STRING</key>
+							<string>.git</string>
+							<key>TYPE</key>
+							<integer>1</integer>
+						</dict>
+						<dict>
+							<key>REGULAR_EXPRESSION</key>
+							<false/>
+							<key>STRING</key>
+							<string>.gitignore</string>
+							<key>TYPE</key>
+							<integer>0</integer>
+						</dict>
 					</array>
 					<key>PROTECTED</key>
 					<true/>
 					<key>PROXY_NAME</key>
 					<string>Remove SCM metadata</string>
 					<key>PROXY_TOOLTIP</key>
-					<string>Remove helper files and folders used by the CVS and SVN Source Code Management systems.</string>
+					<string>Remove helper files and folders used by the CVS, SVN or Git Source Code Management systems.</string>
 					<key>STATE</key>
 					<true/>
 				</dict>
