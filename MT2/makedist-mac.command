@@ -65,18 +65,4 @@ packagesbuild installer/$PLUGIN_NAME.pkgproj
 
 #---------------------------------------------------------------------------------------------------------
 
-hdiutil create installer/$PLUGIN_NAME.dmg -srcfolder installer/build-mac/ -ov -anyowners -volname $PLUGIN_NAME
-
-if [ -f installer/$PLUGIN_NAME-mac.dmg ]
-then
- rm -f installer/$PLUGIN_NAME-mac.dmg
-fi
-
-hdiutil convert installer/$PLUGIN_NAME.dmg -format UDZO -o installer/$PLUGIN_NAME-mac.dmg
-rm -R -f installer/$PLUGIN_NAME.dmg
-
-rm -R -f installer/build-mac/
-
-#---------------------------------------------------------------------------------------------------------
-
 echo "done"
