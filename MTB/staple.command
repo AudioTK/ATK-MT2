@@ -20,6 +20,6 @@ PLUGIN_NAME=$(echo "${PLUGIN_NAME}" | tr -d '[:space:]')
 PKG="installer/$PLUGIN_NAME-mac.dmg"
 
 xcrun stapler staple "${PKG}"
-spctl -a -vvv -t install "${PKG}"
+spctl -a -t open --context context:primary-signature -v "${PKG}"
 
 echo "done"
