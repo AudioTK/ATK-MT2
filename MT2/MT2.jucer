@@ -3,8 +3,8 @@
 <JUCERPROJECT id="KHQl4f" name="MT2" displaySplashScreen="1" reportAppUsage="1"
               splashScreenColour="Dark" projectType="audioplug" version="1.2"
               bundleIdentifier="com.MatthieuBrucher.MT2" includeBinaryInAppConfig="1"
-              buildVST="0" buildVST3="1" buildAU="0" buildAUv3="1" buildRTAS="0"
-              buildAAX="0" buildStandalone="1" enableIAA="0" pluginName="MT2"
+              buildVST="0" buildVST3="1" buildAU="1" buildAUv3="1" buildRTAS="0"
+              buildAAX="0" buildStandalone="0" enableIAA="0" pluginName="MT2"
               pluginDesc="" pluginManufacturer="MatthieuBrucher" pluginManufacturerCode="MatB"
               pluginCode="aMT2" pluginChannelConfigs="{1,1}" pluginIsSynth="0"
               pluginWantsMidiIn="0" pluginProducesMidiOut="0" pluginIsMidiEffectPlugin="0"
@@ -12,7 +12,7 @@
               aaxIdentifier="com.MatthieuBrucher.MT2" pluginAAXCategory="0"
               companyName="Matthieu Brucher" companyWebsite="http://www.audio-tk.com/"
               cppLanguageStandard="17" companyCopyright="Matthieu Brucher"
-              pluginFormats="buildAUv3,buildStandalone,buildVST3" jucerFormatVersion="1"
+              pluginFormats="buildAU,buildAUv3,buildVST3" jucerFormatVersion="1"
               defines="JUCE_VST3_CAN_REPLACE_VST2=0&#10;ATK_NO_FFT" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0">
   <MAINGROUP id="H9V4ut" name="MT2">
@@ -50,7 +50,7 @@
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX" vst3Folder="../../../SDKs/VST3_SDK"
                keepCustomXcodeSchemes="1" aaxFolder="../../SDKs/AAX_SDK_2p3p0"
-               xcodeValidArchs="arm64,arm64e,x86_64" extraCompilerFlags="-fno-aligned-allocation">
+               extraCompilerFlags="-fno-aligned-allocation" hardenedRuntime="1">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MT2" enablePluginBinaryCopyStep="1"
                        headerPath="../../../&#10;../../../../../AudioTK&#10;../../../../../AudioTK/3rdParty/gsl/include&#10;../../../../../AudioTK/3rdParty/eigen&#10;../../../../../../local/boost_1_75_0&#10;../../../../../AudioTK-Modeling&#10;"
