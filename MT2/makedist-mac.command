@@ -41,7 +41,7 @@ echo ""
 
 # build xcode project. Change target to build individual formats
 echo "Build"
-xcodebuild -project Builds/MacOSX/$PLUGIN_NAME.xcodeproj -target "$PLUGIN_NAME - All" -configuration Release 2> ./build-mac.log
+arch -x86_64 xcodebuild -project Builds/MacOSX/$PLUGIN_NAME.xcodeproj -target "$PLUGIN_NAME - All" -configuration Release 2> ./build-mac.log
 
 if [ -s build-mac.log ]
 then
