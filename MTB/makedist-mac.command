@@ -61,4 +61,5 @@ rm -rf installer/build-mac-signed
 mkdir installer/build-mac-signed
 productsign --sign "Developer ID Installer: Matthieu Brucher (APLDS8QMQ5)" "installer/build-mac/$PLUGIN_NAME Installer.pkg" "installer/build-mac-signed/$PLUGIN_NAME Installer.pkg"
 
+rm -R -f installer/build-mac/
 echo "done"
