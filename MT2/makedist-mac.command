@@ -53,11 +53,6 @@ else
  rm build-mac.log
 fi
 
-#---------------------------------------------------------------------------------------------------------
-
-# installer, uses Packages http://s.sudre.free.fr/Software/Packages/about.html
-rm -R -f installer/$PLUGIN_NAME-mac.dmg
-
 echo "building installer"
 echo ""
 chmod 0777 installer
@@ -65,22 +60,5 @@ packagesbuild installer/$PLUGIN_NAME.pkgproj
 rm -rf installer/build-mac-signed
 mkdir installer/build-mac-signed
 productsign --sign "Developer ID Installer: Matthieu Brucher (APLDS8QMQ5)" "installer/build-mac/$PLUGIN_NAME Installer.pkg" "installer/build-mac-signed/$PLUGIN_NAME Installer.pkg"
-
-
-#---------------------------------------------------------------------------------------------------------
-
-hdiutil create installer/$PLUGIN_NAME.dmg -srcfolder installer/build-mac-signed/ -ov -anyowners -volname $PLUGIN_NAME
-
-if [ -f installer/$PLUGIN_NAME-mac.dmg ]
-then
- rm -f installer/$PLUGIN_NAME-mac.dmg
-fi
-
-hdiutil convert installer/$PLUGIN_NAME.dmg -format UDZO -o installer/$PLUGIN_NAME-mac.dmg
-rm -R -f installer/$PLUGIN_NAME.dmg
-
-rm -R -f installer/build-mac/
-
-#---------------------------------------------------------------------------------------------------------
 
 echo "done"

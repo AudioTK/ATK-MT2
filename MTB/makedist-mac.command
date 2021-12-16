@@ -41,7 +41,7 @@ echo ""
 
 # build xcode project. Change target to build individual formats
 echo "Build"
-xcodebuild -project Builds/MacOSX/$PLUGIN_NAME.xcodeproj -target "$PLUGIN_NAME - All" -configuration Release 2> ./build-mac.log
+arch -x86_64 xcodebuild -project Builds/MacOSX/$PLUGIN_NAME.xcodeproj -target "$PLUGIN_NAME - All" -configuration Release 2> ./build-mac.log
 
 if [ -s build-mac.log ]
 then
@@ -53,16 +53,12 @@ else
  rm build-mac.log
 fi
 
-#---------------------------------------------------------------------------------------------------------
-
-# installer, uses Packages http://s.sudre.free.fr/Software/Packages/about.html
-rm -R -f installer/$PLUGIN_NAME-mac.dmg
-
 echo "building installer"
 echo ""
 chmod 0777 installer
 packagesbuild installer/$PLUGIN_NAME.pkgproj
-
-#---------------------------------------------------------------------------------------------------------
+rm -rf installer/build-mac-signed
+mkdir installer/build-mac-signed
+productsign --sign "Developer ID Installer: Matthieu Brucher (APLDS8QMQ5)" "installer/build-mac/$PLUGIN_NAME Installer.pkg" "installer/build-mac-signed/$PLUGIN_NAME Installer.pkg"
 
 echo "done"

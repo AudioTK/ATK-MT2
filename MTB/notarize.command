@@ -17,8 +17,8 @@ PLUGIN_NAME=$(echo "${PLUGIN_NAME}" | tr -d '[:space:]')
 
 # work out the paths to the binaries
 
-PKG="installer/build-mac/$PLUGIN_NAME Installer.pkg"
+PKG="installer/build-mac-signed/$PLUGIN_NAME Installer.pkg"
 
-xcrun altool --notarize-app -f "${PKG}" --primary-bundle-id com.MatthieuBrucher.$PLUGIN_NAME.pkg -u "matthieu.brucher@gmail.com" -p "@keychain:AC_PASSWORD"
+arch -x86_64 xcrun notarytool submit "${PKG}" --keychain-profile "AC_PASSWORD" --wait
 
 echo "done"

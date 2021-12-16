@@ -1,6 +1,9 @@
 MTB changelog
 http://www.audio-tk.com
 
+16/12/2021 - v1.1
+ - AUv3 and M1 support
+
 13/02/2021 - v1.0.0 initial release
   - Built against ATK 2.3.3
   
