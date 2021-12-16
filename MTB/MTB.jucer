@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="KHQl4f" name="MTB" displaySplashScreen="1" reportAppUsage="1"
-              splashScreenColour="Dark" projectType="audioplug" version="1.0"
+              splashScreenColour="Dark" projectType="audioplug" version="1.1"
               bundleIdentifier="com.MatthieuBrucher.MTB" includeBinaryInAppConfig="1"
-              buildVST="0" buildVST3="1" buildAU="1" buildAUv3="1" buildRTAS="0"
-              buildAAX="0" buildStandalone="0" enableIAA="0" pluginName="MTB"
+              buildVST="0" buildVST3="1" buildAU="0" buildAUv3="1" buildRTAS="0"
+              buildAAX="0" buildStandalone="1" enableIAA="0" pluginName="MTB"
               pluginDesc="" pluginManufacturer="MatthieuBrucher" pluginManufacturerCode="MatB"
               pluginCode="aMTB" pluginChannelConfigs="{1,1}" pluginIsSynth="0"
               pluginWantsMidiIn="0" pluginProducesMidiOut="0" pluginIsMidiEffectPlugin="0"
@@ -12,7 +12,7 @@
               aaxIdentifier="com.MatthieuBrucher.MTB" pluginAAXCategory="0"
               companyName="Matthieu Brucher" companyWebsite="http://www.audio-tk.com/"
               cppLanguageStandard="17" companyCopyright="Matthieu Brucher"
-              pluginFormats="buildAU,buildAUv3,buildVST3" jucerFormatVersion="1"
+              pluginFormats="buildAUv3,buildStandalone,buildVST3" jucerFormatVersion="1"
               defines="JUCE_VST3_CAN_REPLACE_VST2=0&#10;ATK_NO_FFT" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0">
   <MAINGROUP id="H9V4ut" name="MTB">
@@ -49,19 +49,20 @@
   </MAINGROUP>
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX" vst3Folder="../../../SDKs/VST3_SDK"
-               keepCustomXcodeSchemes="1" aaxFolder="../../../SDKs/AAX_SDK_2p3p0"
-               hardenedRuntime="1" extraCompilerFlags="-fno-aligned-allocation">
+               keepCustomXcodeSchemes="1" aaxFolder="../../SDKs/AAX_SDK_2p3p0"
+               xcodeValidArchs="arm64,arm64e,x86_64" extraCompilerFlags="-fno-aligned-allocation">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="MTB" enablePluginBinaryCopyStep="1"
-                       headerPath="../../../&#10;../../../../../AudioTK&#10;../../../../../AudioTK/3rdParty/gsl/include&#10;../../../../../AudioTK/3rdParty/eigen&#10;../../../../../../local/boost_1_75_0&#10;../../../../../AudioTK-Modeling&#10;"
-                       osxArchitecture="64BitIntel" codeSigningIdentity="Developer ID Application: Matthieu Brucher (APLDS8QMQ5)"
-                       osxSDK="11.1 SDK" osxCompatibility="10.14 SDK"/>
+                       headerPath="../../../&#10;../../../../../AudioTK&#10;../../../../../AudioTK/3rdParty/gsl/include&#10;../../../../../AudioTK/3rdParty/eigen&#10;../../../../../boost_1_77_0&#10;../../../../../ATK-Modelling&#10;"
+                       osxArchitecture="64BitIntel" codeSigningIdentity="Brucher Matthieu"
+                       macOSBaseSDK="12.1" osxSDK="12.1 SDK"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="MTB"
                        enablePluginBinaryCopyStep="1" stripLocalSymbols="1" fastMath="1"
-                       headerPath="../../../&#10;../../../../../AudioTK&#10;../../../../../AudioTK/3rdParty/gsl/include&#10;../../../../../AudioTK/3rdParty/eigen&#10;../../../../../../local/boost_1_75_0&#10;../../../../../AudioTK-Modeling&#10;"
+                       headerPath="../../../&#10;../../../../../AudioTK&#10;../../../../../AudioTK/3rdParty/gsl/include&#10;../../../../../AudioTK/3rdParty/eigen&#10;../../../../../boost_1_77_0&#10;../../../../../ATK-Modelling&#10;"
                        aaxBinaryLocation="$(HOME)/Library/Application Support/Avid/Audio/Plug-Ins/"
-                       osxSDK="11.1 SDK" codeSigningIdentity="Developer ID Application: Matthieu Brucher (APLDS8QMQ5)"
-                       customXcodeFlags="OTHER_CODE_SIGN_FLAGS= --options=runtime --timestamp"/>
+                       osxSDK="12.1 SDK" codeSigningIdentity="Developer ID Application: Matthieu Brucher (APLDS8QMQ5)"
+                       customXcodeFlags="OTHER_CODE_SIGN_FLAGS= --options=runtime --timestamp"
+                       macOSBaseSDK="12.1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
@@ -70,6 +71,7 @@
         <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
         <MODULEPATH id="juce_audio_formats" path="../../../JUCE/modules"/>
@@ -79,14 +81,14 @@
         <MODULEPATH id="atk_core" path="../../../AudioTK/modules/JUCE"/>
         <MODULEPATH id="atk_utility" path="../../../AudioTK/modules/JUCE"/>
         <MODULEPATH id="atk_tools" path="../../../AudioTK/modules/JUCE"/>
-        <MODULEPATH id="atk_modelling" path="../../../AudioTK-Modeling/modules/JUCE"/>
+        <MODULEPATH id="atk_modelling" path="../../../ATK-Modelling/modules/JUCE"/>
         <MODULEPATH id="atk_eq" path="../../../AudioTK/modules/JUCE"/>
       </MODULEPATHS>
     </XCODE_MAC>
     <VS2019 targetFolder="Builds/VisualStudio2019">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" headerPath="C:\Dev\ATK-MT2&#10;C:\Dev\AudioTK&#10;C:\Dev\AudioTK\3rdParty\gsl\include&#10;C:\Dev\AudioTK\3rdParty\eigen&#10;C:\Dev\boost_1_75_0&#10;C:\Dev\ATK-Modelling&#10;"/>
-        <CONFIGURATION isDebug="0" name="Release" headerPath="C:\Dev\ATK-MT2&#10;C:\Dev\AudioTK&#10;C:\Dev\AudioTK\3rdParty\gsl\include&#10;C:\Dev\AudioTK\3rdParty\eigen&#10;C:\Dev\boost_1_75_0&#10;C:\Dev\ATK-Modelling&#10;"/>
+        <CONFIGURATION isDebug="1" name="Debug" headerPath="C:\Dev\ATK-MTB\MTB&#10;C:\Dev\AudioTK&#10;C:\Dev\AudioTK\3rdParty\gsl\include&#10;C:\Dev\AudioTK\3rdParty\eigen&#10;C:\Dev\boost_1_75_0&#10;C:\Dev\ATK-Modelling&#10;"/>
+        <CONFIGURATION isDebug="0" name="Release" headerPath="C:\Dev\ATK-MTB\MTB&#10;C:\Dev\AudioTK&#10;C:\Dev\AudioTK\3rdParty\gsl\include&#10;C:\Dev\AudioTK\3rdParty\eigen&#10;C:\Dev\boost_1_75_0&#10;C:\Dev\ATK-Modelling&#10;"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_gui_extra"/>
@@ -94,6 +96,7 @@
         <MODULEPATH id="juce_graphics"/>
         <MODULEPATH id="juce_events"/>
         <MODULEPATH id="juce_data_structures"/>
+        <MODULEPATH id="juce_cryptography"/>
         <MODULEPATH id="juce_core"/>
         <MODULEPATH id="juce_audio_utils"/>
         <MODULEPATH id="juce_audio_processors"/>
@@ -110,9 +113,9 @@
     </VS2019>
     <VS2019 targetFolder="Builds/VisualStudio2019_32">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" headerPath="C:\Dev\ATK-MT2&#10;C:\Dev\AudioTK&#10;C:\Dev\AudioTK\3rdParty\gsl\include&#10;C:\Dev\AudioTK\3rdParty\eigen&#10;C:\Dev\boost_1_75_0&#10;C:\Dev\ATK-Modelling&#10;"
+        <CONFIGURATION isDebug="1" name="Debug" headerPath="C:\Dev\ATK-MTB\MTB&#10;C:\Dev\AudioTK&#10;C:\Dev\AudioTK\3rdParty\gsl\include&#10;C:\Dev\AudioTK\3rdParty\eigen&#10;C:\Dev\boost_1_75_0&#10;C:\Dev\ATK-Modelling&#10;"
                        winArchitecture="Win32"/>
-        <CONFIGURATION isDebug="0" name="Release" headerPath="C:\Dev\ATK-MT2&#10;C:\Dev\AudioTK&#10;C:\Dev\AudioTK\3rdParty\gsl\include&#10;C:\Dev\AudioTK\3rdParty\eigen&#10;C:\Dev\boost_1_75_0&#10;C:\Dev\ATK-Modelling&#10;"
+        <CONFIGURATION isDebug="0" name="Release" headerPath="C:\Dev\ATK-MTB\MTB&#10;C:\Dev\AudioTK&#10;C:\Dev\AudioTK\3rdParty\gsl\include&#10;C:\Dev\AudioTK\3rdParty\eigen&#10;C:\Dev\boost_1_75_0&#10;C:\Dev\ATK-Modelling&#10;"
                        winArchitecture="Win32"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
@@ -121,6 +124,7 @@
         <MODULEPATH id="juce_graphics"/>
         <MODULEPATH id="juce_events"/>
         <MODULEPATH id="juce_data_structures"/>
+        <MODULEPATH id="juce_cryptography"/>
         <MODULEPATH id="juce_core"/>
         <MODULEPATH id="juce_audio_utils"/>
         <MODULEPATH id="juce_audio_processors"/>
@@ -150,6 +154,7 @@
     <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
